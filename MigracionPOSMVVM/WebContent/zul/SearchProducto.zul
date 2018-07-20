@@ -1,0 +1,104 @@
+<?page title="Busca Producto" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="winBuscaProducto" title="Busca Producto" border="normal" width="800px"
+		height="600px" position="center" closable="true" mode="modal" sizable="false" 
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerSearchProduct')">
+		
+<style>    
+    .MyGridRowHeight
+        tr.z-row td.z-row-inner div.z-row-content{
+            border:1px solid white;
+            border-right:1px solid transparent;
+            padding:0px;
+            margin:0px;            
+     }
+     
+     .z-combobox-inp
+     { height: 20px; }
+     
+     .z-button-inp
+     { height: 15px; }
+</style>		
+
+		<borderlayout>
+			<north>
+				<div width="100%">
+					<grid sclass="MyGridRowHeight">
+						<rows>
+							<row>
+								<label
+									value="Familia de Productos.....:" height="15px" />
+								<combobox model="@load(vm.familiaBeans)" 
+									selectedItem="@bind(vm.familiaBean)" 
+									onSelect="@command('cargaSubFamilias',familia=vm.familiaBean.codigo)" 									
+									sclass="z-combobox-inp">
+									<template name='model'>
+										<comboitem label="@load(each.codigo)"  description="@load(each.descripcion)"/>
+									</template>
+								</combobox>
+							</row>
+							<row>
+								<label value="Sub-familia de Productos:" height="15px"/>
+								<combobox model="@load(vm.subFamiliaBeans)" 
+									selectedItem="@bind(vm.subFamiliaBean)" 
+									onSelect="@command('cargaGrupoFamilias',familia=vm.familiaBean.codigo, subFamilia=vm.subFamiliaBean.codigo)"									
+									sclass="z-combobox-inp">
+									<template name='model'>
+										<comboitem label="@load(each.codigo)"  description="@load(each.descripcion)"/>
+									</template>
+								</combobox>
+							</row>
+							<row>
+								<label value="Grupo de Productos......:" height="15px"/>
+								<combobox model="@load(vm.grupoFamiliaBeans)" 
+									selectedItem="@bind(vm.grupoFamiliaBean)" 
+									sclass="z-combobox-inp">
+									<template name='model'>
+										<comboitem label="@load(each.codigo)"  description="@load(each.descripcion)"/>
+									</template>
+								</combobox>
+							</row>
+							<row>
+								<label value="Código de Producto SAP..:" height="20px"/>
+								<textbox value = "@bind(vm.codigoSap)" height="20px"/>
+							</row>
+							<row>
+								<label value="Codigo Barra Producto...:" height="20px"/>
+								<textbox value = "@bind(vm.codigoBarra)" height="20px"/>
+								<button label="click" onClick="@command('buscarProducto',arg=vm.familiaBean,arg2=vm.subFamiliaBean,arg3=vm.grupoFamiliaBean)"/>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</north>
+
+			<center>
+				<div>
+					<grid model= "@load(vm.productos)" 
+					sclass="MyGridRowHeight" height="300px"  
+					emptyMessage="Sin registros">
+						<columns>
+							<column label="Articulo" />
+							<column label="Descripciion" />
+							<column label="Precio iva" />
+							<column label="Grupo" />
+							<column label="Accion" />
+						</columns>
+						<template name="model">							
+							<row>
+								<textbox value="@load(each.cod_barra)"/>
+								<textbox value="@load(each.descripcion)"/>
+								<doublebox value="@load(each.precio)"/>
+								<textbox value="@load(each.grupo)"/>
+								<button label="Seleccionar" onClick="@command('seleccionaProducto',win=winBuscaProducto) @global-command('actProdGrid',arg=each)"/>
+							</row>							
+						</template>
+					</grid>
+				</div>
+			</center>
+
+		</borderlayout>
+
+	</window>
+</zk>

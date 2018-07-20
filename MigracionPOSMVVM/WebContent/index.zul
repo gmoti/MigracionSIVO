@@ -1,0 +1,11 @@
+<?page title="Auto Generated index.zul"?>
+<window title="Hello World!!" border="normal" width="200px" 
+		apply="org.zkoss.bind.BindComposer" 
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerIndex')">
+
+<label value="You are using: ${desktop.webApp.version}"/>
+
+
+<a href="zul/MenuPrincipal.zul">Ir a cliente</a>
+
+</window>

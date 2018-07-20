@@ -1,0 +1,116 @@
+<?page title="Venta Directa" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="Venta Directa" border="normal" width="100%" height="100%" closable="true" 
+apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerVentaDirecta')">
+		
+
+<style>   
+    .MyGridRowHeight
+        tr.z-row td.z-row-inner div.z-row-content{
+            border:1px solid white;
+            border-right:1px solid transparent;
+            padding:0px;
+            margin:0px;
+     }
+</style>
+	<caption>
+		<toolbarbutton label="" />
+		<toolbarbutton label="" />
+		<toolbarbutton label="" />
+		<toolbarbutton label="" />
+	</caption>
+
+	<borderlayout>
+		<north>
+			<vbox>
+			<hbox>
+				<div style="border-style: double" width="1150px">
+					Ticket
+					<textbox width="50px"/>
+					<textbox />
+					Cliente
+					<textbox value="@bind(vm.cliente.nif)" />
+					<textbox value="@bind(vm.cliente.dvnif)" width="50px"/>
+					<button  onClick="@command('buscarCliente',arg=vm.cliente.nif)" />
+					<button  onClick="" />
+					<textbox value="@bind(vm.cliente.nombre)"/>
+				</div>
+			</hbox>
+			<hbox>
+				<div style="border-style: double" width="1150px">
+					Caja
+					<textbox />
+					Cajero
+					<textbox />
+					Fecha
+					<datebox value="@load(vm.fecha)" format="dd/MM/yyyy" readonly="true"/>
+					Hora
+					<timebox value="@load(vm.fecha)" format="HH:mm:ss" readonly="true"/>
+				</div>
+			</hbox>
+			<hbox>
+				<div style="border-style: double" width="1150px">
+					Tipo A
+					<textbox />
+					Agente					
+					<combobox id="cbx_agente" model="@load(vm.agentes)" selectedItem="@bind(vm.agente)">
+						<template name="model">
+							<comboitem label="@load(each.usuario)"  description="@load(each.nombre_completo)"/>
+						</template>						
+					</combobox>
+					Divisa
+					<textbox value="@bind(vm.monedas)" readonly="true"/>
+					Cambio
+					<textbox width="50px"/>
+				</div>
+			</hbox>
+		</vbox>
+		</north>
+
+		<center>
+		<div>
+				
+		    <div width="1150px"	height="45px" style="border-style: double">
+		    	<space width="10px"/>
+				<label value="Codigo del articulo"/><space width="30px"/>
+				<button image="/image/adicion.png" onClick="" disabled="true" />
+				<label value="Descripcion"/><space width="100px"/>
+				<label value="Precio"/><space width="130px"/>
+				<label value="Importe"/><space width="140px"/>
+				<label value="Cantidad"/><space width="100px"/>
+				<button image="/image/adicion.png" onClick="@command('buscaProducto')" disabled="@bind(vm.disabledGrid)"/>		    
+		    </div> 
+			<div style="border-style: double;" width="1150px"
+				height="430px">
+
+				<grid model="@bind(vm.productos)" emptyMessage="Sin datos cargados"  
+					sclass="MyGridRowHeight"  width="1150px" height="420px">
+					<template name="model">
+						<row>
+							<textbox value="@load(each.cod_barra)" readonly="true"/>
+							<textbox value="@load(each.descripcion)" readonly="true"/>
+							<intbox value="@load(each.precio)" readonly="true"/>
+							<intbox value="@bind(each.importe)" readonly="true"/>
+							<intbox value="@bind(each.cantidad)" onChange="@command('actImporteGrid',arg=each)"/>
+							<button label="Del" onClick="@command('deleteItem',arg=each)" />
+						</row>					
+					</template>
+				</grid>
+			</div>
+		</div>
+		</center>
+
+		<south>
+			<div style="border-style: solid;" width="1150px" height="40px">
+				<hbox>
+					<space width="730px"/>
+					<label value="Total "/>
+					<intbox value="@bind(vm.total)" readonly="true"/>
+				</hbox>
+			</div>
+		</south>
+	</borderlayout>
+
+</window>
+</zk>

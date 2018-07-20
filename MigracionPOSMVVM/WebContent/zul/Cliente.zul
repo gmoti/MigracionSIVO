@@ -1,0 +1,57 @@
+<?page title="Mantenedor Clientes" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="win" title="Mantenedor Clientes" border="normal" closable="true"
+		width="100%" height="100%"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerCliente')">	
+		
+		<borderlayout>
+		<north></north>
+		<center>
+		<div width="100%" height="800px">
+			<vbox>
+				<hbox>
+					<label value="Codigo" />
+					<textbox value="@bind(vm.cliente.codigo)"/>
+
+					<label value="Rut" />
+					<textbox value="@bind(vm.cliente.nif)" />
+					
+					<button id="buscar" label="Buscar" onClick="@command('buscar',arg1=vm.cliente.nif,arg2=vm.cliente.codigo)" />
+
+					<label value="fecha Nac." />					
+					<datebox />
+				</hbox>
+
+				<hbox>
+					<label value="Apellidos" />
+					<textbox value="@bind(vm.cliente.apellido)" />
+					<label value="Edad" />
+					<intbox  />
+				</hbox>
+
+				<hbox>
+					<label value="Nombres" />
+					<textbox value="@bind(vm.cliente.nombre)" />
+					
+					<label value="Agente" />
+					<combobox id="cbx_agente" model="@load(vm.listaAgentes)" selectedItem="@bind(vm.agente)">
+						<template name="model">
+							<comboitem label="@load(each.usuario)"  description="@load(each.nombre_completo)"/>
+						</template>						
+					</combobox>
+				</hbox>
+			</vbox>
+		</div>
+		</center>
+		<south>
+			<div>
+			<label value="Mensaje:" /><textbox id="mensaje" width="500px" />
+			</div>
+		</south>
+		</borderlayout>
+		
+
+		
+	</window>
+</zk>

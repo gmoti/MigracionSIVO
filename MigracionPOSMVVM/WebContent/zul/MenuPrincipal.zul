@@ -1,0 +1,48 @@
+<?page title="Menu Principal" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window title="Menu Principal" border="normal" width="100%" height="100%"
+		apply="org.zkoss.bind.BindComposer" 
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerMenuPrincipal')">
+	<menubar>
+		<menu label="Venta">
+			<menupopup>
+				<menuitem label="Venta Directa" onClick="@command('seleccionMenu',arg='M1_1')"/>
+				<menuseparator />
+				<menuitem label="Presupuestos" />
+				<menuseparator />
+				<menuitem label="Encargos" />
+				<menuseparator />
+				<menuitem label="Liberacion de encargos" />
+			</menupopup>
+		</menu>
+
+		<menu label="Mantenedores">
+			<menupopup>
+				<menuitem label="Clientes" onClick="@command('seleccionMenu',arg='M2_1')"/>
+				<menuseparator />
+				<menuitem label="Graduacion cliente" />
+				<menuseparator />
+				<menuitem label="Medico" />
+				<menuseparator />
+				<menuitem label="Albaran" />
+				<menuseparator />
+				<menuitem label="Cambio de folio" />
+			</menupopup>
+		</menu>
+
+		<menu label="Informes">
+			<menupopup>
+				<menuitem label="Listado Informe optico"/>
+				<menuitem label="Listado Total del dia" onClick="@command('seleccionMenu',arg='M3_2')"/>
+				<menuitem label="Listado de boletas" />
+				<menuitem label="Listado de presupuestos" />
+				<menuitem label="Listado de encargos pendientes de entrega" />
+				<menuitem label="Busqueda general de articulos" />
+				<menuitem label="Copia de guias y boletas" />
+				
+			</menupopup>
+		</menu>
+
+	</menubar>
+</window>
+</zk>
