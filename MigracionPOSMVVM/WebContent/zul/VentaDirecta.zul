@@ -1,6 +1,6 @@
 <?page title="Venta Directa" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window title="Venta Directa" border="normal" width="100%" height="100%" closable="true" 
+<window id="win" title="Venta Directa" border="normal" width="100%" height="100%" closable="true" 
 apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerVentaDirecta')">
 		
@@ -14,11 +14,14 @@ apply="org.zkoss.bind.BindComposer"
             margin:0px;
      }
 </style>
-	<caption>
-		<toolbarbutton label="" />
-		<toolbarbutton label="" />
-		<toolbarbutton label="" />
-		<toolbarbutton label="" />
+
+	<caption>	
+		<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">			
+			<toolbarbutton image="/image/New_32x32.png" />
+			<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagoVenta')"/>
+			<toolbarbutton image="/image/Check_32x32.png" />
+			<toolbarbutton image="/image/Remove_32x32.png" onClick="win.detach()"/>
+		</hbox>		
 	</caption>
 
 	<borderlayout>

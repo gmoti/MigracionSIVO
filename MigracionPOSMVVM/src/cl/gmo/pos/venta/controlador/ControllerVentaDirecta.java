@@ -5,18 +5,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
-import org.zkoss.zk.ui.Component;
+
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.ForwardEvent;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.utils.Utils;
@@ -32,6 +30,7 @@ import cl.gmo.pos.venta.web.beans.SubFamiliaBean;
 
 public class ControllerVentaDirecta {
 	
+		
 	//constantes
 	private final String SUCURSAL="T002";
 	private final String MONEDA="PESO";
@@ -65,7 +64,9 @@ public class ControllerVentaDirecta {
 	
 	
 	@Init
-	public void inicio() {		
+	public void inicio() {	
+		
+		
 		
 		clienteImp = new ClienteDAOImpl();
 		cliente = new ClienteBean();
@@ -182,6 +183,19 @@ public class ControllerVentaDirecta {
 		actTotal(productos);
 	}
 	
+	/*@Command
+	public void buttonClose(@BindingParam("window")Window window) {
+		window.detach();
+	} */
+	
+	@Command
+	public void pagoVenta() {	
+		
+		Window window = (Window)Executions.createComponents(
+                "/zul/pagoVentaDirecta.zul", null, null);
+		
+        window.doModal();        
+	}
 	
 	
 	//Combos Precargados para evitar recargas

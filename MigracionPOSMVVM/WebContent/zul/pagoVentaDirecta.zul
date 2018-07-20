@@ -1,0 +1,111 @@
+<?page title="Pago Venta Directa" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window id="winPagoVentaDirecta" border="none" height="80%" width="80%">
+
+		<panel  height="40%" width="100%" style="margin-bottom:10px"
+     			title="Seleccion de cobro" border="normal">
+     			
+     		<caption>
+     			<toolbarbutton image="/image/Remove_32x32.png" onClick="winPagoVentaDirecta.detach()"/>
+     		</caption>
+
+     		<panelchildren>
+     			<grid sclass="MyGridRowHeight">   
+     			
+     				<columns>
+     					<column width="100px"/>
+     					<column width="250px"/>
+     					<column width="100px"/>
+     					<column width="250px"/>
+     				</columns>
+
+     				<rows>
+     					<row>
+     						<label value="Fecha" />
+     						<datebox />     						
+     						<label value="Mro. de serie" />
+     						<textbox />     						
+     					</row>
+
+     					<row>
+     						<label value="Nif" />
+     						<textbox />
+     						<label value="Razon Social" />
+     						<textbox />
+     					</row>
+
+     					<row>
+     						<label value="Direccion" />
+     						<textbox />
+     						<label value="Provincia" />
+     						<textbox />
+     					</row>
+
+     					<row>
+     						<label value="Poblacion" />
+     						<textbox />
+     						<label value="Giro" />
+     						<textbox />
+     					</row>
+     				</rows>
+     			</grid>
+     		</panelchildren>
+		</panel>
+
+		<panel height="50%" width="100%" style="margin-bottom:10px"
+     		   title="Cobro" border="normal">
+     		   
+     		<caption>
+     			<toolbarbutton image="/image/Save_32x32.png"/>
+     			<toolbarbutton image="/image/Print_32x32.png"/>
+     		</caption>
+
+     		<panelchildren>
+     			<borderlayout>
+     				<west width="50%">
+     					<grid sclass="MyGridRowHeight">
+     						<rows>
+     							<row>
+     								<label value="Valor total a pago" />
+     								<textbox />
+     							</row>
+     							<row>
+     								<label value="Valor a pagar" />
+     								<textbox />
+     							</row>
+     							<row>
+     								<label value="Descuento" />
+     								<textbox />
+     							</row>
+     							<row>
+     								<label value="Diferencia" />
+     								<textbox />
+     							</row>
+     							<row>
+     								<label value="Forma pago" />
+     								<textbox />
+     							</row>
+     						</rows>
+     					</grid>
+     				</west>
+     				<east width="50%">
+
+     					<grid>
+     						<columns>
+     							<column label="Fecha" />
+     							<column label="Forma pago" />
+     							<column label="Monto" />
+     							<column label="Eliminar" />
+     						</columns>
+     						<rows>
+     							<row></row>
+     						</rows>
+     					</grid>
+     					
+     				</east>
+     			</borderlayout>
+     		</panelchildren>
+		</panel>
+
+	</window>
+</zk>
