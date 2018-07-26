@@ -2,126 +2,187 @@ package cl.gmo.pos.venta.controlador;
 
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
-
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.Session;
+import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
-import cl.gmo.pos.venta.utils.Utils;
+import cl.gmo.pos.venta.controlador.ventaDirecta.VentaDirectaDispatchActions;
+import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.ClienteDAOImpl;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.UtilesDAOImpl;
-import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
-import cl.gmo.pos.venta.web.beans.DivisaBean;
 import cl.gmo.pos.venta.web.beans.FamiliaBean;
-import cl.gmo.pos.venta.web.beans.GrupoFamiliaBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
-import cl.gmo.pos.venta.web.beans.SubFamiliaBean;
+import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
+import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
 
 public class ControllerVentaDirecta {
 	
+	Session sess = Sessions.getCurrent();
 		
-	//constantes
-	private final String SUCURSAL="T002";
-	private final String MONEDA="PESO";
+	//constantes	
+
+	private String local="";
+	private int caja=0;
+	private String glprofile="";
+	private String gldescripcion="";
+	private String nombreSucural="";
 	
 	//Definiciones 
 	private ClienteDAOImpl clienteImp;
 	private ClienteBean cliente;	
-	private AgenteBean agente;
-	private ArrayList<AgenteBean> agentes;	
-	private DivisaBean divisa;
-	private Timestamp fecha;
-	private String monedas;
+	private Timestamp fecha;	
 	private ProductosBean productoBean;
-	private Integer total;
+	private Integer total;		
+	private VentaDirectaForm ventaDirectaForm;
+	private SeleccionPagoForm seleccionPagoForm;
+	
 	
 	//arreglos
 	private List<FamiliaBean> familiaBeans;
-	private List<SubFamiliaBean> subFamiliaBeans;
-	private List<GrupoFamiliaBean> grupoFamiliaBeans;
-	private List<ProductosBean> productos;
+	private ArrayList<ProductosBean> productos;
 	
 	//Instacias
-	private Utils utils = new Utils();
 	private UtilesDAOImpl utilesDaoImpl;
+	private VentaDirectaDispatchActions ventaDirectaAccion;
 	
 	//Modelos
-	final HashMap<String,Object> objetos = new HashMap<String,Object>();
+	HashMap<String,Object> objetos;
 	
-	//Banderas e indicadores
+	//Banderas e indicadores	
 	private String disabledGrid;
+	private String disableNew;
+	private String disablePagar;
+	private String disableGrabar;
+	
+	
+	SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy");
+	SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss");
 	
 	
 	@Init
 	public void inicio() {	
 		
-		
-		
+		local = (String) sess.getAttribute("sucursal");	
+		caja  = (int) sess.getAttribute("caja");
+		glprofile = (String) sess.getAttribute("glprofile");	
+		gldescripcion = (String) sess.getAttribute("gldescripcion");
+		nombreSucural = (String) sess.getAttribute("nombreSucural");		
+				
 		clienteImp = new ClienteDAOImpl();
-		cliente = new ClienteBean();
-		agente = new AgenteBean();
-		agentes = new ArrayList<>();
-		divisa = new DivisaBean();		
-		productoBean = new ProductosBean();
+		cliente = new ClienteBean();			
+		productoBean = new ProductosBean();		
+		familiaBeans = new ArrayList<>();	
+		productos = new ArrayList<ProductosBean>();
 		
-		familiaBeans = new ArrayList<>();
-		subFamiliaBeans = new ArrayList<>();
-		grupoFamiliaBeans = new ArrayList<>();
-		productos = new ArrayList<>();
-		
-		utilesDaoImpl = new UtilesDAOImpl();
+		utilesDaoImpl = new UtilesDAOImpl();	
+		ventaDirectaAccion = new VentaDirectaDispatchActions();
 		
 		disabledGrid="true";
-		divisa.setId(MONEDA);
-		fecha = new Timestamp(System.currentTimeMillis());
-		monedas=MONEDA;
+		disableGrabar="true";
+		disableNew="false";
+		disablePagar="true";
+		
+		fecha = new Timestamp(System.currentTimeMillis());		
 		total=0;
 		
-		try {
-			agentes = utils.traeAgentes(SUCURSAL);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//Encabezado venta directa		
+		ventaDirectaForm = new VentaDirectaForm();
+		
+		ventaDirectaForm = ventaDirectaAccion.cargaCaja(ventaDirectaForm, sess);
+		ventaDirectaForm = ventaDirectaAccion.carga(ventaDirectaForm, sess);
+		ventaDirectaForm.setCajero(glprofile);
+		ventaDirectaForm.setAgente(glprofile);
+		ventaDirectaForm.setNumero_caja(caja);		
+	}
+	
+	
+	@NotifyChange({"ventaDirectaForm","cliente","disabledGrid","disableGrabar","disablePagar"})
+	@Command
+	public void nuevaVenta() {
+		
+		fecha = new Timestamp(System.currentTimeMillis());		
+		cliente = new ClienteBean();
+		disabledGrid="true";		
+		disableGrabar="true";		
+		disablePagar="true";
+		
+		ventaDirectaForm = ventaDirectaAccion.carga(ventaDirectaForm, sess);
+		ventaDirectaForm.setCajero(glprofile);
+		ventaDirectaForm.setAgente(glprofile);
+		ventaDirectaForm.setNumero_caja(caja);	
+		
+		System.out.println(ventaDirectaForm.getCajero());
+		System.out.println(ventaDirectaForm.getAgente());
+		System.out.println(ventaDirectaForm.getNumero_caja());
 		
 	}
 	
-	@NotifyChange({"cliente","disabledGrid"})
+	
+	@NotifyChange({"cliente","disabledGrid","disableGrabar"})
 	@Command
 	public void buscarCliente(@BindingParam("arg")String arg) {
 		
 		try {
 			cliente = clienteImp.traeCliente(arg, "");
 			disabledGrid="false";
+			disableGrabar="false";
+			//disablePagar="false";
+			ventaDirectaForm.setCodigo_cliente(cliente.getCodigo());
+			ventaDirectaForm.setNombre(cliente.getNombre());
+			ventaDirectaForm.setNombreCliente(cliente.getNombre());
+			
+			
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}
 		
 	}
 	
-	public void cargarAgentes() {
+	@NotifyChange({"disablePagar","ventaDirectaForm"})
+	@Command
+	public void grabaVenta() {
 		
+		//valida grabar venta
+		if (total < 1) {
+			Messagebox.show("Venta sin lineas");
+			return;
+		}	
 		
+		//venta_directa.js
+		ventaDirectaForm.setAccion(Constantes.STRING_AGREGAR_VENTA_DIRECTA);
+		ventaDirectaForm.setSumaTotal(total);
+		
+		ventaDirectaForm.setListaProductos(productos);
+		try {
+			ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);			
+			Messagebox.show("Venta almacenada");
+			
+			//activar botn de pago
+			disablePagar="false";
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Command
 	public void buscaProducto() {		
 		
-		objetos.put("familiaBeans",familiaBeans);		
-		objetos.put("subFamiliaBeans",subFamiliaBeans);
-		objetos.put("grupoFamiliaBeans",grupoFamiliaBeans);
-		
+		objetos = new HashMap<String,Object>();
+		objetos.put("familiaBeans",familiaBeans);
 		Window window = (Window)Executions.createComponents(
                 "/zul/SearchProducto.zul", null, objetos);
 		
@@ -140,7 +201,7 @@ public class ControllerVentaDirecta {
 		System.out.println("estoy en otro controlador "+arg.getDescripcion());
 	}
 	
-	//onChange="@command('actImporteGrid',arg=each)" 
+	 
 	@NotifyChange({"productoBean","productos","total"})
 	@Command
 	public void actImporteGrid(@BindingParam("arg")ProductosBean arg){
@@ -183,19 +244,26 @@ public class ControllerVentaDirecta {
 		actTotal(productos);
 	}
 	
-	/*@Command
-	public void buttonClose(@BindingParam("window")Window window) {
-		window.detach();
-	} */
 	
 	@Command
-	public void pagoVenta() {	
+	public void pagoVenta() {
+		
+		seleccionPagoForm = new SeleccionPagoForm();
+		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaDirectaForm.getListaProductos());
+		seleccionPagoForm.setAccion("pagar");		
+		
+		objetos = new HashMap<String,Object>();
+		objetos.put("cliente",cliente);
+		objetos.put("pagoForm",seleccionPagoForm);
+		objetos.put("ventaDirectaForm",ventaDirectaForm);		
+		
 		
 		Window window = (Window)Executions.createComponents(
-                "/zul/pagoVentaDirecta.zul", null, null);
+                "/zul/pagoVentaDirecta.zul", null, objetos);
 		
         window.doModal();        
 	}
+	
 	
 	
 	//Combos Precargados para evitar recargas
@@ -211,29 +279,11 @@ public class ControllerVentaDirecta {
 		}		
 	}
 	
-	public void cargaSubFamilias(String familia) {
-		
-		try {
-			subFamiliaBeans = utilesDaoImpl.traeSubfamilias(familia);	
-			cargaGrupoFamilias("","");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}	
-	
-	public void cargaGrupoFamilias(String familia, String subFamilia) {
-		
-		try {
-			grupoFamiliaBeans = utilesDaoImpl.traeGruposFamilias(familia, subFamilia);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	
-	//**** getter an setter
+	
+	//********* getter an setter
+	//==================================
 
 	public ClienteBean getCliente() {
 		return cliente;
@@ -241,46 +291,6 @@ public class ControllerVentaDirecta {
 
 	public void setCliente(ClienteBean cliente) {
 		this.cliente = cliente;
-	}
-
-	public AgenteBean getAgente() {
-		return agente;
-	}
-
-	public void setAgente(AgenteBean agente) {
-		this.agente = agente;
-	}
-
-	public ArrayList<AgenteBean> getAgentes() {
-		return agentes;
-	}
-
-	public void setAgentes(ArrayList<AgenteBean> agentes) {
-		this.agentes = agentes;
-	}
-
-	public DivisaBean getDivisa() {
-		return divisa;
-	}
-
-	public void setDivisa(DivisaBean divisa) {
-		this.divisa = divisa;
-	}
-
-	public Timestamp getFecha() {
-		return fecha;
-	}
-
-	public void setFecha(Timestamp fecha) {
-		this.fecha = fecha;
-	}
-
-	public String getMonedas() {
-		return monedas;
-	}
-
-	public void setMonedas(String monedas) {
-		this.monedas = monedas;
 	}
 
 	public ProductosBean getProductoBean() {
@@ -291,11 +301,11 @@ public class ControllerVentaDirecta {
 		this.productoBean = productoBean;
 	}
 
-	public List<ProductosBean> getProductos() {
+	public ArrayList<ProductosBean> getProductos() {
 		return productos;
 	}
 
-	public void setProductos(List<ProductosBean> productos) {
+	public void setProductos(ArrayList<ProductosBean> productos) {
 		this.productos = productos;
 	}
 
@@ -314,6 +324,57 @@ public class ControllerVentaDirecta {
 	public void setTotal(Integer total) {
 		this.total = total;
 	}
+
+	public Timestamp getFecha() {
+		return fecha;
+	}
+
+
+	public void setFecha(Timestamp fecha) {
+		this.fecha = fecha;
+	}
+
+
+	public VentaDirectaForm getVentaDirectaForm() {
+		return ventaDirectaForm;
+	}
+
+
+	public void setVentaDirectaForm(VentaDirectaForm ventaDirectaForm) {
+		this.ventaDirectaForm = ventaDirectaForm;
+	}
+
+
+	public String getDisableNew() {
+		return disableNew;
+	}
+
+
+	public void setDisableNew(String disableNew) {
+		this.disableNew = disableNew;
+	}
+
+
+	public String getDisablePagar() {
+		return disablePagar;
+	}
+
+
+	public void setDisablePagar(String disablePagar) {
+		this.disablePagar = disablePagar;
+	}
+
+
+	public String getDisableGrabar() {
+		return disableGrabar;
+	}
+
+
+	public void setDisableGrabar(String disableGrabar) {
+		this.disableGrabar = disableGrabar;
+	}
+	
+	
 	
 	
 }

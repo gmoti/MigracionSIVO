@@ -1,6 +1,6 @@
 <?page title="Venta Directa" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window id="win" title="Venta Directa" border="normal" width="100%" height="100%" closable="true" 
+<window id="win" border="normal" width="100%" height="100%" closable="false" 
 apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerVentaDirecta')">
 		
@@ -15,13 +15,15 @@ apply="org.zkoss.bind.BindComposer"
      }
 </style>
 
-	<caption>	
-		<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%">			
-			<toolbarbutton image="/image/New_32x32.png" />
-			<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagoVenta')"/>
-			<toolbarbutton image="/image/Check_32x32.png" />
-			<toolbarbutton image="/image/Remove_32x32.png" onClick="win.detach()"/>
-		</hbox>		
+	<caption label="Venta Directa">
+	    <div width="1100px" style="float:right;">
+	    	<hbox pack="stretch" sclass="hboxRemoveWhiteStrips"	width="30%">
+	    		<toolbarbutton image="/image/New_32x32.png" onClick="@command('nuevaVenta')" disabled="@bind(vm.disableNew)"/>
+	    		<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagoVenta')" disabled="@bind(vm.disablePagar)"/>
+	    		<toolbarbutton image="/image/Check_32x32.png" onClick="@command('grabaVenta')" disabled="@bind(vm.disableGrabar)"/>
+	    		<toolbarbutton image="/image/Remove_32x32.png" onClick="win.detach()" />
+	    	</hbox>
+	    </div>
 	</caption>
 
 	<borderlayout>
@@ -29,43 +31,56 @@ apply="org.zkoss.bind.BindComposer"
 			<vbox>
 			<hbox>
 				<div style="border-style: double" width="1150px">
-					Ticket
-					<textbox width="50px"/>
-					<textbox />
-					Cliente
-					<textbox value="@bind(vm.cliente.nif)" />
-					<textbox value="@bind(vm.cliente.dvnif)" width="50px"/>
+					<label value="Ticket" />
+					<textbox value="@load(vm.ventaDirectaForm.encabezado_ticket)" width="60px" readonly="true"/>
+					<textbox value="@bind(vm.ventaDirectaForm.numero_ticket)" width="140px" readonly="true"/>
+					
+					<label value="Cliente" />
+					<textbox value="@bind(vm.cliente.nif)" width="140px"/>
+					<textbox value="@bind(vm.cliente.dvnif)" width="30px"/>
+					
 					<button  onClick="@command('buscarCliente',arg=vm.cliente.nif)" />
 					<button  onClick="" />
 					<textbox value="@bind(vm.cliente.nombre)"/>
+					<textbox value="@bind(vm.cliente.apellido)"/>
 				</div>
 			</hbox>
 			<hbox>
 				<div style="border-style: double" width="1150px">
-					Caja
-					<textbox />
-					Cajero
-					<textbox />
-					Fecha
-					<datebox value="@load(vm.fecha)" format="dd/MM/yyyy" readonly="true"/>
-					Hora
-					<timebox value="@load(vm.fecha)" format="HH:mm:ss" readonly="true"/>
+					<label value="Caja" />
+					<intbox value = "@load(vm.ventaDirectaForm.numero_caja)" readonly="true" width="60px"/>					
+					
+					<label value="Cajero" />
+					<textbox value = "@load(vm.ventaDirectaForm.cajero)" readonly="true"/>
+					
+					<label value="Fecha" />
+					<textbox value="@load(vm.ventaDirectaForm.fecha)" readonly="true"/>
+					
+					<label value="Hora" />
+					<textbox value="@load(vm.ventaDirectaForm.hora)" readonly="true"/>
+					
 				</div>
 			</hbox>
 			<hbox>
 				<div style="border-style: double" width="1150px">
-					Tipo A
-					<textbox />
-					Agente					
-					<combobox id="cbx_agente" model="@load(vm.agentes)" selectedItem="@bind(vm.agente)">
+					<label value="Tipo A" />
+					<textbox value="@load(vm.ventaDirectaForm.tipoAlbaran)" readonly="true"/>
+					
+					<label value="Agente" />					
+					<textbox value = "@load(vm.ventaDirectaForm.cajero)" readonly="true"/>	
+								
+					 <!--  <combobox id="cbx_agente" model="@load(vm.ventaDirectaForm.listaAgentes)" >
 						<template name="model">
 							<comboitem label="@load(each.usuario)"  description="@load(each.nombre_completo)"/>
 						</template>						
-					</combobox>
-					Divisa
-					<textbox value="@bind(vm.monedas)" readonly="true"/>
-					Cambio
-					<textbox width="50px"/>
+					</combobox>  -->
+					
+					
+					<label value="Divisa" />
+					<textbox value="@bind(vm.ventaDirectaForm.divisa)" readonly="true"/>
+					
+					<label value="Cambio" />
+					<textbox value="@bind(vm.ventaDirectaForm.cambio)" width="50px" readonly="true"/>
 				</div>
 			</hbox>
 		</vbox>

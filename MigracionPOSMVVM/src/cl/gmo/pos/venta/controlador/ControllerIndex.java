@@ -8,18 +8,23 @@ import org.zkoss.zk.ui.Sessions;
 public class ControllerIndex {
 	
 	Session sess;
-	String sucursal="T004";
-	String nombreSucural="GMO Parque Arauco";
-	String fechaBusquedaTotal = "17/07/2018";
-	String venta_fecha = "17/07/2018";
+	String sucursal="T002";
+	String nombreSucural="GMO Tienda Prueba";	
+	int caja = 1201;
+	String glprofile = "HARRINGTON";
+	String gldescripcion = "CHRISTOPHER HARRINGTON";
+	String agente="HARRINGTON";
 	
 	@Init
 	public void inicio() {
 		sess = Sessions.getCurrent();
 		sess.setAttribute("sucursal", sucursal);
 		sess.setAttribute("nombreSucural", nombreSucural);
-		sess.setAttribute("fechaBusquedaTotal", fechaBusquedaTotal);
-		sess.setAttribute("venta_fecha", venta_fecha);
+		sess.setAttribute("caja", 1201);		
+		sess.setAttribute("glprofile", "HARRINGTON");
+		sess.setAttribute("gldescripcion", "CHRISTOPHER HARRINGTON");
+		sess.setAttribute("agente", "HARRINGTON");
+		sess.setAttribute("usuario", "HARRINGTON");
 	}
 	
 

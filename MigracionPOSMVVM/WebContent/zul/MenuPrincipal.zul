@@ -32,9 +32,9 @@
 
 		<menu label="Informes">
 			<menupopup>
-				<menuitem label="Listado Informe optico"/>
+				<menuitem label="Listado Informe optico" onClick="@command('seleccionMenu',arg='M3_1')"/>
 				<menuitem label="Listado Total del dia" onClick="@command('seleccionMenu',arg='M3_2')"/>
-				<menuitem label="Listado de boletas" />
+				<menuitem label="Listado de boletas" onClick="@command('seleccionMenu',arg='M3_3')"/>
 				<menuitem label="Listado de presupuestos" />
 				<menuitem label="Listado de encargos pendientes de entrega" />
 				<menuitem label="Busqueda general de articulos" />

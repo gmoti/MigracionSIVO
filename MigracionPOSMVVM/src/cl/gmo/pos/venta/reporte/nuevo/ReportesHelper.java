@@ -257,8 +257,9 @@ public class ReportesHelper extends Utils{
 		}
 	}
 
-	public void creaListadoBoletas(HttpSession session,HttpServletResponse response){
-		log.info("ReportesHelper:creaListadoBoletas inicio");
+	public byte[] creaListadoBoletas(Session session){
+		
+			log.info("ReportesHelper:creaListadoBoletas inicio");
 			InputStream io = ReportesHelper.class.getResourceAsStream("listaBoletas.jasper");
 		
 			
@@ -273,7 +274,7 @@ public class ReportesHelper extends Utils{
 
 				byte[] bytes = new CreaReportes().obtenerJasper(parametros, io,listadoBoletasBean);
 				
-				response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
+				/*response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
 				response.setContentLength(bytes.length);
 				response.setHeader(Constantes.STRING_REPORTER_CONTENT_DISPOSITION, Constantes.STRING_REPORTER_BOLETA_PDF);
 				ServletOutputStream servletOutputStream;
@@ -284,7 +285,8 @@ public class ReportesHelper extends Utils{
 					servletOutputStream.close();
 				} catch (IOException e) {
 					log.error("ReportesHelper:creaListadoBoletas error catch",e);
-				}
+				}*/
+			return bytes;	
 		}
 	
 	public void creaListadoPresupuestos(HttpSession session,HttpServletResponse response){
@@ -672,8 +674,8 @@ public class ReportesHelper extends Utils{
 			
 		}
 		 
-		//String sucursal = (String)session.getAttribute(Constantes.STRING_REPORTER_NOMBRE_SUCURSAL);
-		 String sucursal = sess.getAttribute("nombreSucural").toString();
+		String sucursal = (String)sess.getAttribute(Constantes.STRING_REPORTER_NOMBRE_SUCURSAL);
+		//String sucursal = sess.getAttribute("nombreSucural").toString();
 		 
 		String fechaBusqueda = sess.getAttribute(Constantes.STRING_ACTION_LISTA_FECHA_BUSQUEDA_TOTAL).toString();
 		
@@ -831,7 +833,8 @@ public class ReportesHelper extends Utils{
 		}
 		
 	}
-	public void creaListadoOptico(HttpSession session,HttpServletResponse response){
+	public byte[] creaListadoOptico(Session session){
+		
 		log.info("ReportesHelper:creaListadoOptico inicio");
 		InputStream io = ReportesHelper.class.getResourceAsStream("reporteOptico.jasper");
 		InformeOpticoForm informeOptico = (InformeOpticoForm)session.getAttribute("InformeOptico");
@@ -847,7 +850,7 @@ public class ReportesHelper extends Utils{
 
 		byte[] bytes = new CreaReportes().obtenerJasper(parametros, io,informeOptico.getListaGraduaciones());
 
-		response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
+		/*response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
 		response.setContentLength(bytes.length);
 		response.setHeader(Constantes.STRING_REPORTER_CONTENT_DISPOSITION, Constantes.STRING_REPORTER_BOLETA_PDF);
 		ServletOutputStream servletOutputStream;
@@ -859,6 +862,8 @@ public class ReportesHelper extends Utils{
 		} catch (IOException e) {
 			log.error("ReportesHelper:creaListadoOptico error catch",e);
 		}
+		*/
+		return bytes;
 	}
 	public String traeImagenCodBarra(String codigo, String rutaTTF) throws FontFormatException, IOException
 	{

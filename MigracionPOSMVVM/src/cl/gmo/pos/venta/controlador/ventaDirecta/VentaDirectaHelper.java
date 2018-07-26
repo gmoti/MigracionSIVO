@@ -1,4 +1,4 @@
-package cl.gmo.pos.venta.web.helper;
+package cl.gmo.pos.venta.controlador.ventaDirecta;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -164,9 +164,7 @@ public class VentaDirectaHelper extends Utils{
 
 	
   	public VentaDirectaForm actualizaProductos(VentaDirectaForm formulario,	String local, String tipo_busqueda, Session session) {
-  		
-  		    log.info("VentaDirectaHelper:actualizaProductos inicio");
-  		
+  		log.info("VentaDirectaHelper:actualizaProductos inicio");
   			ProductosBean prod = new ProductosBean();
   			ArrayList<ProductosBean> listaProductos = new ArrayList<ProductosBean>();
   			ArrayList<ProductosBean> listaProductosMultiOfertas = (ArrayList<ProductosBean>)session.getAttribute(Constantes.STRING_LISTA_MULTIOFERTAS);
@@ -243,7 +241,7 @@ public class VentaDirectaHelper extends Utils{
   				formulario.setEstado(Constantes.STRING_PRODUCTOS_NO_ENCONTRADO);
   			}
   			
-  	return formulario;		
+  		return formulario;	
   			
 	}
   	
@@ -297,7 +295,10 @@ public class VentaDirectaHelper extends Utils{
 		return listaProductos;
 	}
 
-	public void ingresaVenta(VentaDirectaForm formulario, String local, String tipo_documento) 
+	
+	//FQuiroz
+	//Devuelve formulario nates solo void
+	public VentaDirectaForm ingresaVenta(VentaDirectaForm formulario, String local, String tipo_documento) 
 	{
 		log.info("VentaDirectaHelper:ingresaVenta inicio");
 		VentaDirectaBean ventaBean = new VentaDirectaBean();
@@ -334,6 +335,8 @@ public class VentaDirectaHelper extends Utils{
 		} catch (Exception e) {
 			log.error("VentaDirectaHelper:ingresaVenta error catch",e);
 		}
+		
+		return formulario;
 	}
 	
 	public boolean ingresaDetalle(ArrayList<ProductosBean> listaProductos, String codigo_albaran, String local, VentaDirectaForm formulario)
@@ -442,7 +445,7 @@ public class VentaDirectaHelper extends Utils{
 	 * LMARIN 20141219
 	 * Metodo que invoca la impresion de los datos que se utilizaran para generar la boleta  
 	 */
-	public String genera_datos_belec(String tipodoc,SeleccionPagoForm formulario,String foliocl,HttpSession session){
+	public String genera_datos_belec(String tipodoc,SeleccionPagoForm formulario,String foliocl,Session session){
 				
 		Utils util = new Utils();
 		String res = null;

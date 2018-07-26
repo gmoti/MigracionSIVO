@@ -1,6 +1,8 @@
 <?page title="Pago Venta Directa" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window id="winPagoVentaDirecta" border="none" height="80%" width="80%">
+	<window id="winPagoVentaDirecta" border="none" height="80%" width="80%" 
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerPagoVentaDirecta')">		
 
 		<panel  height="40%" width="100%" style="margin-bottom:10px"
      			title="Seleccion de cobro" border="normal">
@@ -22,30 +24,30 @@
      				<rows>
      					<row>
      						<label value="Fecha" />
-     						<datebox />     						
+     						<textbox value="@load(vm.seleccionPagoForm.fecha)" readonly="true"/>    						
      						<label value="Mro. de serie" />
-     						<textbox />     						
+     						<textbox value="@load(vm.seleccionPagoForm.serie)" readonly="true"/>     						
      					</row>
 
      					<row>
      						<label value="Nif" />
-     						<textbox />
+     						<textbox value="@load(vm.seleccionPagoForm.nif)" readonly="true"/>
      						<label value="Razon Social" />
-     						<textbox />
+     						<textbox value="@load(vm.seleccionPagoForm.razon)" readonly="true"/>
      					</row>
 
      					<row>
      						<label value="Direccion" />
-     						<textbox />
+     						<textbox value="@load(vm.seleccionPagoForm.direccion)" readonly="true"/>
      						<label value="Provincia" />
-     						<textbox />
+     						<textbox value="@load(vm.seleccionPagoForm.provincia_descripcion)" readonly="true"/>
      					</row>
 
      					<row>
      						<label value="Poblacion" />
-     						<textbox />
+     						<textbox value="@load(vm.seleccionPagoForm.poblacion)" readonly="true"/>
      						<label value="Giro" />
-     						<textbox />
+     						<textbox value="@load(vm.seleccionPagoForm.giro_descripcion)" readonly="true"/>
      					</row>
      				</rows>
      			</grid>
@@ -56,7 +58,7 @@
      		   title="Cobro" border="normal">
      		   
      		<caption>
-     			<toolbarbutton image="/image/Save_32x32.png"/>
+     			<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagarVenta')"/>
      			<toolbarbutton image="/image/Print_32x32.png"/>
      		</caption>
 
@@ -67,23 +69,30 @@
      						<rows>
      							<row>
      								<label value="Valor total a pago" />
-     								<textbox />
+     								<textbox value="@load(vm.seleccionPagoForm.v_total_parcial)" width="120px" readonly="true"/>
+     								<textbox value="@load(vm.seleccionPagoForm.v_total)" width="120px" readonly="true"/>
      							</row>
      							<row>
      								<label value="Valor a pagar" />
-     								<textbox />
+     								<textbox value="@bind(vm.seleccionPagoForm.v_a_pagar)" width="120px" />
      							</row>
      							<row>
      								<label value="Descuento" />
-     								<textbox />
+     								<textbox value="@load(vm.seleccionPagoForm.descuento)" width="120px"/>
      							</row>
      							<row>
      								<label value="Diferencia" />
-     								<textbox />
+     								<textbox value="@load(vm.seleccionPagoForm.diferencia)" width="120px" readonly="true"/>
      							</row>
-     							<row>
-     								<label value="Forma pago" />
-     								<textbox />
+     							<row>	     							
+	     							<label value="Forma pago" />
+	     							<cell colspan="2" align="left">	
+	     								<combobox model="@bind(vm.seleccionPagoForm.listaFormasPago)" width="200px" selectedItem="@bind(vm.formaPagoBean)">     								
+		     								<template name='model'>
+		     									<comboitem label="@load(each.descripcion)"/>  
+		     								</template>	   									
+	     								</combobox>
+	     							</cell>	
      							</row>
      						</rows>
      					</grid>

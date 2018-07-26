@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Window;
 import cl.gmo.pos.venta.reporte.nuevo.ListadoTotalDiaDAOImpl;
 import cl.gmo.pos.venta.reporte.nuevo.ReportesHelper;
+import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.ListasTotalesDiaBean;
 import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
@@ -33,6 +34,7 @@ public class ControllerListadoTotalDia{
 	private AMedia fileContent;
 	private Date fecha=null;
 	private String local;
+	private String nombreSucural;
 	private byte[] bytes;
 	
 	private ListadoTotalDiaDAOImpl listadoTotalDiasImpl;
@@ -52,7 +54,8 @@ public class ControllerListadoTotalDia{
 		fecha = new Date(System.currentTimeMillis());
 		listadoTotalDiasImpl = new ListadoTotalDiaDAOImpl();
 		reportesHelper = new ReportesHelper();		
-		local = (String) sess.getAttribute("sucursal");				
+		local = (String) sess.getAttribute("sucursal");	
+		nombreSucural = (String)sess.getAttribute("nombreSucural");		
 	}
 	
 	
@@ -63,6 +66,9 @@ public class ControllerListadoTotalDia{
 		
 		SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy");
 		String fechaReporte = dt.format(fecha);
+		sess.setAttribute(Constantes.STRING_ACTION_LISTA_VENTA_FECHA, fechaReporte);
+		sess.setAttribute(Constantes.STRING_ACTION_LISTA_FECHA_BUSQUEDA_TOTAL, fechaReporte);
+		sess.setAttribute(Constantes.STRING_REPORTER_NOMBRE_SUCURSAL, nombreSucural);
 		//System.out.println("fecha "  + fechaReporte);
 		
 		try {

@@ -36,6 +36,13 @@ public class ControllerMenuPrincipal {
 	        window.doModal();
 	        break;
 		
+		case "M3_1":			
+			window = (Window)Executions.createComponents(
+	                "/zul/ListadoInformeOptico.zul", null, null);
+			
+	        window.doModal();			
+			break;
+			
 		case "M3_2":
 			
 			window = (Window)Executions.createComponents(
@@ -43,6 +50,14 @@ public class ControllerMenuPrincipal {
 			
 	        window.doModal();			
 			break;
+			
+		case "M3_3":
+			
+			window = (Window)Executions.createComponents(
+	                "/zul/ListadoBoletas.zul", null, null);
+			
+	        window.doModal();			
+			break;	
 
 		default:
 			break;
