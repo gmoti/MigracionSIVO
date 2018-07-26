@@ -222,6 +222,7 @@ public class VentaDirectaDispatchActions {
 			
 			ventaHelper.ingresaVenta(formulario, local, sess.getAttribute(Constantes.STRING_TIPO_DOCUMENTO).toString());
 			listaProductosAdicionales =	(ArrayList<ProductosBean>) sess.getAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES);
+			
 			formulario.setListaProductos(ventaHelper.agregaProductosGratuitos(listaProductosAdicionales, formulario.getListaProductos()));
 			boolean hay_multioferta = false;
 			hay_multioferta = ventaHelper.ingresaDetalle(formulario.getListaProductos(), sess.getAttribute(Constantes.STRING_TICKET).toString(), local, formulario);

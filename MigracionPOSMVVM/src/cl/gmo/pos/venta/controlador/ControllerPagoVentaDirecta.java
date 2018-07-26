@@ -25,10 +25,12 @@ import org.zkoss.zul.Window;
 import org.zkoss.zul.impl.MessageboxDlg;
 
 import cl.gmo.pos.venta.controlador.ventaDirecta.SeleccionPagoDispatchActions;
+import cl.gmo.pos.venta.controlador.ventaDirecta.VentaDirectaDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.UtilesDAOImpl;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.FormaPagoBean;
+import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
 
@@ -42,8 +44,10 @@ public class ControllerPagoVentaDirecta {
 	
 	private SeleccionPagoForm seleccionPagoForm;
 	private ClienteBean cliente;
-	private SeleccionPagoDispatchActions seleccionPagoDispatchActions;
 	private VentaDirectaForm ventaDirectaForm;
+	private SeleccionPagoDispatchActions seleccionPagoDispatchActions;
+	private VentaDirectaDispatchActions ventaDirectaDispatchActions;
+	
 	
 	private UtilesDAOImpl utilesDAOImpl;
 	private FormaPagoBean formaPagoBean;
@@ -63,6 +67,7 @@ public class ControllerPagoVentaDirecta {
 		cargaFormaPago();		
 		
 		seleccionPagoDispatchActions = new SeleccionPagoDispatchActions();
+		ventaDirectaDispatchActions = new VentaDirectaDispatchActions(); 
 		
 		cliente           = (ClienteBean)arg;		
 		seleccionPagoForm = (SeleccionPagoForm)arg2;
@@ -80,10 +85,12 @@ public class ControllerPagoVentaDirecta {
 		seleccionPagoForm.setV_total_parcial(ventaDirectaForm.getSumaTotal());
 		seleccionPagoForm.setV_total(ventaDirectaForm.getSumaTotal());
 		seleccionPagoForm.setV_a_pagar(ventaDirectaForm.getSumaTotal());
-		seleccionPagoForm.setDiferencia(0);
-		
+		seleccionPagoForm.setDiferencia(0);	
+		seleccionPagoForm.setSerie(ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());		
 		
 		seleccionPagoForm.setListaFormasPago(listaFormasPago);
+		seleccionPagoForm.setFech_pago(ventaDirectaForm.getFecha());
+		seleccionPagoForm.setFecha(ventaDirectaForm.getFecha());
 		
 	}
 	
@@ -114,6 +121,7 @@ public class ControllerPagoVentaDirecta {
 		
 		//asigno el tipo de pago seleccionado
 		seleccionPagoForm.setForma_pago(formaPagoBean.getId());
+		seleccionPagoForm.setTipo_doc('B');
 		
 		try {
 			
@@ -121,7 +129,26 @@ public class ControllerPagoVentaDirecta {
 			//System.out.println("regreso");
 			
 			
-			seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);			
+			seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);	
+			
+			String d = seleccionPagoForm.getSerie();
+		
+			//si el pago es exitoso
+			
+			ventaDirectaForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
+			sess.setAttribute(Constantes.STRING_TICKET, ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());
+			sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPagoForm.getTipo_doc());
+			sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, new ArrayList<ProductosBean>());
+			sess.setAttribute(Constantes.STRING_DOCUMENTO, 0);
+			sess.setAttribute("SeleccionPagoForm", seleccionPagoForm);
+			sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());
+			
+			
+			
+			//ventaDirectaForm.set
+			ventaDirectaDispatchActions.IngresaVentaDirecta(ventaDirectaForm, sess);
+			
+			
 			
 			//Messagebox.show("pago efectuado");
 			//win.detach();
@@ -135,12 +162,16 @@ public class ControllerPagoVentaDirecta {
 	
 	public void verificaImpresion() {		
 		
-		ArrayList<Button> botones = new ArrayList<Button>();
+		/*ArrayList<Button> botones = new ArrayList<Button>();
 		
-		botones.add(new Button("Boleta"));
-		botones.add(new Button("Salir"));
+		botones.add(Messagebox.Button.OK);
+		botones.add(Messagebox.Button.OK);
 		
+		Event w;
 		
+		Messagebox.show("pregunta", botones, new org.zkoss.zk.ui.event.EventListener<ClickEvent>());
+		
+		*/
 
 				
         

@@ -32,7 +32,7 @@ public class SeleccionPagoDispatchActions{
 		return formulario;
 	}
 	
-	public void IngresaPago(SeleccionPagoForm form,	Session request) throws Exception
+	public SeleccionPagoForm IngresaPago(SeleccionPagoForm form,	Session request) throws Exception
 	{
 		System.out.println("PASO POR SPAGO 2");
 				
@@ -75,7 +75,7 @@ public class SeleccionPagoDispatchActions{
 			this.carga_formulario(formulario, session, formulario.getFecha());
 			helper.aplicaDescuentoVentaDirecta(session, formulario, cant);
 			// FQuiroz return mapping.findForward(Constantes.FORWARD_PAGO);
-			return; 
+			return formulario; 
 		}
 		
 		if (Constantes.STRING_CONFIRMA_CAMBIO_BOLETA.equals(accion)) {
@@ -88,7 +88,7 @@ public class SeleccionPagoDispatchActions{
 			
 			helper.realiza_cambio_boleta(resultado, formulario.getNumero_boleta_conf(), session, resultado_temp);
 			//FQuiroz return mapping.findForward(Constantes.FORWARD_PAGO);
-			return;
+			return formulario;
 		}
 		
 		if (Constantes.STRING_VALIDA_BOLETA.equals(accion)) 
@@ -110,7 +110,7 @@ public class SeleccionPagoDispatchActions{
 			session.setAttribute("SeleccionPagoForm", formulario);			
 			
 			//FQuiroz return mapping.findForward(Constantes.FORWARD_PAGO);
-			return;
+			return formulario;
 		}
 		
 		if (Constantes.STRING_VOLVER.equals(accion)) 
@@ -208,7 +208,9 @@ public class SeleccionPagoDispatchActions{
 			}
 			
 			System.out.println("PASO POR SPAGO 2 5 3");
-			this.carga_formulario(formulario, session, formulario.getFecha());
+			//FQuiroz efectua una recarga del contenido del formulario
+			//this.carga_formulario(formulario, session, formulario.getFecha());
+			formulario = this.carga_formulario(formulario, session, formulario.getFecha());
 			
 			if (null != formulario.getConvenio() && null != formulario.getConvenio().getId() && !(Constantes.STRING_BLANCO.equals(formulario.getConvenio().getId()))) {
 				System.out.println("PASO POR SPAGO 2 5 4");
@@ -268,7 +270,7 @@ public class SeleccionPagoDispatchActions{
 			}
 			
 			//FQuiroz return mapping.findForward(Constantes.FORWARD_PAGO);
-			return;
+			return formulario;
 		}
 		
 		if("pagarDevolcion".equals(accion)){
@@ -282,7 +284,7 @@ public class SeleccionPagoDispatchActions{
 			session.setAttribute(Constantes.STRING_CABECERA_BOLETAS, formulario);
 			
 			//FQuiroz return mapping.findForward("pago_devolucion");		
-			return;
+			return formulario;
 		}	
 
 	
@@ -337,7 +339,7 @@ public class SeleccionPagoDispatchActions{
 				
 		  	}
 			//FQuiroz return mapping.findForward(Constantes.FORWARD_PAGO);
-			return;
+			return formulario;
 		}
 		
 		if (Constantes.STRING_VALIDA_FPAGO.equals(formulario.getAccion())) 
@@ -440,10 +442,10 @@ public class SeleccionPagoDispatchActions{
 				log.info("SeleccionPagoDispatchActions:IngresaPago  fin");
 				if("eliminarFormaPagoBoleta".equals(formulario.getAccion())){
 					//FQuiroz return mapping.findForward(Constantes.FORWARD_PAGO_BOLETA);
-					return;
+					return formulario;
 				}else{
 					//return mapping.findForward(Constantes.FORWARD_PAGO);
-					return;
+					return formulario;
 				}
 			
 		}
@@ -454,8 +456,10 @@ public class SeleccionPagoDispatchActions{
 			log.info("SeleccionPagoDispatchActions:IngresaPago  fin");		
 			
 			//return mapping.findForward(Constantes.FORWARD_DIRECTA_PAGADA);
-			return;
+			return formulario;
 		}
+		
+		
 		
 	}
 	

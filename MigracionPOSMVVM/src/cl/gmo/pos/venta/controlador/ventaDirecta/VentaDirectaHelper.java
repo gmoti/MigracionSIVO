@@ -286,6 +286,7 @@ public class VentaDirectaHelper extends Utils{
 			ArrayList<ProductosBean> listaProductosAdicionales,
 			ArrayList<ProductosBean> listaProductos) {
 		log.info("VentaDirectaHelper:agregaProductosGratuitos inicio");
+		
 		for (Iterator<ProductosBean> iterator = listaProductosAdicionales.iterator(); iterator.hasNext();) {
 			log.info("VentaDirectaHelper:agregaProductosGratuitos entrando ciclo for");
 			ProductosBean productosBean = (ProductosBean) iterator.next();
