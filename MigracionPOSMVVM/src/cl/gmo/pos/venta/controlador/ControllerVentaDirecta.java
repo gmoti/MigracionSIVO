@@ -15,7 +15,11 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Messagebox.ClickEvent;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.ventaDirecta.VentaDirectaDispatchActions;
@@ -31,6 +35,9 @@ import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
 public class ControllerVentaDirecta {
 	
 	Session sess = Sessions.getCurrent();
+	
+	@Wire
+	Window win;
 		
 	//constantes	
 
@@ -101,20 +108,21 @@ public class ControllerVentaDirecta {
 		//Encabezado venta directa		
 		ventaDirectaForm = new VentaDirectaForm();
 		
-		ventaDirectaForm = ventaDirectaAccion.cargaCaja(ventaDirectaForm, sess);
 		ventaDirectaForm = ventaDirectaAccion.carga(ventaDirectaForm, sess);
+		ventaDirectaForm = ventaDirectaAccion.cargaCaja(ventaDirectaForm, sess);		
 		ventaDirectaForm.setCajero(glprofile);
 		ventaDirectaForm.setAgente(glprofile);
 		ventaDirectaForm.setNumero_caja(caja);		
 	}
 	
 	
-	@NotifyChange({"ventaDirectaForm","cliente","disabledGrid","disableGrabar","disablePagar"})
+	@NotifyChange({"ventaDirectaForm","cliente","productos","disabledGrid","disableGrabar","disablePagar"})
 	@Command
 	public void nuevaVenta() {
 		
 		fecha = new Timestamp(System.currentTimeMillis());		
 		cliente = new ClienteBean();
+		productos = new ArrayList<ProductosBean>();
 		disabledGrid="true";		
 		disableGrabar="true";		
 		disablePagar="true";
@@ -131,19 +139,33 @@ public class ControllerVentaDirecta {
 	}
 	
 	
-	@NotifyChange({"cliente","disabledGrid","disableGrabar"})
+	@NotifyChange({"ventaDirectaForm","cliente","disabledGrid","disableGrabar"})
 	@Command
 	public void buscarCliente(@BindingParam("arg")String arg) {
 		
 		try {
-			cliente = clienteImp.traeCliente(arg, "");
-			disabledGrid="false";
-			disableGrabar="false";
-			//disablePagar="false";
-			ventaDirectaForm.setCodigo_cliente(cliente.getCodigo());
-			ventaDirectaForm.setNombre(cliente.getNombre());
-			ventaDirectaForm.setNombreCliente(cliente.getNombre());
 			
+			cliente = clienteImp.traeCliente(arg, "");
+			
+			if (!cliente.getNif().equals("")) {
+			
+				ventaDirectaForm.setCodigo_cliente(cliente.getCodigo());
+				ventaDirectaForm.setNombreCliente(cliente.getApellido());
+				ventaDirectaForm.setNombre(cliente.getNombre());
+				
+				sess.setAttribute("nombre_cliente",cliente.getNombre() + " " + cliente.getApellido());			
+				sess.setAttribute(Constantes.STRING_CLIENTE, cliente.getCodigo());
+	        	sess.setAttribute(Constantes.STRING_CLIENTE_VENTA, cliente.getCodigo());	        	
+	        	sess.setAttribute("NOMBRE_CLIENTE",cliente.getNombre() + " " + cliente.getApellido());       	
+	    	    sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());			
+				
+				disabledGrid="false";
+				disableGrabar="false";
+				//disablePagar="false";		
+			}else {
+				Messagebox.show("El cliente no existe");
+			}
+				
 			
 		} catch (Exception e) {			
 			e.printStackTrace();
@@ -163,10 +185,13 @@ public class ControllerVentaDirecta {
 		
 		//venta_directa.js
 		ventaDirectaForm.setAccion(Constantes.STRING_AGREGAR_VENTA_DIRECTA);
-		ventaDirectaForm.setSumaTotal(total);
+		ventaDirectaForm.setSumaTotal(total);		
+		ventaDirectaForm.setListaProductos(productos);		
 		
-		ventaDirectaForm.setListaProductos(productos);
 		try {
+			
+			ventaDirectaForm = ventaDirectaAccion.generaVentaDirecta(ventaDirectaForm, sess);
+			
 			ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);			
 			Messagebox.show("Venta almacenada");
 			
@@ -249,8 +274,7 @@ public class ControllerVentaDirecta {
 	public void pagoVenta() {
 		
 		seleccionPagoForm = new SeleccionPagoForm();
-		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaDirectaForm.getListaProductos());
-		seleccionPagoForm.setAccion("pagar");		
+		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaDirectaForm.getListaProductos());				
 		
 		objetos = new HashMap<String,Object>();
 		objetos.put("cliente",cliente);
@@ -264,6 +288,22 @@ public class ControllerVentaDirecta {
         window.doModal();        
 	}
 	
+	
+	@Command
+	public void salir() {
+		
+		Messagebox.show("Aviso","Salir de Ventas Directas",Messagebox.YES|Messagebox.NO,Messagebox.QUESTION ,new EventListener() {
+
+			@Override
+			public void onEvent(Event e) throws Exception {				
+				if(  ((Integer) e.getData()).intValue() == Messagebox.YES)
+				    win.detach();
+			}
+			
+			
+		});
+		
+	}
 	
 	
 	//Combos Precargados para evitar recargas

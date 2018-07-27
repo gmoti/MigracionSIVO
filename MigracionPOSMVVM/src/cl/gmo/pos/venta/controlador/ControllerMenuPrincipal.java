@@ -57,6 +57,14 @@ public class ControllerMenuPrincipal {
 	                "/zul/ListadoBoletas.zul", null, null);
 			
 	        window.doModal();			
+			break;
+			
+		case "M3_4":
+			
+			window = (Window)Executions.createComponents(
+	                "/zul/ListadoPresupuestos.zul", null, null);
+			
+	        window.doModal();			
 			break;	
 
 		default:

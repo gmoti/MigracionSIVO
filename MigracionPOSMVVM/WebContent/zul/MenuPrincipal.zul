@@ -35,7 +35,7 @@
 				<menuitem label="Listado Informe optico" onClick="@command('seleccionMenu',arg='M3_1')"/>
 				<menuitem label="Listado Total del dia" onClick="@command('seleccionMenu',arg='M3_2')"/>
 				<menuitem label="Listado de boletas" onClick="@command('seleccionMenu',arg='M3_3')"/>
-				<menuitem label="Listado de presupuestos" />
+				<menuitem label="Listado de presupuestos" onClick="@command('seleccionMenu',arg='M3_4')"/>
 				<menuitem label="Listado de encargos pendientes de entrega" />
 				<menuitem label="Busqueda general de articulos" />
 				<menuitem label="Copia de guias y boletas" />

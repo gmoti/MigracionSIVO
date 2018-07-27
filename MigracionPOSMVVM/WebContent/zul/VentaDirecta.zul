@@ -41,8 +41,8 @@ apply="org.zkoss.bind.BindComposer"
 					
 					<button  onClick="@command('buscarCliente',arg=vm.cliente.nif)" />
 					<button  onClick="" />
-					<textbox value="@bind(vm.cliente.nombre)"/>
-					<textbox value="@bind(vm.cliente.apellido)"/>
+					<textbox value="@bind(vm.cliente.nombre)" width="250px"/>
+					<textbox value="@bind(vm.cliente.apellido)" width="250px"/>					
 				</div>
 			</hbox>
 			<hbox>

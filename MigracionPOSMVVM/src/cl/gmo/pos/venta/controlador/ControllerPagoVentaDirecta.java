@@ -1,6 +1,6 @@
 package cl.gmo.pos.venta.controlador;
 
-
+//pendiente los productos gratis
 
 import java.util.ArrayList;
 
@@ -11,18 +11,11 @@ import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zul.Button;
-import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Messagebox.ClickEvent;
 import org.zkoss.zul.Window;
-import org.zkoss.zul.impl.MessageboxDlg;
 
 import cl.gmo.pos.venta.controlador.ventaDirecta.SeleccionPagoDispatchActions;
 import cl.gmo.pos.venta.controlador.ventaDirecta.VentaDirectaDispatchActions;
@@ -62,7 +55,7 @@ public class ControllerPagoVentaDirecta {
 		
 		Selectors.wireComponents(view, this, false);
 		
-		formaPagoBean = new FormaPagoBean();
+		formaPagoBean = new FormaPagoBean();		
 		utilesDAOImpl = new UtilesDAOImpl();		
 		cargaFormaPago();		
 		
@@ -111,7 +104,7 @@ public class ControllerPagoVentaDirecta {
 	
 	@NotifyChange({"seleccionPagoForm"})
 	@Command
-	public void pagarVenta() {
+	public void pagarVenta() {	
 		
 		//grabar variables de sesion para el pago
 		sess.setAttribute(Constantes.STRING_LISTA_PAGOS, seleccionPagoForm.getListaPagos());
@@ -122,36 +115,25 @@ public class ControllerPagoVentaDirecta {
 		//asigno el tipo de pago seleccionado
 		seleccionPagoForm.setForma_pago(formaPagoBean.getId());
 		seleccionPagoForm.setTipo_doc('B');
+		seleccionPagoForm.setAccion("pagar");
 		
 		try {
 			
-			//verificaImpresion() ;
-			//System.out.println("regreso");
-			
-			
 			seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);	
 			
-			String d = seleccionPagoForm.getSerie();
-		
 			//si el pago es exitoso
 			
-			ventaDirectaForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
+			/*ventaDirectaForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
 			sess.setAttribute(Constantes.STRING_TICKET, ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());
 			sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPagoForm.getTipo_doc());
 			sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, new ArrayList<ProductosBean>());
 			sess.setAttribute(Constantes.STRING_DOCUMENTO, 0);
 			sess.setAttribute("SeleccionPagoForm", seleccionPagoForm);
-			sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());
-			
-			
+			sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());	
 			
 			//ventaDirectaForm.set
-			ventaDirectaDispatchActions.IngresaVentaDirecta(ventaDirectaForm, sess);
-			
-			
-			
-			//Messagebox.show("pago efectuado");
-			//win.detach();
+			ventaDirectaDispatchActions.IngresaVentaDirecta(ventaDirectaForm, sess);		
+			*/
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

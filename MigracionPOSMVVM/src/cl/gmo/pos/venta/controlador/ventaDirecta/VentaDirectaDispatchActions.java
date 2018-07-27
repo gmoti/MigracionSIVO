@@ -309,13 +309,10 @@ public class VentaDirectaDispatchActions {
     	VentaDirectaForm formulario = (VentaDirectaForm)form;
     	//fquiroz
     	//formulario.setEstaGrabado(2);
-    	formulario.setSumaTotalFinal(formulario.getSumaTotal());  	
+    	formulario.setSumaTotalFinal(formulario.getSumaTotal());    	
+    	sess.setAttribute(Constantes.STRING_TOTAL, formulario.getSumaTotalFinal());   	
     	
-    	sess.setAttribute(Constantes.STRING_TOTAL, formulario.getSumaTotalFinal());
-    	
-    	
-    	System.out.println("Numero de Ticket => "+formulario.getNumero_ticket());
-    	
+    	System.out.println("Numero de Ticket => "+formulario.getNumero_ticket());    	
     	sess.setAttribute(Constantes.STRING_TICKET, formulario.getEncabezado_ticket() + "/" + formulario.getNumero_ticket());
     	sess.setAttribute(Constantes.STRING_DIVISA, formulario.getDivisa()); 
     	sess.setAttribute(Constantes.STRING_CAMBIO, formulario.getCambio());
@@ -328,7 +325,8 @@ public class VentaDirectaDispatchActions {
     	sess.setAttribute(Constantes.STRING_AGENTE, ventaHelper.traeNombreAgente(formulario.getAgente(), formulario.getListaAgentes()));
     	
     	ArrayList<ProductosBean> lista = new ArrayList<ProductosBean>();
-    	lista = formulario.getListaProductos();
+    	lista = formulario.getListaProductos(); 
+    	
     	sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, ventaHelper.traeProductosGratuitos(lista , sess.getAttribute(Constantes.STRING_NOMBRE_SUCURSAL).toString(), sess.getAttribute(Constantes.STRING_SUCURSAL).toString()));
     	log.info("VentaDirectaDispatchActions:generaVentaDirecta  fin");
     	
@@ -408,7 +406,7 @@ public class VentaDirectaDispatchActions {
 		  
 		  VentaDirectaForm formulario = (VentaDirectaForm)form;
 		  
-		  //String usuario = request.getParameter("nif").toString();
+		  //String usuario = sess.getParameter("nif").toString();
 		  ClienteBean cliente = ventaHelper.traeCliente(formulario.getNif(),null);
 		  HashMap hm = new HashMap();
 		  
@@ -445,7 +443,7 @@ public class VentaDirectaDispatchActions {
 	    		formulario.setCodigo_cliente("");
 	    	}
 		  
-		  JSONObject json = JSONObject.fromObject(hm);
+		  //JSONObject json = JSONObject.fromObject(hm);
 		  //response.setHeader("X-JSON", json.toString());
 		  //response.getWriter().print(json.toString());	
 			

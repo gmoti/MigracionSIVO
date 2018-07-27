@@ -69,12 +69,12 @@
      						<rows>
      							<row>
      								<label value="Valor total a pago" />
-     								<textbox value="@load(vm.seleccionPagoForm.v_total_parcial)" width="120px" readonly="true"/>
-     								<textbox value="@load(vm.seleccionPagoForm.v_total)" width="120px" readonly="true"/>
+     								<intbox value="@load(vm.seleccionPagoForm.v_total_parcial)" width="120px" readonly="true"/>
+     								<intbox value="@load(vm.seleccionPagoForm.v_total)" width="120px" readonly="true"/>     								
      							</row>
      							<row>
      								<label value="Valor a pagar" />
-     								<textbox value="@bind(vm.seleccionPagoForm.v_a_pagar)" width="120px" />
+     								<intbox value="@bind(vm.seleccionPagoForm.v_a_pagar)" width="120px" />
      							</row>
      							<row>
      								<label value="Descuento" />
@@ -82,7 +82,7 @@
      							</row>
      							<row>
      								<label value="Diferencia" />
-     								<textbox value="@load(vm.seleccionPagoForm.diferencia)" width="120px" readonly="true"/>
+     								<intbox value="@load(vm.seleccionPagoForm.diferencia)" width="120px" readonly="false"/>
      							</row>
      							<row>	     							
 	     							<label value="Forma pago" />
@@ -99,16 +99,22 @@
      				</west>
      				<east width="50%">
 
-     					<grid>
+     					<grid model="@bind(vm.seleccionPagoForm.listaPagos)" emptyMessage="Sin datos cargados"   
+								sclass="MyGridRowHeight">
      						<columns>
      							<column label="Fecha" />
      							<column label="Forma pago" />
      							<column label="Monto" />
      							<column label="Eliminar" />
      						</columns>
-     						<rows>
-     							<row></row>
-     						</rows>
+     						<template name="model">     							
+     								<row>
+     								<textbox value="@load(each.fecha)"/>
+     								<textbox value="@load(each.detalle_forma_pago)"/>
+     								<intbox value="@load(each.cantidad)"/>
+     								<button image="/image/Remove_32x32.png"/>
+     								</row>     							
+     						</template>
      					</grid>
      					
      				</east>
