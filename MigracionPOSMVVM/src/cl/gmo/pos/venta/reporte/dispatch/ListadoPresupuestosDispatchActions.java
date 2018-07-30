@@ -3,7 +3,6 @@ package cl.gmo.pos.venta.reporte.dispatch;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
-
 import cl.gmo.pos.venta.reporte.nuevo.ListadoPresupuestosHelper;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.forms.ListadoPresupuestosForm;
@@ -49,10 +48,11 @@ public class ListadoPresupuestosDispatchActions {
 	{
 		log.info("ListadoPresupuestosDispatchActions:buscar Inicial inicio");
 		Session session = response;
+		
 		String sucursal = (String)session.getAttribute(Constantes.STRING_SUCURSAL);
 		ListadoPresupuestosForm formulario = (ListadoPresupuestosForm)form;
 		this.cargaInicial(formulario, sucursal, session);
-		helper.cargaListadoPresupuestos(formulario,sucursal);
+		formulario = helper.cargaListadoPresupuestos(formulario,sucursal);
 		this.Limpia(formulario);
 		session.setAttribute(Constantes.STRING_ACTION_LISTA_PRESUPUESTO, formulario.getListaPresupuestos());
 		session.setAttribute(Constantes.STRING_ACTION_FECHA_BUSQUEDA_PRESUPUESTO, formulario.getFechaInicio()+" - "+formulario.getFechaTermino());

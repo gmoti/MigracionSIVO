@@ -34,25 +34,39 @@
 						<rows>
 							<row>
 								<label value="Codigo" />
-								<textbox value = "@co" width="180px"/>
-								<label value="Divisa" />
-								<combobox width="180px"/>								
+								<textbox value = "@bind(vm.listadoPresupuestosForm.codigo)" width="180px"/>
+								
+								<label value="Divisa" />								
+								<combobox model = "@bind(vm.listadoPresupuestosForm.listaDivisas)" width="180px" selectedItem="@bind(vm.divisaBean)">
+								<template name="model">
+									<comboitem label="@load(each.id)"  description="@load(each.descripcion)" />
+								</template>
+								</combobox>
 							</row>
 							<row>
 								<label value="Fecha inicio" />
-								<textbox width="180px"/>
+								<datebox value = "@bind(vm.fechaInicio)" format="dd/MM/yyyy"/>								
 								<label value="Fecha termino" />
-								<textbox width="180px"/>
+								<datebox value = "@bind(vm.fechaFin)" format="dd/MM/yyyy"/>								
 								<label value="Cerrado" />
-								<combobox width="180px"/>								
+								<combobox value="@bind(vm.listadoPresupuestosForm.cerrado)" width="180px">
+									<comboitem label="Si" value="S"/>
+									<comboitem label="No" value="N"/>
+								</combobox>
 							</row>
 							<row>
 								<label value="Cliente" />
-								<textbox width="180px"/>
+								<textbox value = "@bind(vm.listadoPresupuestosForm.cliente)" width="180px"/>
+								<button label="click" onClick="" width="30px"/>
+								
 								<label value="Listado detallado" />
-								<checkbox width="180px"/>
+								<checkbox  width="180px"/>
+								
 								<label value="Forma de pago" />
-								<combobox width="180px"/>								
+								<combobox value="@bind(vm.listadoPresupuestosForm.listaFormasPago)" width="180px">
+									<comboitem label="" />
+									<comboitem label="" />
+								</combobox>							
 							</row>
 						</rows>
 					</grid>

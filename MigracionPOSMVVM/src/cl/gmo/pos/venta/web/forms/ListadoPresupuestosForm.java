@@ -27,6 +27,28 @@ public class ListadoPresupuestosForm{
 	private  ArrayList<DivisaBean> listaDivisas;
 	private ArrayList<FormaPagoBean>  listaFormasPago;
 	
+	
+	public void ListadoPresupuestosForm() {
+		
+		this.codigo=0;
+		this.agente="";
+		this.fecha=new Date(System.currentTimeMillis());
+		this.fechaInicio="";
+		this.fechaTermino="";
+		this.divisa="";
+		this.cerrado="";
+		this.forma_pago="";
+		this.cliente="";
+		this.anulado="";
+		
+		listaPresupuestos=null;
+		listaDivisas=null;
+		listaFormasPago=null;
+		
+	}
+	
+	
+	
 	public ArrayList<DivisaBean> getListaDivisas() {
 		return listaDivisas;
 	}
@@ -38,9 +60,7 @@ public class ListadoPresupuestosForm{
 	}
 	public void setListaFormasPago(ArrayList<FormaPagoBean> listaFormasPago) {
 		this.listaFormasPago = listaFormasPago;
-	}
-	
-	
+	}	
 	
 	public String getFechaInicio() {
 		return fechaInicio;
@@ -107,9 +127,6 @@ public class ListadoPresupuestosForm{
 	}
 	public void setListaPresupuestos(ArrayList<PresupuestoBean> listaPresupuestos) {
 		this.listaPresupuestos = listaPresupuestos;
-	}
-	
-	
-	
+	}	
 	
 }

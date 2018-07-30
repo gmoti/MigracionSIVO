@@ -10,8 +10,13 @@ import cl.gmo.pos.venta.utils.Constantes;
 public class ControllerIndex {
 	
 	Session sess;
-	String sucursal="T002";
-	String nombre_sucural="GMO Tienda Prueba";	
+	//String sucursal="T002";
+	//String nombre_sucural="GMO Tienda Prueba";	
+	
+	String sucursal="T004";
+	String nombre_sucural="GMO MALL PARQUE ARAUCO";
+	
+	
 	int caja = 1201;
 	String glprofile = "HARRINGTON";
 	String gldescripcion = "CHRISTOPHER HARRINGTON";

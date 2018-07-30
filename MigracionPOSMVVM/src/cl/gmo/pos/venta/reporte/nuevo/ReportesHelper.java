@@ -289,7 +289,8 @@ public class ReportesHelper extends Utils{
 			return bytes;	
 		}
 	
-	public void creaListadoPresupuestos(HttpSession session,HttpServletResponse response){
+	public byte[] creaListadoPresupuestos(Session session){
+		
 		log.info("ReportesHelper:creaListadoPresupuestos inicio");
 		InputStream io = ReportesHelper.class.getResourceAsStream("listadoPresupuestos.jasper");
 	
@@ -346,7 +347,7 @@ public class ReportesHelper extends Utils{
 
 			byte[] bytes = new CreaReportes().obtenerJasper(parametros, io,reporteListaPresupuestosBean);
 			
-			response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
+			/*response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
 			response.setContentLength(bytes.length);
 			response.setHeader(Constantes.STRING_REPORTER_CONTENT_DISPOSITION, Constantes.STRING_REPORTER_BOLETA_PDF);
 			ServletOutputStream servletOutputStream;
@@ -357,7 +358,8 @@ public class ReportesHelper extends Utils{
 				servletOutputStream.close();
 			} catch (IOException e) {
 				log.error("ReportesHelper:creaListadoPresupuestos error catch",e);
-			}
+			}*/
+			return bytes;
 	}
 	
 	public byte[] creaListadoTotalDia(ListasTotalesDiaBean listasTotalesDiaBean){

@@ -2,7 +2,7 @@ package cl.gmo.pos.venta.reporte.nuevo;
 
 import java.util.ArrayList;
 
-import javax.servlet.http.HttpSession;
+
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
@@ -19,7 +19,8 @@ import cl.gmo.pos.venta.web.forms.ListadoPresupuestosForm;
 
 public class ListadoPresupuestosHelper extends Utils {
 	Logger log = Logger.getLogger( this.getClass() );
-	public void cargaListadoPresupuestos(ListadoPresupuestosForm form,String sucursal){
+	
+	public ListadoPresupuestosForm cargaListadoPresupuestos(ListadoPresupuestosForm form,String sucursal){
 		log.info("ListadoPresupuestosHelper:cargaListadoPresupuestos inicio");
 		ListaPresupuestosBean listaPresupuestosBean = PosListadosFacade.traeListadoPresupuestos(sucursal,form.getCliente(), form.getCerrado(), String.valueOf(form.getCodigo()),"", form.getFechaInicio(), form.getFechaTermino(), form.getAgente(), form.getDivisa(), form.getForma_pago());
 		
@@ -66,6 +67,8 @@ public class ListadoPresupuestosHelper extends Utils {
  			presupuestosBean.add(presupuesto);
 			form.setListaPresupuestos(presupuestosBean);
 		}
+		
+		return form;
 	}
 
 	public void traeDatosFormulario(ListadoPresupuestosForm formulario,
