@@ -69,20 +69,21 @@
      						<rows>
      							<row>
      								<label value="Valor total a pago" />
-     								<intbox value="@load(vm.seleccionPagoForm.v_total_parcial)" width="120px" readonly="true"/>
-     								<intbox value="@load(vm.seleccionPagoForm.v_total)" width="120px" readonly="true"/>     								
+     								<intbox value="@bind(vm.seleccionPagoForm.v_total_parcial)" width="120px" readonly="true"/>
+     								<intbox value="@bind(vm.seleccionPagoForm.v_total)" width="120px" readonly="true"/>     								
      							</row>
      							<row>
      								<label value="Valor a pagar" />
-     								<intbox value="@bind(vm.seleccionPagoForm.v_a_pagar)" width="120px" />
+     								<intbox value="@bind(vm.seleccionPagoForm.v_a_pagar)" width="120px" onBlur="@command('validaPago')"/>
      							</row>
      							<row>
      								<label value="Descuento" />
-     								<textbox value="@load(vm.seleccionPagoForm.descuento)" width="120px"/>
+     								<textbox value="@bind(vm.seleccionPagoForm.descuento)" width="120px" readonly="@bind(vm.disableDescuento)" onBlur="@command('aplicaDescuento')"/>
      							</row>
      							<row>
      								<label value="Diferencia" />
-     								<intbox value="@load(vm.seleccionPagoForm.diferencia)" width="120px" readonly="false"/>
+     								<intbox id="diferencia" value="@bind(vm.seleccionPagoForm.diferencia)" width="120px" readonly="true"/>
+     								<intbox id="diferencia_total" value = "@bind(vm.diferencia_total)" width="120px" readonly="false" visible="true"/>
      							</row>
      							<row>	     							
 	     							<label value="Forma pago" />
@@ -112,7 +113,7 @@
      								<textbox value="@load(each.fecha)"/>
      								<textbox value="@load(each.detalle_forma_pago)"/>
      								<intbox value="@load(each.cantidad)"/>
-     								<button image="/image/Remove_32x32.png"/>
+     								<button image="/image/Remove_32x32.png" onClick="@command('deleteItem',arg=each)"/>
      								</row>     							
      						</template>
      					</grid>
@@ -122,5 +123,5 @@
      		</panelchildren>
 		</panel>
 
-	</window>
+	</window>	
 </zk>
