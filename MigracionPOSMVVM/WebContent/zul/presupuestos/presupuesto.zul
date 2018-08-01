@@ -1,0 +1,259 @@
+<?page title="Presupuestos" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<window border="none" width="100%" height="100%">
+		
+		<style>
+			.MyGridRowHeight tr.z-row td.z-row-inner div.z-row-content{
+			border:1px solid white; border-right:1px solid transparent;
+			padding:0px; margin:0px; }
+		</style>
+
+		<borderlayout>
+			<!-- Parte superior de la ventana -->
+			<north>
+				<div>
+					<div width="100%"
+						style="background-color:black;color: white">
+						<label value="Presupuesto" />
+					</div>
+					<div>
+						<grid sclass="MyGridRowHeight">
+							<columns>
+								<column label="" />
+								<column label="" width="230px" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+							</columns>
+							<rows>
+								<row>
+									<label value="Codigo" />
+									<cell colspan="3"
+										style="padding-left:0px" width="230px">
+										<textbox width="30px" />
+										<textbox width="150px" />
+										<label value="Cliente" />
+									</cell>
+
+
+									<textbox />
+									<textbox />
+									<button label="click" onClick="" />
+									<button label="click" onClick="" />
+
+									<textbox />
+									<label value="Fecha" />
+									<textbox />
+								</row>
+								<row>
+									<label value="Forma pago" />
+									<combobox width="200px">
+										<comboitem label="" />
+									</combobox>
+									<label value="Divisa" />
+									<combobox>
+										<comboitem label="" />
+									</combobox>
+									<label value="Cambio" />
+									<textbox />
+									<label value="Hora" />
+									<textbox />
+								</row>
+								<row>
+									<label value="Agente" />
+									<combobox width="200px">
+										<comboitem label="" />
+									</combobox>
+									<label value="Idioma" />
+									<combobox>
+										<comboitem label="" />
+									</combobox>
+									<checkbox label="Cerrado" />
+									<label value="Convenio" />
+									<textbox />
+									<textbox />
+									<button label="click" onClick="" />
+									<button label="click" onClick="" />
+								</row>
+							</rows>
+						</grid>
+					</div>							
+				</div>
+			</north>
+
+			<!-- Centro de la ventana -->
+			<center>
+				<div width="100%" height="100%">
+				
+					<div width="100%" height="90%">
+					
+						<!-- Encabezado de la grid -->
+						<div width="100%" style="background-color:black;color: white">
+							<label value="Articulo" />
+							<space width="100px"/>
+							<label value="Descripcion" />
+							<space width="260px"/>
+							<label value="Precio IVA" />
+							<space width="60px"/>
+							<label value="Importe" />
+							<space width="60px"/>
+							<label value="Cantidad" />
+							<space width="60px"/>
+							<label value="Descuento" />
+							<space width="60px"/>
+							<button label="A" onClick="" />
+						</div>
+
+						<grid width="100%" height="80%"	sclass="MyGridRowHeight" style="overflow: scroll;">
+							<columns>
+								<column hflex="1" />
+								<column hflex="3" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+							</columns>
+							<rows>
+								<row>
+									<textbox width="150px" />
+									<textbox width="350px" />
+									<intbox width="60px" />
+									<intbox width="60px" />
+									<intbox width="60px" />
+									<intbox width="60px" />
+									<button label="X" width="20px"
+										onClick="" />
+								</row>
+							</rows>
+						</grid>
+					</div>
+					
+					<div width="100%" height="10%" style="padding-left:350px">					
+						<div width="370px" style="background-color:black;color: white;">
+							<label value="Graduacion del articulo" />
+						</div>
+						<div>
+							<hbox>
+								<label value="Esfera" />
+								<doublebox width="60px"/>
+								<label value="Cilindro" />
+								<doublebox width="60px"/>
+								<label value="Diametro" />
+								<doublebox width="60px"/>
+							</hbox>
+						</div>						
+					</div>
+					
+				</div>
+			</center>
+
+			<!-- Parte inferior de la ventana -->
+			<south>
+				<div>
+					<div width="100%" style="background-color:black;color: white"><label value="Graduacion del cliente"/></div>
+					<div>
+						<grid sclass="MyGridRowHeight">
+							<columns>
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />								
+							</columns>
+							<rows>
+								<row>
+									<label value="Fecha" />
+									<datebox />
+									<space/>
+									<space/>									
+									<label value="Esfera" />
+									<label value="Cilindro" />
+									<label value="Eje" />
+									<label value="Adiccion" />
+									<label value="Esfera Cerca" />
+									<label value="N/P" />
+								</row>
+
+
+								<row>
+									<label value="Orden" />
+									<textbox />
+									<label value="O.D" />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+								</row>
+
+								<row>
+									<label value="Orden" />
+									<textbox />
+									<label value="O.I" />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+									<doublebox />
+								</row>
+							</rows>
+						</grid>
+					</div>
+					<div width="100%" style="background-color:black;color: white"><label value="Totales"/></div>
+					<div>
+						<grid sclass="MyGridRowHeight">
+							<columns>
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+								<column label="" />
+							</columns>
+							<rows>
+								<row>
+									<label value="" />
+									<label value="" />
+									<label value="Sub Total" />
+									<label value="Descuento" />
+									<label value="% Desc" />
+									<label value="Total" />
+								</row>
+								<row>
+									<label value="Fecha de entrega" />
+									<datebox />
+									<intbox />
+									<intbox />
+									<intbox />
+									<intbox />
+								</row>
+								<row>
+									<label value="Notas" />
+									<cell colspan="5"
+										style="padding-left:0px">
+										<textbox width="800px" />
+									</cell>
+								</row>
+							</rows>
+						</grid>
+					</div>
+				</div>
+			</south>
+		</borderlayout>
+	</window>
+</zk>

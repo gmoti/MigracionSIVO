@@ -22,13 +22,19 @@ public class ControllerMenuPrincipal {
 		
 		switch (arg) {
 		
+			//transacciones
 		case "M1_1":
 			window = (Window)Executions.createComponents(
-	                "/zul/VentaDirecta.zul", null, null);
+	                "/zul/venta_directa/VentaDirecta.zul", null, null);
+			
+		case "M1_2":
+			window = (Window)Executions.createComponents(
+	                "/zul/presupuestos/presupuesto.zul", null, null);	
 			
 	        window.doModal();
 	        break;
 			
+	        //mantenedores
 		case "M2_1":	
 			window = (Window)Executions.createComponents(
 	                "/zul/Cliente.zul", null, null);
@@ -36,9 +42,10 @@ public class ControllerMenuPrincipal {
 	        window.doModal();
 	        break;
 		
+	        //reportes
 		case "M3_1":			
 			window = (Window)Executions.createComponents(
-	                "/zul/ListadoInformeOptico.zul", null, null);
+	                "/zul/reportes/ListadoInformeOptico.zul", null, null);
 			
 	        window.doModal();			
 			break;
@@ -46,7 +53,7 @@ public class ControllerMenuPrincipal {
 		case "M3_2":
 			
 			window = (Window)Executions.createComponents(
-	                "/zul/ListadoTotalDia.zul", null, null);
+	                "/zul/reportes/ListadoTotalDia.zul", null, null);
 			
 	        window.doModal();			
 			break;
@@ -54,7 +61,7 @@ public class ControllerMenuPrincipal {
 		case "M3_3":
 			
 			window = (Window)Executions.createComponents(
-	                "/zul/ListadoBoletas.zul", null, null);
+	                "/zul/reportes/ListadoBoletas.zul", null, null);
 			
 	        window.doModal();			
 			break;
@@ -62,7 +69,7 @@ public class ControllerMenuPrincipal {
 		case "M3_4":
 			
 			window = (Window)Executions.createComponents(
-	                "/zul/ListadoPresupuestos.zul", null, null);
+	                "/zul/reportes/ListadoPresupuestos.zul", null, null);
 			
 	        window.doModal();			
 			break;	

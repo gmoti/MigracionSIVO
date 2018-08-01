@@ -209,7 +209,7 @@ public class ControllerVentaDirecta {
 		objetos = new HashMap<String,Object>();
 		objetos.put("familiaBeans",familiaBeans);
 		Window window = (Window)Executions.createComponents(
-                "/zul/SearchProducto.zul", null, objetos);
+                "/zul/venta_directa/SearchProducto.zul", null, objetos);
 		
         window.doModal();        
 	}
@@ -283,7 +283,7 @@ public class ControllerVentaDirecta {
 		
 		
 		Window window = (Window)Executions.createComponents(
-                "/zul/pagoVentaDirecta.zul", null, objetos);
+                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
 		
         window.doModal();        
 	}

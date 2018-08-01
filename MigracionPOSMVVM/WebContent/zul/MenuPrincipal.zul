@@ -8,7 +8,7 @@
 			<menupopup>
 				<menuitem label="Venta Directa" onClick="@command('seleccionMenu',arg='M1_1')"/>
 				<menuseparator />
-				<menuitem label="Presupuestos" />
+				<menuitem label="Presupuestos" onClick="@command('seleccionMenu',arg='M1_2')"/>
 				<menuseparator />
 				<menuitem label="Encargos" />
 				<menuseparator />
