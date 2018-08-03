@@ -15,7 +15,7 @@ import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.PromocionBean;
 import cl.gmo.pos.venta.web.beans.TipoPedidoBean;
 
-public class PresupuestoForm{
+public class PresupuestoForm extends GenericForm{
 
 	/**
 	 * 

@@ -1,6 +1,7 @@
 <?page title="Presupuestos" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window border="none" width="100%" height="100%">
+	<window border="none" width="100%" height="100%" apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerPresupuesto')">
 		
 		<style>
 			.MyGridRowHeight tr.z-row td.z-row-inner div.z-row-content{
@@ -10,75 +11,116 @@
 
 		<borderlayout>
 			<!-- Parte superior de la ventana -->
-			<north>
+			<north height="30%">
 				<div>
-					<div width="100%"
-						style="background-color:black;color: white">
+					<div width="100%" style="background-color:black;color: white">
 						<label value="Presupuesto" />
+						
+						<div style="text-align: right;">
+						<button label="X" onClick="" />
+						<button label="X" onClick="" />
+						<button label="P" onClick="@command('busquedaPresupuesto')" />
+						<button label="X" onClick="" />
+						<button label="X" onClick="" />
+						<button label="X" onClick="" />						
+						</div>
+						
 					</div>
-					<div>
+					
+					<div width="100%">
 						<grid sclass="MyGridRowHeight">
 							<columns>
-								<column label="" />
-								<column label="" width="230px" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
+								<column label="" hflex="1"/>
+								<column label="" hflex="2"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="2"/>
+								
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
 							</columns>
 							<rows>
 								<row>
 									<label value="Codigo" />
-									<cell colspan="3"
-										style="padding-left:0px" width="230px">
-										<textbox width="30px" />
-										<textbox width="150px" />
-										<label value="Cliente" />
+									
+									<cell colspan="1" style="padding-left:0px">
+										<textbox value="@bind(vm.presupuestoForm.codigo_suc)" width="30px" />
+										<textbox value="@bind(vm.presupuestoForm.codigo)" width="150px" />										
 									</cell>
 
-
-									<textbox />
-									<textbox />
-									<button label="click" onClick="" />
-									<button label="click" onClick="" />
-
-									<textbox />
-									<label value="Fecha" />
-									<textbox />
+								    <label value="Cliente" style="padding-left:0px"/>	
+								    
+								    <cell colspan="2" style="padding-left:0px">							
+								     <textbox value="@bind(vm.presupuestoForm.nif)" width="150px"/>
+								     <textbox value="@load(vm.presupuestoForm.dvnif)" width="30px"/>
+								     <button label="B" onClick="@command('buscarCliente',arg=vm.presupuestoForm.nif)"  width="30px"/>
+								     <button label="B" onClick=""  width="30px"/>								     
+								    </cell>
+								    			
+								    <cell colspan="3" style="padding-left:0px">									
+								    <textbox value="@bind(vm.presupuestoForm.nombre_cliente)" width="250px"/>
+								    </cell>			
+								    						
+									<label value="fecha"/>
+									<datebox value="@bind(vm.fecha)" format="dd/MM/yyyy"/>									
+									
 								</row>
+								
 								<row>
 									<label value="Forma pago" />
-									<combobox width="200px">
-										<comboitem label="" />
+									
+									<combobox id="cbx_fpago" model="@bind(vm.presupuestoForm.listaFormasPago)" width="150px" selectedItem="@bind(vm.formaPagoBean)">
+									   <template name="model">
+										<comboitem label="@load(each.descripcion)"/>
+									   </template>	
 									</combobox>
+									
 									<label value="Divisa" />
-									<combobox>
-										<comboitem label="" />
+									
+									<combobox id="cbx_divisa" model="@load(vm.presupuestoForm.listaDivisas)" width="150px" selectedItem="@bind(vm.divisaBean)">
+									  <template name="model">
+										<comboitem label="@load(each.descripcion)" />
+									  </template>	
 									</combobox>
+									
 									<label value="Cambio" />
-									<textbox />
+									<textbox value="@bind(vm.presupuestoForm.cambio)" width="30px"/>
+									
+									<cell colspan="2"></cell>
+									
 									<label value="Hora" />
-									<textbox />
+									<datebox value="@bind(vm.fecha)" format="hh:mm:ss"/>	
 								</row>
+								
 								<row>
 									<label value="Agente" />
-									<combobox width="200px">
-										<comboitem label="" />
+									
+									<combobox id="cbx_agente" model="@bind(vm.presupuestoForm.listaAgentes)" width="150px" selectedItem="@bind(vm.agenteBean)">
+									  <template name="model">
+										<comboitem label="@load(each.usuario)" />
+									  </template>	
 									</combobox>
+									
 									<label value="Idioma" />
-									<combobox>
-										<comboitem label="" />
+									<combobox id="cbx_idioma" model="@load(vm.presupuestoForm.listaIdiomas)" width="150px" selectedItem="@bind(vm.idiomaBean)">
+									  <template name="model">
+										<comboitem label="@load(each.descripcion)" />
+									  </template>
 									</combobox>
-									<checkbox label="Cerrado" />
-									<label value="Convenio" />
-									<textbox />
-									<textbox />
-									<button label="click" onClick="" />
-									<button label="click" onClick="" />
+									
+									<checkbox label="Cerrado" value="@load(vm.presupuestoForm.cerrado)"/>
+									
+									<cell colspan="1"></cell>
+									<label value="Convenio" />									
+									<cell colspan="4" style="padding-left:0px">
+										<textbox value="@bind(vm.presupuestoForm.convenio)" width="30px" />
+										<textbox value="@bind(vm.presupuestoForm.convenio_det)" width="150px"/>
+										<button label="B" onClick="" />
+										<button label="B" onClick="" />
+									</cell>
 								</row>
 							</rows>
 						</grid>
@@ -87,7 +129,7 @@
 			</north>
 
 			<!-- Centro de la ventana -->
-			<center>
+			<center >
 				<div width="100%" height="100%">
 				
 					<div width="100%" height="90%">
@@ -109,7 +151,8 @@
 							<button label="A" onClick="" />
 						</div>
 
-						<grid width="100%" height="80%"	sclass="MyGridRowHeight" style="overflow: scroll;">
+						<grid model="@bind(vm.presupuestoForm.listaProductos)" 
+						width="100%" height="80%"	sclass="MyGridRowHeight" style="overflow: scroll;">
 							<columns>
 								<column hflex="1" />
 								<column hflex="3" />
@@ -119,18 +162,17 @@
 								<column hflex="1" />
 								<column hflex="1" />
 							</columns>
-							<rows>
+							<template name="model">
 								<row>
-									<textbox width="150px" />
-									<textbox width="350px" />
-									<intbox width="60px" />
-									<intbox width="60px" />
-									<intbox width="60px" />
-									<intbox width="60px" />
-									<button label="X" width="20px"
-										onClick="" />
+									<textbox value="@load(each.codigo)" width="150px" tooltiptext="Click para ver detalles" onClick="@command('actualizaDetalles',arg=each)"/>
+									<textbox value="@load(each.descripcion)" width="350px" />
+									<intbox value="@load(each.precio)"  width="60px" />
+									<intbox value="@load(each.importe)" width="60px" />
+									<intbox value="@bind(each.cantidad)" width="60px" />
+									<intbox value="@bind(each.descuento)" width="60px" />
+									<button label="X" width="20px" onClick="" />
 								</row>
-							</rows>
+							</template>
 						</grid>
 					</div>
 					
@@ -141,11 +183,11 @@
 						<div>
 							<hbox>
 								<label value="Esfera" />
-								<doublebox width="60px"/>
+								<doublebox value="@load(vm.esfera)" width="60px"/>
 								<label value="Cilindro" />
-								<doublebox width="60px"/>
+								<doublebox value="@load(vm.cilindro)" width="60px"/>
 								<label value="Diametro" />
-								<doublebox width="60px"/>
+								<doublebox value="@load(vm.diametro)" width="60px"/>
 							</hbox>
 						</div>						
 					</div>
@@ -160,56 +202,59 @@
 					<div>
 						<grid sclass="MyGridRowHeight">
 							<columns>
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />
-								<column label="" />								
+								<column label="" hflex="1"/>
+								<column label="" hflex="3"/>
+								<column label="" hflex="1" align="center"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>
+								<column label="" hflex="1"/>								
 							</columns>
 							<rows>
 								<row>
 									<label value="Fecha" />
-									<datebox />
-									<space/>
-									<space/>									
+									<datebox value = "@load(vm.fecha)" format="dd/MM/yyyy"/>
+									<space/>																	
 									<label value="Esfera" />
 									<label value="Cilindro" />
 									<label value="Eje" />
 									<label value="Adiccion" />
-									<label value="Esfera Cerca" />
-									<label value="N/P" />
+									<label value="Esfera Cerca" />																							
+									<label value="N/P"/>																
 								</row>
 
 
 								<row>
 									<label value="Orden" />
-									<textbox />
+									<textbox value="@load(vm.presupuestoForm.graduacion.orden)"  width="60px"/>
 									<label value="O.D" />
-									<doublebox />
-									<doublebox />
-									<doublebox />
-									<doublebox />
-									<doublebox />
-									<doublebox />
-									<doublebox />
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_esfera)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_cilindro)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_eje)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_adicion)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_esfera_cerca)" width="60px"/>
+									<cell colspan="2">
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_n)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_p)" width="60px"/>
+									</cell>
 								</row>
 
 								<row>
-									<label value="Orden" />
-									<textbox />
+									<label value="Doctor" />
+									<textbox value="@load(vm.presupuestoForm.graduacion.doctor)" width="280px"/>
 									<label value="O.I" />
-									<doublebox />
-									<doublebox />
-									<doublebox />
-									<doublebox />
-									<doublebox />
-									<doublebox />
-									<doublebox />
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_esfera)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_cilindro)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_eje)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_adicion)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_esfera_cerca)" width="60px"/>
+									<cell colspan="2">
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_n)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_p)" width="60px"/>
+									</cell>									
 								</row>
 							</rows>
 						</grid>
@@ -236,17 +281,16 @@
 								</row>
 								<row>
 									<label value="Fecha de entrega" />
-									<datebox />
-									<intbox />
-									<intbox />
-									<intbox />
-									<intbox />
+									<datebox value="@bind(vm.fechaEntrega)" format="dd/MM/yyyy"/>
+									<intbox  value="@bind(vm.presupuestoForm.subTotal)"/>
+									<intbox  value="@bind(vm.presupuestoForm.descuento)"/>
+									<intbox  />
+									<intbox  value="@bind(vm.presupuestoForm.total)"/>
 								</row>
 								<row>
 									<label value="Notas" />
-									<cell colspan="5"
-										style="padding-left:0px">
-										<textbox width="800px" />
+									<cell colspan="5" style="padding-left:0px">
+										<textbox value="@bind(vm.presupuestoForm.nota)" width="800px" />
 									</cell>
 								</row>
 							</rows>
