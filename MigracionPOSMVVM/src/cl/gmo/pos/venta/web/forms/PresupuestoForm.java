@@ -72,13 +72,35 @@ public class PresupuestoForm extends GenericForm{
     private int porcentaje_descuento_max;
     private String supervisor = Constantes.STRING_BLANCO;
     private int cantidad_linea = Constantes.INT_CERO;
-    private double cantidad_descuento = Constantes.INT_CERO;
-    
+    private double cantidad_descuento = Constantes.INT_CERO;    
   //Informacion del cliente.
 	private String nif;
 	private String dvnif;
-    
 	
+	//FQuiroz 
+	//06/08/2018 Se agrega contructor
+	public PresupuestoForm() {
+		
+		listaDivisas = new ArrayList<DivisaBean>();
+		listaConvenios = new ArrayList<ConvenioBean>();
+		listaAgentes = new ArrayList<AgenteBean>();
+		listaIdiomas = new ArrayList<IdiomaBean>();
+		listaFormasPago = new ArrayList<FormaPagoBean>();
+		listaPromociones = new ArrayList<PromocionBean>();
+		listaProductos = new ArrayList<ProductosBean>();
+		listaTiposPedidos = new ArrayList<TipoPedidoBean>();
+		
+		subTotal = Constantes.INT_CERO;
+	    descuento = Constantes.INT_CERO;
+	    dtcoPorcentaje = Constantes.INT_CERO;
+	    total = Constantes.INT_CERO;
+	    anticipo = Constantes.INT_CERO;
+	    totalPendiante = Constantes.INT_CERO;
+	    cantidad_descuento = Constantes.INT_CERO;
+	    sobre = Constantes.INT_CERO;
+		cantidad = Constantes.INT_CERO;
+		
+	}
 	
     
 	public ContactologiaBean getGraduacion_lentilla() {

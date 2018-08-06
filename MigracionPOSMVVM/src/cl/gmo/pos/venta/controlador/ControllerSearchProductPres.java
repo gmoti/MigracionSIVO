@@ -22,12 +22,12 @@ import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.SubFamiliaBean;
 import cl.gmo.pos.venta.web.helper.BusquedaProductosHelper;
 
-public class ControllerSearchProduct implements Serializable{
+public class ControllerSearchProductPres implements Serializable {
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -3072799490102569407L;
+	private static final long serialVersionUID = -7360268478883882968L;
 
 	@Wire("#winBuscaProducto")
 	private Window win;
@@ -38,7 +38,7 @@ public class ControllerSearchProduct implements Serializable{
 	private final String TIPO_BUSQUEDA="DIRECTA";
 	
 	//protected UnderlayingWindowCtrl ctrl;
-	protected ControllerSearchProduct model;
+	protected ControllerSearchProductPres model;
 	
 	private FamiliaBean familiaBean;
 	private SubFamiliaBean subFamiliaBean;

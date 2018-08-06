@@ -1,7 +1,6 @@
 <?page title="Listado de Presupuestos" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window id="reporte4" title="Listado de presupuestos" 
-	apply="org.zkoss.bind.BindComposer"
+	<window id="reporte4" title="Listado de presupuestos" 	
      viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerListadoPresupuesto')"	
 		border="normal" width="100%" height="100%" closable="true">
 		

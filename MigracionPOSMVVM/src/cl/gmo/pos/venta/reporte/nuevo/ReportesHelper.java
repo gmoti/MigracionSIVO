@@ -1117,8 +1117,7 @@ public class ReportesHelper extends Utils{
 		}
 	}
 
-	public void creaPresupuesto(HttpSession session,
-			HttpServletResponse response) {
+	public byte[] creaPresupuesto(Session session) {
 		
 		log.info("ReportesHelper:creaPresupuesto inicio");
 		InputStream io = ReportesHelper.class.getResourceAsStream("presupuesto.jasper");
@@ -1146,7 +1145,7 @@ public class ReportesHelper extends Utils{
 		
 		byte[] bytes = new CreaReportes().obtenerJasper(parametros, io, listaProduc);
 		
-		response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
+		/*response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
 		response.setContentLength(bytes.length);
 		response.setHeader(Constantes.STRING_REPORTER_CONTENT_DISPOSITION, Constantes.STRING_REPORTER_PRESUPUESTO_PDF);
 		ServletOutputStream servletOutputStream;
@@ -1157,7 +1156,10 @@ public class ReportesHelper extends Utils{
 			servletOutputStream.close();
 		} catch (IOException e) {
 			log.error("ReportesHelper:creaPresupuesto error catch",e);
-		}
+		}*/
+		
+		return bytes;
+		
 	}
 }
 

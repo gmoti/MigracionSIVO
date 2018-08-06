@@ -1,5 +1,7 @@
 package cl.gmo.pos.venta.controlador;
 
+import java.io.Serializable;
+
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
@@ -7,8 +9,12 @@ import org.zkoss.zk.ui.Sessions;
 import cl.gmo.pos.venta.utils.Constantes;
 
 
-public class ControllerIndex {
+public class ControllerIndex implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5375817743395813578L;
 	Session sess;
 	String sucursal="T002";
 	String nombre_sucural="GMO Tienda Prueba";	

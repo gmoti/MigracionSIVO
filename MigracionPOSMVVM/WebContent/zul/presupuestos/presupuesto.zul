@@ -1,6 +1,6 @@
 <?page title="Presupuestos" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window border="none" width="100%" height="100%" apply="org.zkoss.bind.BindComposer"
+	<window id="winPresupuesto" border="none" width="100%" height="100%" 
 		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerPresupuesto')">
 		
 		<style>
@@ -17,16 +17,54 @@
 						<label value="Presupuesto" />
 						
 						<div style="text-align: right;">
+						<button label="New" onClick="@command('nuevoPresupuesto')" />
+						<button label="Print" onClick="@command('imprimirPresupuesto')" />
+						<button label="Search" onClick="@command('busquedaPresupuesto')" />
 						<button label="X" onClick="" />
-						<button label="X" onClick="" />
-						<button label="P" onClick="@command('busquedaPresupuesto')" />
-						<button label="X" onClick="" />
-						<button label="X" onClick="" />
-						<button label="X" onClick="" />						
-						</div>
-						
+						<button label="Save" onClick="@command('grabarPresupuesto')" />
+						<button label="Exit" onClick="@command('cerrarVentana', arg=winPresupuesto)" />						
+						</div>						
 					</div>
 					
+					<div width="100%" style="padding :10px 0px 0px 0px">					
+					   <hbox>
+					    <div width="300px">
+					    	<label value="Codigo" />
+					    	<space width="40px"/>
+					    	<textbox value="@bind(vm.presupuestoForm.codigo_suc)" width="30px" disabled="true" />
+					    	<textbox value="@bind(vm.presupuestoForm.codigo)" width="150px"	disabled="true" />
+					    </div>
+
+					    <label value="Cliente"/>
+						
+							<textbox value="@bind(vm.presupuestoForm.nif)" width="150px"/>
+							<textbox value="@load(vm.presupuestoForm.dvnif)" width="30px"/>
+							<button label="B" onClick="@command('buscarCliente',arg=vm.presupuestoForm.nif)"  width="30px"/>
+							<button label="B" onClick=""  width="30px"/>						
+						
+						
+						<textbox value="@bind(vm.presupuestoForm.nombre_cliente)" width="250px" disabled="true"/>
+						<label value="fecha"/>
+						<datebox value="@bind(vm.fecha)" format="dd/MM/yyyy" disabled="true" />
+						</hbox>					
+					</div>	
+					
+					<div width="100%"
+						style="padding :10px 0px 0px 0px">
+						<hbox>
+
+						</hbox>
+					</div>
+
+					<div width="100%"
+						style="padding :10px 0px 0px 0px">
+						<hbox>
+
+						</hbox>
+					</div>
+
+
+					<!-- 
 					<div width="100%">
 						<grid sclass="MyGridRowHeight">
 							<columns>
@@ -47,8 +85,8 @@
 									<label value="Codigo" />
 									
 									<cell colspan="1" style="padding-left:0px">
-										<textbox value="@bind(vm.presupuestoForm.codigo_suc)" width="30px" />
-										<textbox value="@bind(vm.presupuestoForm.codigo)" width="150px" />										
+										<textbox value="@bind(vm.presupuestoForm.codigo_suc)" width="30px" disabled="true"/>
+										<textbox value="@bind(vm.presupuestoForm.codigo)" width="150px" disabled="true"/>										
 									</cell>
 
 								    <label value="Cliente" style="padding-left:0px"/>	
@@ -61,18 +99,19 @@
 								    </cell>
 								    			
 								    <cell colspan="3" style="padding-left:0px">									
-								    <textbox value="@bind(vm.presupuestoForm.nombre_cliente)" width="250px"/>
+								    <textbox value="@bind(vm.presupuestoForm.nombre_cliente)" width="250px" disabled="true"/>
 								    </cell>			
 								    						
 									<label value="fecha"/>
-									<datebox value="@bind(vm.fecha)" format="dd/MM/yyyy"/>									
+									<datebox value="@bind(vm.fecha)" format="dd/MM/yyyy" disabled="true" />									
 									
 								</row>
 								
 								<row>
 									<label value="Forma pago" />
 									
-									<combobox id="cbx_fpago" model="@bind(vm.presupuestoForm.listaFormasPago)" width="150px" selectedItem="@bind(vm.formaPagoBean)">
+									<combobox id="cbx_fpago" model="@bind(vm.presupuestoForm.listaFormasPago)" 
+										width="150px" selectedItem="@bind(vm.formaPagoBean)" disabled="@bind(vm.fpagoDisable)">
 									   <template name="model">
 										<comboitem label="@load(each.descripcion)"/>
 									   </template>	
@@ -80,38 +119,41 @@
 									
 									<label value="Divisa" />
 									
-									<combobox id="cbx_divisa" model="@load(vm.presupuestoForm.listaDivisas)" width="150px" selectedItem="@bind(vm.divisaBean)">
+									<combobox id="cbx_divisa" model="@load(vm.presupuestoForm.listaDivisas)"  
+										width="150px" selectedItem="@bind(vm.divisaBean)" disabled="true">
 									  <template name="model">
 										<comboitem label="@load(each.descripcion)" />
 									  </template>	
 									</combobox>
 									
 									<label value="Cambio" />
-									<textbox value="@bind(vm.presupuestoForm.cambio)" width="30px"/>
+									<textbox value="@bind(vm.presupuestoForm.cambio)" width="30px" disabled="true"/>
 									
 									<cell colspan="2"></cell>
 									
 									<label value="Hora" />
-									<datebox value="@bind(vm.fecha)" format="hh:mm:ss"/>	
+									<datebox value="@bind(vm.fecha)" format="hh:mm:ss" disabled="true"/>	
 								</row>
 								
 								<row>
 									<label value="Agente" />
 									
-									<combobox id="cbx_agente" model="@bind(vm.presupuestoForm.listaAgentes)" width="150px" selectedItem="@bind(vm.agenteBean)">
+									<combobox id="cbx_agente" model="@bind(vm.presupuestoForm.listaAgentes)" 
+										width="150px" selectedItem="@bind(vm.agenteBean)" disabled="@bind(vm.agenteDisable)">
 									  <template name="model">
 										<comboitem label="@load(each.usuario)" />
 									  </template>	
 									</combobox>
 									
 									<label value="Idioma" />
-									<combobox id="cbx_idioma" model="@load(vm.presupuestoForm.listaIdiomas)" width="150px" selectedItem="@bind(vm.idiomaBean)">
+									<combobox id="cbx_idioma" model="@load(vm.presupuestoForm.listaIdiomas)" 
+										width="150px" selectedItem="@bind(vm.idiomaBean)" disabled="true">
 									  <template name="model">
 										<comboitem label="@load(each.descripcion)" />
 									  </template>
 									</combobox>
 									
-									<checkbox label="Cerrado" value="@load(vm.presupuestoForm.cerrado)"/>
+									<checkbox label="Cerrado" value="@load(vm.presupuestoForm.cerrado)" disabled="true"/>
 									
 									<cell colspan="1"></cell>
 									<label value="Convenio" />									
@@ -124,7 +166,8 @@
 								</row>
 							</rows>
 						</grid>
-					</div>							
+					</div> -->
+												
 				</div>
 			</north>
 
@@ -148,10 +191,10 @@
 							<space width="60px"/>
 							<label value="Descuento" />
 							<space width="60px"/>
-							<button label="A" onClick="" />
+							<button label="A" onClick="@command('buscaProducto')" />
 						</div>
 
-						<grid model="@bind(vm.presupuestoForm.listaProductos)" 
+						<grid model="@bind(vm.productos)" 
 						width="100%" height="80%"	sclass="MyGridRowHeight" style="overflow: scroll;">
 							<columns>
 								<column hflex="1" />
@@ -164,13 +207,14 @@
 							</columns>
 							<template name="model">
 								<row>
-									<textbox value="@load(each.codigo)" width="150px" tooltiptext="Click para ver detalles" onClick="@command('actualizaDetalles',arg=each)"/>
-									<textbox value="@load(each.descripcion)" width="350px" />
-									<intbox value="@load(each.precio)"  width="60px" />
-									<intbox value="@load(each.importe)" width="60px" />
-									<intbox value="@bind(each.cantidad)" width="60px" />
-									<intbox value="@bind(each.descuento)" width="60px" />
-									<button label="X" width="20px" onClick="" />
+									<textbox value="@load(each.codigo)" width="150px" tooltiptext="Click para ver detalles" 
+										onClick="@command('actualizaDetalles',arg=each)" readonly="true"/>
+									<textbox value="@load(each.descripcion)" width="350px" disabled="true"/>
+									<intbox value="@load(each.precio)"  width="80px" disabled="true"/>
+									<intbox value="@load(each.importe)" width="80px" disabled="true"/>
+									<intbox value="@bind(each.cantidad)" width="80px" />
+									<intbox value="@bind(each.descuento)" width="80px" />
+									<button label="X" width="20px" onClick="@command('deleteItem',arg=each)" />
 								</row>
 							</template>
 						</grid>
@@ -216,7 +260,7 @@
 							<rows>
 								<row>
 									<label value="Fecha" />
-									<datebox value = "@load(vm.fecha)" format="dd/MM/yyyy"/>
+									<datebox value = "@load(vm.fecha)" format="dd/MM/yyyy" disabled="true"/>
 									<space/>																	
 									<label value="Esfera" />
 									<label value="Cilindro" />
@@ -229,31 +273,31 @@
 
 								<row>
 									<label value="Orden" />
-									<textbox value="@load(vm.presupuestoForm.graduacion.orden)"  width="60px"/>
+									<textbox value="@load(vm.presupuestoForm.graduacion.orden)"  width="60px" disabled="true"/>
 									<label value="O.D" />
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_esfera)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_cilindro)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_eje)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_adicion)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_esfera_cerca)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_esfera)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_cilindro)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_eje)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_adicion)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_esfera_cerca)" width="60px" disabled="true"/>
 									<cell colspan="2">
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_n)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_p)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_n)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OD_p)" width="60px" disabled="true"/>
 									</cell>
 								</row>
 
 								<row>
 									<label value="Doctor" />
-									<textbox value="@load(vm.presupuestoForm.graduacion.doctor)" width="280px"/>
+									<textbox value="@load(vm.presupuestoForm.graduacion.doctor)" width="280px" disabled="true"/>
 									<label value="O.I" />
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_esfera)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_cilindro)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_eje)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_adicion)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_esfera_cerca)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_esfera)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_cilindro)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_eje)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_adicion)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_esfera_cerca)" width="60px" disabled="true"/>
 									<cell colspan="2">
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_n)" width="60px"/>
-									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_p)" width="60px"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_n)" width="60px" disabled="true"/>
+									<doublebox value="@load(vm.presupuestoForm.graduacion.OI_p)" width="60px" disabled="true"/>
 									</cell>									
 								</row>
 							</rows>

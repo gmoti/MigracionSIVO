@@ -1,5 +1,6 @@
 package cl.gmo.pos.venta.controlador;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
@@ -27,8 +28,13 @@ import cl.gmo.pos.venta.web.forms.ListadoPresupuestosForm;
 
 
 
-public class ControllerListadoPresupuesto {
+public class ControllerListadoPresupuesto implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 984154573804131507L;
+
 	Session sess = Sessions.getCurrent();
 	
 	@Wire("#reporte4")

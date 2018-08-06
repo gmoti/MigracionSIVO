@@ -1,13 +1,19 @@
 package cl.gmo.pos.venta.controlador;
 
+import java.io.Serializable;
+
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zul.Window;
 
-public class ControllerMenuPrincipal {
+public class ControllerMenuPrincipal implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7591341824630787025L;
 	private Window window;
 	
 	

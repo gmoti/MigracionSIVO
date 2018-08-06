@@ -1,6 +1,8 @@
 package cl.gmo.pos.venta.controlador;
 
 
+import java.io.Serializable;
+
 import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
@@ -19,9 +21,14 @@ import cl.gmo.pos.venta.reporte.nuevo.ReportesHelper;
 import cl.gmo.pos.venta.web.forms.InformeOpticoForm;
 
 
-public class ControllerInformeOptico {
+public class ControllerInformeOptico implements Serializable{
 	
 	
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3911700019027519574L;
+
 Session sess = Sessions.getCurrent();
 	
 	@Wire("#reporte2")

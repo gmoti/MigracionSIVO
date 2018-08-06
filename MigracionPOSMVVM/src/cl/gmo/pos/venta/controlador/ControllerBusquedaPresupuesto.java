@@ -1,5 +1,7 @@
 package cl.gmo.pos.venta.controlador;
 
+import java.io.Serializable;
+
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
@@ -17,8 +19,15 @@ import cl.gmo.pos.venta.web.beans.PresupuestosBean;
 import cl.gmo.pos.venta.web.forms.PresupuestoForm;
 
 
-public class ControllerBusquedaPresupuesto {
+public class ControllerBusquedaPresupuesto implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9094708405939416646L;
+
+
+
 	Session sess = Sessions.getCurrent();
 	
 	

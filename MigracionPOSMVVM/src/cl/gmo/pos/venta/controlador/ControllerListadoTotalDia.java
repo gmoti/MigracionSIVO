@@ -2,6 +2,7 @@ package cl.gmo.pos.venta.controlador;
 
 
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
@@ -23,8 +24,13 @@ import cl.gmo.pos.venta.web.beans.ListasTotalesDiaBean;
 import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
 
-public class ControllerListadoTotalDia{
+public class ControllerListadoTotalDia implements Serializable{
 
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3623703810372235414L;
 
 	Session sess = Sessions.getCurrent();
 	

@@ -1,5 +1,7 @@
 package cl.gmo.pos.venta.controlador;
 
+import java.io.Serializable;
+
 //pendiente los productos gratis
 
 import java.util.ArrayList;
@@ -33,8 +35,13 @@ import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
 
 
-public class ControllerPagoVentaDirecta {
+public class ControllerPagoVentaDirecta implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3283893161345500968L;
+
 	Session sess = Sessions.getCurrent();
 	
 	@Wire("#winPagoVentaDirecta")

@@ -1,6 +1,7 @@
 package cl.gmo.pos.venta.controlador;
 
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
-import org.zkoss.zul.Messagebox.ClickEvent;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.ventaDirecta.VentaDirectaDispatchActions;
@@ -32,8 +32,13 @@ import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
 
-public class ControllerVentaDirecta {
+public class ControllerVentaDirecta implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1872185090221869401L;
+
 	Session sess = Sessions.getCurrent();
 	
 	@Wire
@@ -208,6 +213,7 @@ public class ControllerVentaDirecta {
 		
 		objetos = new HashMap<String,Object>();
 		objetos.put("familiaBeans",familiaBeans);
+		objetos.put("org","venta");
 		Window window = (Window)Executions.createComponents(
                 "/zul/venta_directa/SearchProducto.zul", null, objetos);
 		
@@ -216,14 +222,15 @@ public class ControllerVentaDirecta {
 	
 	@NotifyChange({"productos","total"})
     @GlobalCommand
-	public void actProdGrid(@BindingParam("arg")ProductosBean arg) {
+	public void actProdGrid(@BindingParam("arg")ProductosBean arg, @BindingParam("arg2")String arg2 ) {		
+		
 		productoBean = arg;
 		productoBean.setImporte(productoBean.getPrecio());
 		productoBean.setCantidad(1);
 		productos.add(productoBean);		
-		
 		actTotal(productos);
 		System.out.println("estoy en otro controlador "+arg.getDescripcion());
+				
 	}
 	
 	 
@@ -253,7 +260,9 @@ public class ControllerVentaDirecta {
 	@NotifyChange("total")	
 	public void actTotal(List<ProductosBean> arg){
 		int sumar=0;
-		//arg.stream().collect(Collectors.summingInt((ProductosBean)o -> o));
+		
+		//arg.stream().mapToInt(ProductosBean::getImporte).sum();
+		
 		for (ProductosBean pb:arg){
 			sumar += pb.getImporte();
 		}

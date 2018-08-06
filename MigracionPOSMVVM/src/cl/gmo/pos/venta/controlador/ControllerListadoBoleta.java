@@ -1,5 +1,6 @@
 package cl.gmo.pos.venta.controlador;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
@@ -19,10 +20,15 @@ import org.zkoss.zul.Window;
 import cl.gmo.pos.venta.reporte.dispatch.ListadoBoletasDispatchActions;
 import cl.gmo.pos.venta.reporte.nuevo.ReportesHelper;
 import cl.gmo.pos.venta.web.forms.ListadoBoletasForm;
-import cl.gmo.pos.venta.web.helper.ListadoBoletasHelper;
 
-public class ControllerListadoBoleta {
+
+public class ControllerListadoBoleta implements Serializable{
 	
+
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7856414447863092650L;
 
 Session sess = Sessions.getCurrent();
 	

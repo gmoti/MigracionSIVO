@@ -2,7 +2,7 @@
 <zk>
 	<window id="winBuscaProducto" title="Busca Producto" border="normal" width="800px"
 		height="600px" position="center" closable="false" mode="modal" sizable="false" 		
-		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerSearchProduct')">
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerSearchProductPres')">
 		
 <style>    
     .MyGridRowHeight
@@ -96,7 +96,7 @@
 								<textbox value="@load(each.grupo)"/>
 								<button label="Seleccionar" 
 								onClick="@command('seleccionaProducto',win=winBuscaProducto) 
-										@global-command('actProdGrid',arg=each,arg2=vm.origen)"/>
+										@global-command('actProdGridPresupuesto',arg=each,arg2=vm.origen)"/>
 							</row>							
 						</template>
 					</grid>
