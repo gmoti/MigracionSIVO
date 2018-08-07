@@ -68,6 +68,8 @@ public class ControllerPresupuesto implements Serializable{
 
 	
 	HashMap<String,Object> objetos;
+	private Window wBusqueda;
+	private boolean bWin=true;
 	
 	
 	@Init
@@ -196,6 +198,12 @@ public class ControllerPresupuesto implements Serializable{
 		presupuestoForm.setIdioma("CASTELLANO");
 		productos = new ArrayList<ProductosBean>();
 		posicionComboNuevo();
+		
+		if (!bWin) {
+			wBusqueda.detach();
+			bWin=true;
+		}
+		
 	}
 	
 	
@@ -208,18 +216,23 @@ public class ControllerPresupuesto implements Serializable{
 	@Command
 	public void buscaProducto() {		
 		
-		objetos = new HashMap<String,Object>();
-		objetos.put("familiaBeans",familiaBeans);
-		objetos.put("org","presupuesto");
-		Window window = (Window)Executions.createComponents(
-                "/zul/presupuestos/SearchProducto.zul", null, objetos);
-		
-        window.doModal();        
+		if (bWin) {
+			objetos = new HashMap<String,Object>();
+			objetos.put("presupuestoForm",presupuestoForm);		
+			wBusqueda = (Window)Executions.createComponents(
+	                "/zul/presupuestos/SearchProducto.zul", null, objetos);
+			
+			wBusqueda.doModal();
+			bWin=false;
+		}else {
+			wBusqueda.setVisible(true);
+		}
+       
 	}
 	
 	@NotifyChange({"productos","presupuestoForm"})
     @GlobalCommand
-	public void actProdGridPresupuesto(@BindingParam("arg")ProductosBean arg, @BindingParam("arg2")String arg2 ) {		
+	public void actProdGridPresupuesto(@BindingParam("arg")ProductosBean arg) {		
 		
 		productoBean = arg;
 		productoBean.setImporte(productoBean.getPrecio());
@@ -253,11 +266,13 @@ public class ControllerPresupuesto implements Serializable{
 	@Command
 	public void grabarPresupuesto() {		
 		
-		//sess.setAttribute(Constantes.STRING_PRESUPUESTO, 0);
+		//sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");
 		presupuestoForm.setEstado(Constantes.STRING_FORMULARIO);
 		presupuestoForm.setAccion("ingresa_presupuesto");
 		presupuestoForm.setListaProductos(productos);
 		presupuestoForm = presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);
+		
+		Messagebox.show("Grabacion exitosa");
 		
 	}	
 	
@@ -266,9 +281,8 @@ public class ControllerPresupuesto implements Serializable{
 	public void imprimirPresupuesto() {
 		
 		Window window = (Window)Executions.createComponents(
-                "/zul/reportes/ReportePresupuesto.zul", null, objetos);
-		
-        window.doModal(); 
+                "/zul/reportes/ReportePresupuesto.zul", null, objetos);		
+        window.doModal();
 	}	
 	
 	

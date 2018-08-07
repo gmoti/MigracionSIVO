@@ -1,7 +1,6 @@
 <?page title="Pago Venta Directa" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window id="winPagoVentaDirecta" border="none" height="80%" width="80%" 
-		apply="org.zkoss.bind.BindComposer"
+	<window id="winPagoVentaDirecta" border="none" height="80%" width="80%" 		
 		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerPagoVentaDirecta')">		
 
 		<panel  height="40%" width="100%" style="margin-bottom:10px"

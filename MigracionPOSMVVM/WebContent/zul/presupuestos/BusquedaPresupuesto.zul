@@ -2,7 +2,7 @@
 <zk>
 	<window id="winBusquedaPresupuesto" title="Selecciona Presupuesto" border="normal" width="800px"
 		height="600px" position="center"  mode="modal" 
-		sizable="false" apply="org.zkoss.bind.BindComposer"
+		sizable="false" 
 		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerBusquedaPresupuesto')">
 
 		<style>

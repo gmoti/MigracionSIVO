@@ -11,7 +11,7 @@
 
 		<borderlayout>
 			<!-- Parte superior de la ventana -->
-			<north height="30%">
+			<north height="25%">
 				<div>
 					<div width="100%" style="background-color:black;color: white">
 						<label value="Presupuesto" />
@@ -26,7 +26,8 @@
 						</div>						
 					</div>
 					
-					<div width="100%" style="padding :10px 0px 0px 0px">					
+					<!-- Linea 1 del encabezxado -->
+					<div width="100%" style="padding :15px 0px 0px 0px">					
 					   <hbox>
 					    <div width="300px">
 					    	<label value="Codigo" />
@@ -35,13 +36,13 @@
 					    	<textbox value="@bind(vm.presupuestoForm.codigo)" width="150px"	disabled="true" />
 					    </div>
 
-					    <label value="Cliente"/>
-						
+						<div width="350px">
+						    <label value="Cliente"/>						
 							<textbox value="@bind(vm.presupuestoForm.nif)" width="150px"/>
 							<textbox value="@load(vm.presupuestoForm.dvnif)" width="30px"/>
 							<button label="B" onClick="@command('buscarCliente',arg=vm.presupuestoForm.nif)"  width="30px"/>
 							<button label="B" onClick=""  width="30px"/>						
-						
+						</div>
 						
 						<textbox value="@bind(vm.presupuestoForm.nombre_cliente)" width="250px" disabled="true"/>
 						<label value="fecha"/>
@@ -49,125 +50,77 @@
 						</hbox>					
 					</div>	
 					
-					<div width="100%"
-						style="padding :10px 0px 0px 0px">
-						<hbox>
-
+					<!-- Linea 2 del encabezxado -->
+					<div width="100%" style="padding :15px 0px 0px 0px">
+						<hbox>						
+							<div width="300px">
+								<label value="Forma pago" />
+								<space width="5px"/>									
+								<combobox id="cbx_fpago" model="@bind(vm.presupuestoForm.listaFormasPago)" 
+									width="180px" selectedItem="@bind(vm.formaPagoBean)" disabled="@bind(vm.fpagoDisable)">
+								   <template name="model">
+									<comboitem label="@load(each.descripcion)"/>
+								   </template>	
+								</combobox>
+							</div>
+									
+							<div width="350px">			
+								<label value="Divisa" />							
+								<combobox id="cbx_divisa" model="@load(vm.presupuestoForm.listaDivisas)"  
+									width="180px" selectedItem="@bind(vm.divisaBean)" disabled="true">
+								  <template name="model">
+									<comboitem label="@load(each.descripcion)" />
+								  </template>	
+								</combobox>
+							</div>
+							
+							<label value="Cambio" />
+							<textbox value="@bind(vm.presupuestoForm.cambio)" width="30px" disabled="true"/>					
+							
+							<space width="100px"></space>
+							<label value="Hora" />
+							<datebox value="@bind(vm.fecha)" format="hh:mm:ss" disabled="true"/>
 						</hbox>
 					</div>
 
+					<!-- Linea 3 del encabezxado -->
 					<div width="100%"
-						style="padding :10px 0px 0px 0px">
+						style="padding :15px 0px 0px 0px">
 						<hbox>
-
+							
+							<div width="300px">
+								<label value="Agente" />	
+								<space width="38px"/>									
+								<combobox id="cbx_agente" model="@bind(vm.presupuestoForm.listaAgentes)" 
+									width="180px" selectedItem="@bind(vm.agenteBean)" disabled="@bind(vm.agenteDisable)">
+								  <template name="model">
+									<comboitem label="@load(each.usuario)" />
+								  </template>	
+								</combobox>
+							</div>
+							
+							<div width="350px">	
+								<label value="Idioma" />
+								<combobox id="cbx_idioma" model="@load(vm.presupuestoForm.listaIdiomas)" 
+									width="180px" selectedItem="@bind(vm.idiomaBean)" disabled="true">
+								  <template name="model">
+									<comboitem label="@load(each.descripcion)" />
+								  </template>
+								</combobox>
+							</div>
+							
+							<checkbox label="Cerrado" value="@load(vm.presupuestoForm.cerrado)" disabled="true"/>															
+							
+							<div width="400px">
+								<label value="Convenio" />	
+								<textbox value="@bind(vm.presupuestoForm.convenio)" width="30px" />
+								<textbox value="@bind(vm.presupuestoForm.convenio_det)" width="150px"/>
+								<button label="B" onClick="" />
+								<button label="B" onClick="" />
+							</div>
 						</hbox>
-					</div>
-
-
-					<!-- 
-					<div width="100%">
-						<grid sclass="MyGridRowHeight">
-							<columns>
-								<column label="" hflex="1"/>
-								<column label="" hflex="2"/>
-								<column label="" hflex="1"/>
-								<column label="" hflex="2"/>
+					</div>									
 								
-								<column label="" hflex="1"/>
-								<column label="" hflex="1"/>
-								<column label="" hflex="1"/>
-								<column label="" hflex="1"/>
-								<column label="" hflex="1"/>
-								<column label="" hflex="1"/>
-							</columns>
-							<rows>
-								<row>
-									<label value="Codigo" />
-									
-									<cell colspan="1" style="padding-left:0px">
-										<textbox value="@bind(vm.presupuestoForm.codigo_suc)" width="30px" disabled="true"/>
-										<textbox value="@bind(vm.presupuestoForm.codigo)" width="150px" disabled="true"/>										
-									</cell>
-
-								    <label value="Cliente" style="padding-left:0px"/>	
-								    
-								    <cell colspan="2" style="padding-left:0px">							
-								     <textbox value="@bind(vm.presupuestoForm.nif)" width="150px"/>
-								     <textbox value="@load(vm.presupuestoForm.dvnif)" width="30px"/>
-								     <button label="B" onClick="@command('buscarCliente',arg=vm.presupuestoForm.nif)"  width="30px"/>
-								     <button label="B" onClick=""  width="30px"/>								     
-								    </cell>
-								    			
-								    <cell colspan="3" style="padding-left:0px">									
-								    <textbox value="@bind(vm.presupuestoForm.nombre_cliente)" width="250px" disabled="true"/>
-								    </cell>			
-								    						
-									<label value="fecha"/>
-									<datebox value="@bind(vm.fecha)" format="dd/MM/yyyy" disabled="true" />									
-									
-								</row>
-								
-								<row>
-									<label value="Forma pago" />
-									
-									<combobox id="cbx_fpago" model="@bind(vm.presupuestoForm.listaFormasPago)" 
-										width="150px" selectedItem="@bind(vm.formaPagoBean)" disabled="@bind(vm.fpagoDisable)">
-									   <template name="model">
-										<comboitem label="@load(each.descripcion)"/>
-									   </template>	
-									</combobox>
-									
-									<label value="Divisa" />
-									
-									<combobox id="cbx_divisa" model="@load(vm.presupuestoForm.listaDivisas)"  
-										width="150px" selectedItem="@bind(vm.divisaBean)" disabled="true">
-									  <template name="model">
-										<comboitem label="@load(each.descripcion)" />
-									  </template>	
-									</combobox>
-									
-									<label value="Cambio" />
-									<textbox value="@bind(vm.presupuestoForm.cambio)" width="30px" disabled="true"/>
-									
-									<cell colspan="2"></cell>
-									
-									<label value="Hora" />
-									<datebox value="@bind(vm.fecha)" format="hh:mm:ss" disabled="true"/>	
-								</row>
-								
-								<row>
-									<label value="Agente" />
-									
-									<combobox id="cbx_agente" model="@bind(vm.presupuestoForm.listaAgentes)" 
-										width="150px" selectedItem="@bind(vm.agenteBean)" disabled="@bind(vm.agenteDisable)">
-									  <template name="model">
-										<comboitem label="@load(each.usuario)" />
-									  </template>	
-									</combobox>
-									
-									<label value="Idioma" />
-									<combobox id="cbx_idioma" model="@load(vm.presupuestoForm.listaIdiomas)" 
-										width="150px" selectedItem="@bind(vm.idiomaBean)" disabled="true">
-									  <template name="model">
-										<comboitem label="@load(each.descripcion)" />
-									  </template>
-									</combobox>
-									
-									<checkbox label="Cerrado" value="@load(vm.presupuestoForm.cerrado)" disabled="true"/>
-									
-									<cell colspan="1"></cell>
-									<label value="Convenio" />									
-									<cell colspan="4" style="padding-left:0px">
-										<textbox value="@bind(vm.presupuestoForm.convenio)" width="30px" />
-										<textbox value="@bind(vm.presupuestoForm.convenio_det)" width="150px"/>
-										<button label="B" onClick="" />
-										<button label="B" onClick="" />
-									</cell>
-								</row>
-							</rows>
-						</grid>
-					</div> -->
-												
 				</div>
 			</north>
 
@@ -220,7 +173,7 @@
 						</grid>
 					</div>
 					
-					<div width="100%" height="10%" style="padding-left:350px">					
+					<div width="100%" height="10%" style="padding-left:450px">					
 						<div width="370px" style="background-color:black;color: white;">
 							<label value="Graduacion del articulo" />
 						</div>
