@@ -3,6 +3,7 @@ package cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
 
@@ -169,7 +170,7 @@ public class PresupuestoDAOImpl implements PresupuestoDAO {
 			estado = true;
 			presupuesto.setNumero(cs.getInt(16));
 			
-		}  catch (Exception e) {
+		}catch (Exception e) {
 			estado =  false;
 			log.error("PresupuestoDAOImpl:insertaPresupuesto error controlado",e);
             throw new Exception("Error en DAO, al ejecutar SP: SP_PRESUP_INS_PRESUP_CB"); 

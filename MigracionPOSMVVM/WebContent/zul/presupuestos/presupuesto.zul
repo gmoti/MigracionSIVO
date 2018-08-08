@@ -57,7 +57,7 @@
 								<label value="Forma pago" />
 								<space width="5px"/>									
 								<combobox id="cbx_fpago" model="@bind(vm.presupuestoForm.listaFormasPago)" 
-									width="180px" selectedItem="@bind(vm.formaPagoBean)" disabled="@bind(vm.fpagoDisable)">
+									width="180px" selectedItem="@bind(vm.formaPagoBean)" disabled="@bind(vm.fpagoDisable)" constraint="no empty: Indique la forma de pago">
 								   <template name="model">
 									<comboitem label="@load(each.descripcion)"/>
 								   </template>	
@@ -92,7 +92,7 @@
 								<label value="Agente" />	
 								<space width="38px"/>									
 								<combobox id="cbx_agente" model="@bind(vm.presupuestoForm.listaAgentes)" 
-									width="180px" selectedItem="@bind(vm.agenteBean)" disabled="@bind(vm.agenteDisable)">
+									width="180px" selectedItem="@bind(vm.agenteBean)" disabled="@bind(vm.agenteDisable)" constraint="no empty: Indique un agente">
 								  <template name="model">
 									<comboitem label="@load(each.usuario)" />
 								  </template>	

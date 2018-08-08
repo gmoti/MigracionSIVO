@@ -64,6 +64,8 @@ public class ControllerSearchProductPres implements Serializable {
 	private BusquedaProductosForm busquedaProductosForm;
 	private BusquedaProductosDispatchActions busquedaProductosDispatchActions;
 	
+	private String visibleGridCristal="false";
+	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view, 
 			@ExecutionArgParam("presupuestoForm")PresupuestoForm arg) {
@@ -96,7 +98,7 @@ public class ControllerSearchProductPres implements Serializable {
 		codigoBarra="";	
 		
 		
-		//sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");	
+		sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");	
 		busquedaProductosForm = busquedaProductosDispatchActions.cargaBusquedaProductos(busquedaProductosForm, sess);
 			
 	}
@@ -134,12 +136,19 @@ public class ControllerSearchProductPres implements Serializable {
 		}		
 	}
 	
-	@NotifyChange({"subFamiliaBeans","busquedaProductosForm"})
+	@NotifyChange({"subFamiliaBeans","busquedaProductosForm","visibleGridCristal"})
 	@Command
 	public void cargaSubFamilias() {	
 		try {
 			subFamiliaBeans = utilesDaoImpl.traeSubfamilias(familiaBean.getCodigo());
 			busquedaProductosForm.setListaSubFamilias(subFamiliaBeans);
+			
+			if(familiaBean.getTipo_fam().equals("C"))
+				visibleGridCristal="true";
+			else
+				visibleGridCristal="false";
+			
+			
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}
@@ -262,6 +271,16 @@ public class ControllerSearchProductPres implements Serializable {
 
 	public void setWinVisibleBusqueda(String winVisibleBusqueda) {
 		this.winVisibleBusqueda = winVisibleBusqueda;
+	}
+
+
+	public String getVisibleGridCristal() {
+		return visibleGridCristal;
+	}
+
+
+	public void setVisibleGridCristal(String visibleGridCristal) {
+		this.visibleGridCristal = visibleGridCristal;
 	}
 
 	

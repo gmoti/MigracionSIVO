@@ -34,7 +34,7 @@
 					<label value="Familia de Productos" />
 					<space width="77px"/>
 					<combobox model="@load(vm.busquedaProductosForm.listaFamilias)" selectedItem="@bind(vm.familiaBean)" 
-						onSelect="@command('cargaSubFamilias')">						
+						onSelect="@command('cargaSubFamilias')" onRightClick="self.setValue(null)">						
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -45,7 +45,7 @@
 					<label value="Sub-familia de Productos" />
 					<space width="50px"/>
 					<combobox model="@load(vm.busquedaProductosForm.listaSubFamilias)" selectedItem="@bind(vm.subFamiliaBean)" 
-						onSelect="@command('cargaGrupoFamilias')">						
+						onSelect="@command('cargaGrupoFamilias')" onRightClick="self.setValue(null)">						
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -55,7 +55,7 @@
 					<hbox>
 					<label value="Grupo de Productos" />
 					<space width="85px"/>
-					<combobox model="@load(vm.busquedaProductosForm.listaGruposFamilias)" selectedItem="@bind(vm.grupoFamiliaBean)">						
+					<combobox model="@load(vm.busquedaProductosForm.listaGruposFamilias)" selectedItem="@bind(vm.grupoFamiliaBean)" onRightClick="self.setValue(null)">						
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -86,7 +86,7 @@
 				
 					<radiogroup id="ojos"/>	
 								
-					<div height="30%">
+					<div height="30%" visible="@bind(vm.visibleGridCristal)">
 						<grid sclass="MyGridRowHeight">	
 						
 							<columns>

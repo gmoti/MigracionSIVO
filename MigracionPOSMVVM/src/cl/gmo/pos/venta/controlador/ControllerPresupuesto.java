@@ -142,7 +142,11 @@ public class ControllerPresupuesto implements Serializable{
 				sess.setAttribute("nombre_cliente",cliente.getNombre() + " " + cliente.getApellido());			
 				sess.setAttribute(Constantes.STRING_CLIENTE, cliente.getCodigo());
 	        	sess.setAttribute(Constantes.STRING_CLIENTE_VENTA, cliente.getCodigo());	        	
-	        	sess.setAttribute("NOMBRE_CLIENTE",cliente.getNombre() + " " + cliente.getApellido());			
+	        	sess.setAttribute("NOMBRE_CLIENTE",cliente.getNombre() + " " + cliente.getApellido());	
+	        	
+	        	presupuestoForm.setAccion("agregarCliente");
+	        	presupuestoForm.setFlujo(Constantes.STRING_FORMULARIO);                 
+	    		presupuestoForm = presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);
 					
 			}else {
 				Messagebox.show("El cliente no existe");
@@ -194,8 +198,8 @@ public class ControllerPresupuesto implements Serializable{
 		//sess.setAttribute(Constantes.STRING_PRESUPUESTO, 0);
 		presupuestoForm = presupuestoDispatchActions.nuevoFormulario(presupuestoForm, sess);
 		
-		presupuestoForm.setDivisa("PESO CHILENO");
-		presupuestoForm.setIdioma("CASTELLANO");
+		presupuestoForm.setDivisa("PESO");
+		presupuestoForm.setIdioma("CAST");
 		productos = new ArrayList<ProductosBean>();
 		posicionComboNuevo();
 		
@@ -234,6 +238,7 @@ public class ControllerPresupuesto implements Serializable{
     @GlobalCommand
 	public void actProdGridPresupuesto(@BindingParam("arg")ProductosBean arg) {		
 		
+		
 		productoBean = arg;
 		productoBean.setImporte(productoBean.getPrecio());
 		productoBean.setCantidad(1);	
@@ -270,7 +275,13 @@ public class ControllerPresupuesto implements Serializable{
 		presupuestoForm.setEstado(Constantes.STRING_FORMULARIO);
 		presupuestoForm.setAccion("ingresa_presupuesto");
 		presupuestoForm.setListaProductos(productos);
-		presupuestoForm = presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);
+		
+		//presupuestoForm.setCodigo(Constantes.STRING_BLANCO);		
+		presupuestoForm.setForma_pago(formaPagoBean.getId());
+		presupuestoForm.setAgente(agenteBean.getUsuario());
+		
+		
+		presupuestoForm = presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);		
 		
 		Messagebox.show("Grabacion exitosa");
 		
@@ -303,10 +314,10 @@ public class ControllerPresupuesto implements Serializable{
 	
 	public void posicionComboNuevo() {
 		
-		Optional<DivisaBean> b = presupuestoForm.getListaDivisas().stream().filter(s -> presupuestoForm.getDivisa().equals(s.getDescripcion())).findFirst();
+		Optional<DivisaBean> b = presupuestoForm.getListaDivisas().stream().filter(s -> presupuestoForm.getDivisa().equals(s.getId())).findFirst();
 		divisaBean = b.get();		
 		
-		Optional<IdiomaBean> d = presupuestoForm.getListaIdiomas().stream().filter(s -> presupuestoForm.getIdioma().equals(s.getDescripcion())).findFirst();
+		Optional<IdiomaBean> d = presupuestoForm.getListaIdiomas().stream().filter(s -> presupuestoForm.getIdioma().equals(s.getId())).findFirst();
 		idiomaBean = d.get();		
 		
 	}
