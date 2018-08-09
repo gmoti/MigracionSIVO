@@ -32,11 +32,12 @@ public class ControllerMenuPrincipal implements Serializable{
 		case "M1_1":
 			window = (Window)Executions.createComponents(
 	                "/zul/venta_directa/VentaDirecta.zul", null, null);
+			window.doModal();
+	        break;
 			
 		case "M1_2":
 			window = (Window)Executions.createComponents(
-	                "/zul/presupuestos/presupuesto.zul", null, null);	
-			
+	                "/zul/presupuestos/presupuesto.zul", null, null);			
 	        window.doModal();
 	        break;
 			

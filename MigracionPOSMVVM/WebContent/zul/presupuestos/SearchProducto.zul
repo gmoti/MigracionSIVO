@@ -33,8 +33,10 @@
 					<hbox>
 					<label value="Familia de Productos" />
 					<space width="77px"/>
-					<combobox model="@load(vm.busquedaProductosForm.listaFamilias)" selectedItem="@bind(vm.familiaBean)" 
-						onSelect="@command('cargaSubFamilias')" onRightClick="self.setValue(null)">						
+					<combobox model="@load(vm.busquedaProductosForm.listaFamilias)" 
+								selectedItem="@bind(vm.familiaBean)" 
+								onSelect="@command('cargaSubFamilias')" 
+								onRightClick="self.setValue(null)" width="300px">						
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -44,8 +46,10 @@
 					<hbox>
 					<label value="Sub-familia de Productos" />
 					<space width="50px"/>
-					<combobox model="@load(vm.busquedaProductosForm.listaSubFamilias)" selectedItem="@bind(vm.subFamiliaBean)" 
-						onSelect="@command('cargaGrupoFamilias')" onRightClick="self.setValue(null)">						
+					<combobox model="@load(vm.busquedaProductosForm.listaSubFamilias)" 
+								selectedItem="@bind(vm.subFamiliaBean)" 
+								onSelect="@command('cargaGrupoFamilias')" 
+								onRightClick="self.setValue(null)" width="300px">													
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -55,7 +59,9 @@
 					<hbox>
 					<label value="Grupo de Productos" />
 					<space width="85px"/>
-					<combobox model="@load(vm.busquedaProductosForm.listaGruposFamilias)" selectedItem="@bind(vm.grupoFamiliaBean)" onRightClick="self.setValue(null)">						
+					<combobox model="@load(vm.busquedaProductosForm.listaGruposFamilias)" 
+								selectedItem="@bind(vm.grupoFamiliaBean)" 
+								onRightClick="self.setValue(null)" width="300px">														
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -65,13 +71,14 @@
 					<hbox>
 					<label value="Código de Producto SAP" />
 					<space width="50px"/>
-					<textbox value = "@bind(vm.codigoSap)" />					
+					<textbox value = "@bind(vm.busquedaProductosForm.codigoBusqueda)" />					
 					</hbox>
 				
 					<hbox>
 					<label value="Codigo Barra Producto" />
 					<space width="66px"/>
-					<textbox value = "@bind(vm.codigoBarra)" />
+					<textbox value = "@bind(vm.busquedaProductosForm.codigoBarraBusqueda)"/>
+					
 					<button label="click" onClick="@command('despachador',arg='buscar')"/>
 					</hbox>						
 				</div>	
@@ -79,24 +86,88 @@
 			</north>
 
 			<center>
-				<div height="70%">
-					<div width="100%" style="background-color:black;color: white">
-						<label value="Seleccion por:" />													
-					</div>				
-				
-					<radiogroup id="ojos"/>	
+				<div height="70%">			
+					<radiogroup id="ojos"/>
+					<radiogroup id="ojosLentillas"/>
+						
+					<!-- Aqui se incluyen las busquedas especificas de cristales y lentillas  -->	
+					
+					<div height="45%" visible="@bind(vm.busquedaAvanzadaLentilla)">
+					
+						<div width="100%" style="background-color:black;color: white">
+							<label value="Seleccion por:" />													
+						</div>	
+						
+						<grid sclass="MyGridRowHeight">
+							<columns>
+								<column hflex="2" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+								<column hflex="1" />
+							</columns>
+							<rows>
+								<row>
+								<cell colspan="1"/>	
+								<cell colspan="1"/>							
+								<label value="Esfera" />
+								<label value="Cilindro" />
+								<label value="Diametro" />
+								<label value="Eje" />
+								<label value="Radio" />
+								<label value="Zona Optica" />
+								<label value="Curva Base" />
+								</row>
 								
-					<div height="30%" visible="@bind(vm.visibleGridCristal)">
-						<grid sclass="MyGridRowHeight">	
+								<row>
+								<radio label="Ojo Derecho" radiogroup="ojosLentillas" checked="@bind(vm.ojoDerecho)" />								
+								<label value="O.D" />								
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.odesfera)" readonly="true"/>
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.odcilindro)" readonly="true"/>
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.oddiamt)" readonly="true"/>								
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.odeje)" readonly="true"/>
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.odradio1)" readonly="true"/>
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.oddiamz0)" readonly="true"/>
+								<doublebox width="70px" readonly="true"/>															
+								</row>
+								
+								<row>
+								<radio label="Ojo Izquierdo" radiogroup="ojosLentillas" checked="@bind(vm.ojoIzquierdo)" />								
+								<label value="O.I" />								
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.oiesfera)" readonly="true"/>
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.oicilindro)" readonly="true"/>
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.oidiamt)" readonly="true"/>								
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.oieje)" readonly="true"/>
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.oiradio1)" readonly="true"/>
+								<doublebox width="70px" value="@load(vm.busquedaProductosForm.graduacion_lentilla.oidiamz0)" readonly="true"/>
+								<doublebox width="70px" readonly="true"/>															
+								</row>							
+								
+							</rows>
+						</grid>
+
+					</div>					
+								
+					<div height="45%" visible="@bind(vm.busquedaAvanzada)">		
+					
+						<div width="100%" style="background-color:black;color: white">
+							<label value="Seleccion por:" />													
+						</div>
+								
+						<grid sclass="MyGridRowHeight" >	
 						
 							<columns>
-							<column label="" hflex="2"/>
-							<column label="" hflex="1"/>
-							<column label="" hflex="1"/>
-							<column label="" hflex="1"/>
-							<column label="" hflex="1"/>
-							<column label="" hflex="1"/>
-							<column label="" hflex="1"/>
+							<column  hflex="2"/>
+							<column  hflex="1"/>
+							<column  hflex="1"/>
+							<column  hflex="1"/>
+							<column  hflex="1"/>
+							<column  hflex="1"/>
+							<column  hflex="1"/>
 							</columns>						
 												
 							<rows>
@@ -111,48 +182,60 @@
 								</row>
 								
 								<row>								
-								<radio label="Ojo Derecho" radiogroup="ojos"/>
+								<radio label="Ojo Derecho" radiogroup="ojos" checked="@bind(vm.ojoDerecho)" />
 								<cell colspan="1"/>
 								<label value="O.D" />								
-								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OD_esfera)"/>
-								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OD_cilindro)"/>
-								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OD_diametro)"/>
-								<checkbox label="Cerca"/>
+								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OD_esfera)" readonly="true"/>
+								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OD_cilindro)" readonly="true"/>
+								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OD_diametro)" readonly="true"/>
+								
+								<checkbox label="Cerca" checked="@bind(vm.cerca)"/>
 								</row>
 								
 								<row>															
-								<radio label="Ojo Izquierdo" radiogroup="ojos"/>
+								<radio label="Ojo Izquierdo" radiogroup="ojos" checked="@bind(vm.ojoIzquierdo)"/>
 								<button label="B" onClick="" width="30px"/>								
 								<label value="O.I" />
-								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OI_esfera)"/>
-								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OI_cilindro)"/>
-								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OI_diametro)"/>
+								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OI_esfera)" readonly="true"/>
+								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OI_cilindro)" readonly="true"/>
+								<doublebox width="80px" value="@load(vm.busquedaProductosForm.graduacion.OI_diametro)" readonly="true"/>
 								<cell colspan="1"/>
 								</row>
 							</rows>
 						</grid>
 					</div>
 
-					<div height="70%">			
+					<div height="70%">	
+					
+						<div width="100%" style="background-color:black;color: white">
+						<space width="50px"/>
+						<label value="Articulo" />	
+						<space width="100px"/>
+						<label value="Descripcion" />
+						<space width="270px"/>
+						<label value="Precio iva" />
+						<space width="10px"/>
+						<label value="Grupo" />
+						<space width="10px"/>
+						<label value="Accion" />												
+						</div>	
 						<grid model= "@load(vm.busquedaProductosForm.listaProductos)" 
-						sclass="MyGridRowHeight" height="300px"  
-						emptyMessage="Sin registros">
+								sclass="MyGridRowHeight" height="300px"  emptyMessage="Sin registros">						
 						<columns>
-							<column label="Articulo" />
-							<column label="Descripciion" />
-							<column label="Precio iva" />
-							<column label="Grupo" />
-							<column label="Accion" />
-						</columns>
+							<column width="180px"/>
+							<column width="400px"/>
+							<column width="80px" />
+							<column width="60px" />
+							<column width="60px" /> 
+						</columns>						
 						<template name="model">							
 							<row>
-								<textbox value="@load(each.cod_barra)"/>
-								<textbox value="@load(each.descripcion)"/>
-								<doublebox value="@load(each.precio)"/>
-								<textbox value="@load(each.grupo)"/>
-								<button label="Seleccionar" 
-								onClick="@command('seleccionaProducto',win=winBuscaProducto) 
-										@global-command('actProdGridPresupuesto',arg=each)"/>
+								<textbox value="@load(each.cod_barra)" width="180px" readonly="true"/>							
+								<textbox value="@load(each.descripcion)" width="400px" readonly="true"/>  
+								<doublebox value="@load(each.precio)" width="80px" readonly="true"/>
+								<textbox value="@load(each.grupo)" width="60px" readonly="true"/> 
+								<button label="Sel" 
+									onClick="@command('seleccionaProducto',win=winBuscaProducto) @global-command('actProdGridPresupuesto',arg=each)" width="60px"/>
 							</row>							
 						</template>
 						</grid>	

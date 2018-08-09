@@ -15,6 +15,7 @@ import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.ventaDirecta.BusquedaProductosDispatchActions;
@@ -47,24 +48,27 @@ public class ControllerSearchProductPres implements Serializable {
 	private SubFamiliaBean subFamiliaBean;
 	private GrupoFamiliaBean grupoFamiliaBean;
 	private ProductosBean productoBean;
-	private String codigoSap;
-	private String codigoBarra;
-	
+
 	private List<FamiliaBean> familiaBeans;
 	private ArrayList<SubFamiliaBean> subFamiliaBeans;
 	private ArrayList<GrupoFamiliaBean> grupoFamiliaBeans;
 	private List<ProductosBean> productos;
 	
 	private UtilesDAOImpl utilesDaoImpl;
-	private BusquedaProductosHelper busquedaProdhelper;
-	
+	private BusquedaProductosHelper busquedaProdhelper;	
 	
 	private String winVisibleBusqueda;
 	private PresupuestoForm presupuesto;
 	private BusquedaProductosForm busquedaProductosForm;
 	private BusquedaProductosDispatchActions busquedaProductosDispatchActions;
 	
-	private String visibleGridCristal="false";
+	private boolean ojoDerecho;
+	private boolean ojoIzquierdo;
+	private boolean cerca;
+	private String busquedaAvanzada;
+	private String busquedaAvanzadaLentilla;
+	
+	
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view, 
@@ -94,8 +98,11 @@ public class ControllerSearchProductPres implements Serializable {
 		utilesDaoImpl = new UtilesDAOImpl();
 		busquedaProdhelper = new BusquedaProductosHelper();
 		
-		codigoSap="";
-		codigoBarra="";	
+		ojoDerecho=false;
+		ojoIzquierdo=false;
+		cerca=false;
+		busquedaAvanzada = "false";
+		busquedaAvanzadaLentilla= "false";
 		
 		
 		sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");	
@@ -119,12 +126,44 @@ public class ControllerSearchProductPres implements Serializable {
 		
 		busquedaProductosForm.setFamilia(familiaBean.getCodigo());
 		busquedaProductosForm.setSubFamilia(subFamiliaBean.getCodigo());
-		busquedaProductosForm.setGrupo(grupoFamiliaBean.getCodigo());
-		
-		busquedaProductosForm.setAccion(arg);
-		busquedaProductosForm = busquedaProductosDispatchActions.buscar(busquedaProductosForm, sess);
+		busquedaProductosForm.setGrupo(grupoFamiliaBean.getCodigo());		
+	    busquedaProductosForm.setAccion(arg);     	
+     	
+     	if (arg.equals("buscar")) { 
+     		
+     		if (busquedaAvanzada.equals("true")) {
+	     		if (!isOjoDerecho() && !isOjoIzquierdo()) {
+	     			
+	     			Messagebox.show("Debe seleccionar un ojo, para realizar la busqueda.");
+	     			busquedaProductosForm.setAccion("error");
+	     			//busquedaProductosForm = busquedaProductosDispatchActions.buscar(busquedaProductosForm, sess);					
+	     		}
+	     		else {	     			
+	     			
+	     			busquedaProductosForm.setAccion("busqueda_graduada");
+	     			busquedaProductosForm = busquedaProductosDispatchActions.buscar(busquedaProductosForm, sess);	     			
+	     		}
+     		}    		
+			
+			if (busquedaAvanzadaLentilla.equals("true")) {
+				if (!isOjoDerecho() && !isOjoIzquierdo()) {
+					Messagebox.show("Debe seleccionar un ojo, para realizar la busqueda.");
+					busquedaProductosForm.setAccion("error");
+	     			//busquedaProductosForm = busquedaProductosDispatchActions.buscar(busquedaProductosForm, sess);
+				}
+			}			
+		}
+     	
+     	busquedaProductosForm = busquedaProductosDispatchActions.buscar(busquedaProductosForm, sess);		
 	}
 	
+	
+	@NotifyChange({"busquedaProductosForm"})
+	@Command
+	public void cleanProducts() {
+		
+		busquedaProductosForm.setListaProductos(new ArrayList<ProductosBean>());
+	}
 	
 		
 	@NotifyChange("familiaBeans")
@@ -136,17 +175,26 @@ public class ControllerSearchProductPres implements Serializable {
 		}		
 	}
 	
-	@NotifyChange({"subFamiliaBeans","busquedaProductosForm","visibleGridCristal"})
+	@NotifyChange({"subFamiliaBeans","busquedaProductosForm","busquedaAvanzada","busquedaAvanzadaLentilla"})
 	@Command
 	public void cargaSubFamilias() {	
 		try {
 			subFamiliaBeans = utilesDaoImpl.traeSubfamilias(familiaBean.getCodigo());
-			busquedaProductosForm.setListaSubFamilias(subFamiliaBeans);
+			busquedaProductosForm.setListaSubFamilias(subFamiliaBeans);	
 			
-			if(familiaBean.getTipo_fam().equals("C"))
-				visibleGridCristal="true";
+			if (familiaBean.getTipo_fam().equals("C")) {
+				setBusquedaAvanzada("true");
+				cleanProducts();
+			}
 			else
-				visibleGridCristal="false";
+				setBusquedaAvanzada("false");
+			
+			if (familiaBean.getTipo_fam().equals("L")) {
+				setBusquedaAvanzadaLentilla("true");
+				cleanProducts();
+			}
+			else
+				setBusquedaAvanzadaLentilla("false");
 			
 			
 		} catch (Exception e) {			
@@ -241,22 +289,6 @@ public class ControllerSearchProductPres implements Serializable {
 		this.productoBean = productoBean;
 	}
 
-	public String getCodigoSap() {
-		return codigoSap;
-	}
-
-	public void setCodigoSap(String codigoSap) {
-		this.codigoSap = codigoSap;
-	}
-
-	public String getCodigoBarra() {
-		return codigoBarra;
-	}
-
-	public void setCodigoBarra(String codigoBarra) {
-		this.codigoBarra = codigoBarra;
-	}
-
 	public BusquedaProductosForm getBusquedaProductosForm() {
 		return busquedaProductosForm;
 	}
@@ -273,19 +305,45 @@ public class ControllerSearchProductPres implements Serializable {
 		this.winVisibleBusqueda = winVisibleBusqueda;
 	}
 
-
-	public String getVisibleGridCristal() {
-		return visibleGridCristal;
+	public boolean isOjoDerecho() {
+		return ojoDerecho;
 	}
 
-
-	public void setVisibleGridCristal(String visibleGridCristal) {
-		this.visibleGridCristal = visibleGridCristal;
+	public void setOjoDerecho(boolean ojoDerecho) {
+		this.ojoDerecho = ojoDerecho;
 	}
 
-	
-	
-	
-	
+	public boolean isOjoIzquierdo() {
+		return ojoIzquierdo;
+	}
+
+	public void setOjoIzquierdo(boolean ojoIzquierdo) {
+		this.ojoIzquierdo = ojoIzquierdo;
+	}
+
+	public String getBusquedaAvanzada() {
+		return busquedaAvanzada;
+	}
+
+	public void setBusquedaAvanzada(String busquedaAvanzada) {
+		this.busquedaAvanzada = busquedaAvanzada;
+	}
+
+	public String getBusquedaAvanzadaLentilla() {
+		return busquedaAvanzadaLentilla;
+	}
+
+	public void setBusquedaAvanzadaLentilla(String busquedaAvanzadaLentilla) {
+		this.busquedaAvanzadaLentilla = busquedaAvanzadaLentilla;
+	}
+
+	public boolean isCerca() {
+		return cerca;
+	}
+
+	public void setCerca(boolean cerca) {
+		this.cerca = cerca;
+	} 
+
 	
 }
