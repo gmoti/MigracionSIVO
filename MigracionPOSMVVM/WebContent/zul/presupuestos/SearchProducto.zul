@@ -23,6 +23,7 @@
 		<borderlayout>
 			<north >			
 				<div width="100%" height="30%">	
+				
 					<div width="100%" style="background-color:black;color: white">
 						<label value="Busqueda Productos" />
 						<!--  <div style="text-align: right;">-->
@@ -232,15 +233,15 @@
 							<row>
 								<textbox value="@load(each.cod_barra)" width="180px" readonly="true"/>							
 								<textbox value="@load(each.descripcion)" width="400px" readonly="true"/>  
-								<doublebox value="@load(each.precio)" width="80px" readonly="true"/>
+								<doublebox value="@load(each.precio)" width="80px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>
 								<textbox value="@load(each.grupo)" width="60px" readonly="true"/> 
 								<button label="Sel" 
 									onClick="@command('seleccionaProducto',win=winBuscaProducto) @global-command('actProdGridPresupuesto',arg=each)" width="60px"/>
 							</row>							
 						</template>
 						</grid>	
-					</div>
-															
+						
+					</div>															
 				</div>
 			</center>
 		</borderlayout>

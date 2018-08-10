@@ -82,6 +82,8 @@ public class ControllerVentaDirecta implements Serializable{
 	
 	SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy");
 	SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss");
+	private boolean bWin=true;
+	private Window wBusqueda;
 	
 	
 	@Init
@@ -140,6 +142,11 @@ public class ControllerVentaDirecta implements Serializable{
 		System.out.println(ventaDirectaForm.getCajero());
 		System.out.println(ventaDirectaForm.getAgente());
 		System.out.println(ventaDirectaForm.getNumero_caja());
+		
+		if (!bWin) {
+			wBusqueda.detach();
+			bWin=true;
+		}
 		
 	}
 	
@@ -211,18 +218,23 @@ public class ControllerVentaDirecta implements Serializable{
 	@Command
 	public void buscaProducto() {		
 		
-		objetos = new HashMap<String,Object>();
-		objetos.put("familiaBeans",familiaBeans);
-		objetos.put("org","venta");
-		Window window = (Window)Executions.createComponents(
-                "/zul/venta_directa/SearchProducto.zul", null, objetos);
+		if (bWin) {
+			objetos = new HashMap<String,Object>();
+			objetos.put("familiaBeans",familiaBeans);			
+			wBusqueda = (Window)Executions.createComponents(
+	                "/zul/venta_directa/SearchProducto.zul", null, objetos);
+			
+			wBusqueda.doModal(); 
+	        bWin=false;
+		}else {
+			wBusqueda.setVisible(true);
+		} 
 		
-        window.doModal();        
 	}
 	
 	@NotifyChange({"productos","total"})
     @GlobalCommand
-	public void actProdGrid(@BindingParam("arg")ProductosBean arg, @BindingParam("arg2")String arg2 ) {		
+	public void actProdGrid(@BindingParam("arg")ProductosBean arg) {		
 		
 		productoBean = arg;
 		productoBean.setImporte(productoBean.getPrecio());

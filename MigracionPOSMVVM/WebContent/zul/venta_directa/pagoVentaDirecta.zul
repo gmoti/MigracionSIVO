@@ -1,17 +1,16 @@
 <?page title="Pago Venta Directa" contentType="text/html;charset=UTF-8"?>
 <zk>
-	<window id="winPagoVentaDirecta" border="none" height="80%" width="80%" 		
-		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerPagoVentaDirecta')">		
-
-		<panel  height="40%" width="100%" style="margin-bottom:10px"
-     			title="Seleccion de cobro" border="normal">
-     			
-     		<caption>
-     			<toolbarbutton image="/image/Remove_32x32.png" onClick="winPagoVentaDirecta.detach()"/>
-     		</caption>
-
-     		<panelchildren>
-     			<grid sclass="MyGridRowHeight">   
+	<window id="winPagoVentaDirecta" border="none" height="50%" width="80%" 		
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerPagoVentaDirecta')">	
+		
+		
+		<div height="40%" width="100%">
+			<div width="100%" style="background-color:black;color: white;">
+					<label value="Seleccion de cobro" />
+					<toolbarbutton image="/image/Remove_32x32.png" onClick="winPagoVentaDirecta.detach()"/>
+			</div>
+			<div>
+				<grid sclass="MyGridRowHeight">   
      			
      				<columns>
      					<column width="100px"/>
@@ -49,27 +48,29 @@
      						<textbox value="@load(vm.seleccionPagoForm.giro_descripcion)" readonly="true"/>
      					</row>
      				</rows>
-     			</grid>
-     		</panelchildren>
-		</panel>
-
-		<panel height="50%" width="100%" style="margin-bottom:10px"
-     		   title="Cobro" border="normal">
-     		   
-     		<caption>
-     			<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagarVenta')"/>
+     			</grid>	
+			
+			</div>	
+		</div>
+		
+		
+		<div height="60%" width="100%">
+			<div width="100%" style="background-color:black;color: white;">
+				<label value="Cobro" />
+				<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagarVenta')"/>
      			<toolbarbutton image="/image/Print_32x32.png"/>
-     		</caption>
-
-     		<panelchildren>
-     			<borderlayout>
-     				<west width="50%">
+			</div>
+			
+			<div height="80%" width="100%">
+			
+				<borderlayout>				
+     				<west width="50%" >
      					<grid sclass="MyGridRowHeight">
      						<rows>
      							<row>
      								<label value="Valor total a pago" />
-     								<intbox value="@bind(vm.seleccionPagoForm.v_total_parcial)" width="120px" readonly="true"/>
-     								<intbox value="@bind(vm.seleccionPagoForm.v_total)" width="120px" readonly="true"/>     								
+     								<intbox value="@bind(vm.seleccionPagoForm.v_total_parcial)" width="120px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>
+     								<intbox value="@bind(vm.seleccionPagoForm.v_total)" width="120px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>     								
      							</row>
      							<row>
      								<label value="Valor a pagar" />
@@ -81,7 +82,7 @@
      							</row>
      							<row>
      								<label value="Diferencia" />
-     								<intbox id="diferencia" value="@bind(vm.seleccionPagoForm.diferencia)" width="120px" readonly="true"/>
+     								<intbox id="diferencia" value="@bind(vm.seleccionPagoForm.diferencia)" width="120px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>
      								<intbox id="diferencia_total" value = "@bind(vm.diferencia_total)" width="120px" readonly="false" visible="true"/>
      							</row>
      							<row>	     							
@@ -97,30 +98,40 @@
      						</rows>
      					</grid>
      				</west>
-     				<east width="50%">
-
-     					<grid model="@bind(vm.seleccionPagoForm.listaPagos)" emptyMessage="Sin datos cargados"   
-								sclass="MyGridRowHeight">
-     						<columns>
-     							<column label="Fecha" />
-     							<column label="Forma pago" />
-     							<column label="Monto" />
-     							<column label="Eliminar" />
-     						</columns>
-     						<template name="model">     							
-     								<row>
-     								<textbox value="@load(each.fecha)"/>
-     								<textbox value="@load(each.detalle_forma_pago)"/>
-     								<intbox value="@load(each.cantidad)"/>
-     								<button image="/image/Remove_32x32.png" onClick="@command('deleteItem',arg=each)"/>
-     								</row>     							
-     						</template>
-     					</grid>
+     				
+     				<east width="50%" >
+     				
+     					<div width="100%">
      					
-     				</east>
-     			</borderlayout>
-     		</panelchildren>
-		</panel>
-
+     						<div width="100%" style="background-color:black;color: white;">
+     							<space width="10px"/>
+     							<label value="Fecha"/>
+     							<space width="70px"/>
+     							<label value="Forma pago"/>
+     							<space width="30px"/>
+     							<label value="Monto"/>
+     							<space width="60px"/>
+     							<label value="Eliminar"/>
+     						</div>     					
+     					     				
+	     					<grid model="@bind(vm.seleccionPagoForm.listaPagos)" emptyMessage="Sin datos cargados"   
+									sclass="MyGridRowHeight">	     						
+	     						<template name="model">     							
+	     								<row>
+	     								<textbox value="@load(each.fecha)" width="100px" readonly="true"/>
+	     								<textbox value="@load(each.detalle_forma_pago)" readonly="true"/>
+	     								<intbox value="@load(each.cantidad)" style="text-align:right" format="#,###,##0" locale="it" width="100px" readonly="true"/>
+	     								<button image="/image/Remove_32x32.png" onClick="@command('deleteItem',arg=each)"/>
+	     								</row>     							
+	     						</template>
+	     					</grid>
+     					</div>
+     					    					
+     				</east>     				
+     			</borderlayout>		
+     				
+			</div>		
+		</div>
+		
 	</window>	
 </zk>

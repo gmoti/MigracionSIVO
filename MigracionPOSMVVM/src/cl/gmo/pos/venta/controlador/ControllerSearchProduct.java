@@ -11,15 +11,19 @@ import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Session;
+import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Window;
 
+import cl.gmo.pos.venta.controlador.ventaDirecta.BusquedaProductosDispatchActions;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.UtilesDAOImpl;
 import cl.gmo.pos.venta.web.beans.FamiliaBean;
 import cl.gmo.pos.venta.web.beans.GrupoFamiliaBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.SubFamiliaBean;
+import cl.gmo.pos.venta.web.forms.BusquedaProductosForm;
 import cl.gmo.pos.venta.web.helper.BusquedaProductosHelper;
 
 public class ControllerSearchProduct implements Serializable{
@@ -28,106 +32,101 @@ public class ControllerSearchProduct implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -3072799490102569407L;
+	
+	Session sess = Sessions.getCurrent();
 
 	@Wire("#winBuscaProducto")
-	private Window win;
+	private Window win;	
 	
 	//constantes
 	private final String SUCURSAL="T002";
 	private final String MONEDA="PESO";
 	private final String TIPO_BUSQUEDA="DIRECTA";
-	
-	//protected UnderlayingWindowCtrl ctrl;
-	protected ControllerSearchProduct model;
-	
+
 	private FamiliaBean familiaBean;
 	private SubFamiliaBean subFamiliaBean;
 	private GrupoFamiliaBean grupoFamiliaBean;
-	private ProductosBean productoBean;
-	private String codigoSap;
-	private String codigoBarra;
-	
-	private List<FamiliaBean> familiaBeans;
-	private List<SubFamiliaBean> subFamiliaBeans;
-	private List<GrupoFamiliaBean> grupoFamiliaBeans;
-	private List<ProductosBean> productos;
+	private ProductosBean productoBean;		
 	
 	private UtilesDAOImpl utilesDaoImpl;
-	private BusquedaProductosHelper busquedaProdhelper;
-	private String origen;
+	private BusquedaProductosHelper busquedaProdhelper;	
+	
+	private BusquedaProductosForm busquedaProductosForm;
+	private BusquedaProductosDispatchActions busquedaProductosDispatchActions;
+	
+	private String winVisibleBusqueda;
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view, 
-			@ExecutionArgParam("familiaBeans")List<FamiliaBean> arg,
-			@ExecutionArgParam("org")String arg2) {
+						@ExecutionArgParam("familiaBeans")List<FamiliaBean> arg) {	
 		
 		Selectors.wireComponents(view, this, false);
+		
+		winVisibleBusqueda = "TRUE";
+		busquedaProductosForm = new BusquedaProductosForm(); 
+		busquedaProductosDispatchActions = new BusquedaProductosDispatchActions();
+		
 		familiaBean = new FamiliaBean();
 		subFamiliaBean = new SubFamiliaBean();
 		grupoFamiliaBean = new GrupoFamiliaBean();
 		productoBean = new ProductosBean();
 		
-		familiaBeans = new ArrayList<>();
-		subFamiliaBeans = new ArrayList<>();
-		grupoFamiliaBeans = new ArrayList<>();
-		productos = new ArrayList<>();
-		
 		utilesDaoImpl = new UtilesDAOImpl();
-		busquedaProdhelper = new BusquedaProductosHelper();
-		
-		codigoSap="";
-		codigoBarra="";	
-		origen = arg2;
+		busquedaProdhelper = new BusquedaProductosHelper();	
 			
 		cargaFamilias();	
 	}
 	
-	@NotifyChange("familiaBeans")
+	@NotifyChange("busquedaProductosForm")
 	public void cargaFamilias() {		
-		try {
-			familiaBeans = utilesDaoImpl.traeFamilias(TIPO_BUSQUEDA);			
+		try {			
+			busquedaProductosForm.setListaFamilias(utilesDaoImpl.traeFamilias(TIPO_BUSQUEDA));
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}		
 	}
 	
-	@NotifyChange("subFamiliaBeans")
+	@NotifyChange("busquedaProductosForm")
 	@Command
-	public void cargaSubFamilias(@BindingParam("familia")String familia) {	
-		try {
-			subFamiliaBeans = utilesDaoImpl.traeSubfamilias(familia);			
+	public void cargaSubFamilias() {	
+		try {					
+			busquedaProductosForm.setListaSubFamilias(utilesDaoImpl.traeSubfamilias(familiaBean.getCodigo()));
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}
 	}	
 	
-	@NotifyChange("grupoFamiliaBeans")
+	@NotifyChange("busquedaProductosForm")
 	@Command
-	public void cargaGrupoFamilias(@BindingParam("familia")String familia,
-			@BindingParam("subFamilia")String subFamilia) {	
-		try {
-			grupoFamiliaBeans = utilesDaoImpl.traeGruposFamilias(familia, subFamilia);
+	public void cargaGrupoFamilias() {	
+		try {			
+			busquedaProductosForm.setListaGruposFamilias(utilesDaoImpl.traeGruposFamilias(familiaBean.getCodigo(), subFamiliaBean.getCodigo() ));
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}
 	}
 	
 	
-	@NotifyChange("productos")
+	@NotifyChange("busquedaProductosForm")
 	@Command
 	public void buscarProducto(@BindingParam("arg")FamiliaBean arg,
 			@BindingParam("arg2")SubFamiliaBean arg2,
 			@BindingParam("arg3")GrupoFamiliaBean arg3,
 			@BindingParam("arg4")String arg4, @BindingParam("arg5")String arg5){
 		
-			productos = busquedaProdhelper.traeProductos(arg.getCodigo(), arg2.getCodigo(), 
-				arg3.getCodigo(), "", "", "", arg4, arg5, SUCURSAL, TIPO_BUSQUEDA);		
+			//productos = busquedaProdhelper.traeProductos(arg.getCodigo(), arg2.getCodigo(), 
+			//	arg3.getCodigo(), "", "", "", arg4, arg5, SUCURSAL, TIPO_BUSQUEDA);		
+			
+		busquedaProductosForm.setListaProductos(busquedaProdhelper.traeProductos(arg.getCodigo(), arg2.getCodigo(), 
+					arg3.getCodigo(), "", "", "", arg4, arg5, SUCURSAL, TIPO_BUSQUEDA));		
 	}
 	
 	
+	@NotifyChange("winVisibleBusqueda")
 	@Command
 	public void seleccionaProducto(@BindingParam("win")Window win) {		
-		win.detach();		
+		//win.detach();
+		winVisibleBusqueda="FALSE";
 	}
 
 
@@ -155,35 +154,6 @@ public class ControllerSearchProduct implements Serializable{
 		this.grupoFamiliaBean = grupoFamiliaBean;
 	}
 
-	public List<FamiliaBean> getFamiliaBeans() {
-		return familiaBeans;
-	}
-	public void setFamiliaBeans(List<FamiliaBean> familiaBeans) {
-		this.familiaBeans = familiaBeans;
-	}
-
-	public List<SubFamiliaBean> getSubFamiliaBeans() {
-		return subFamiliaBeans;
-	}
-	public void setSubFamiliaBeans(List<SubFamiliaBean> subFamiliaBeans) {
-		this.subFamiliaBeans = subFamiliaBeans;
-	}
-
-	public List<GrupoFamiliaBean> getGrupoFamiliaBeans() {
-		return grupoFamiliaBeans;
-	}
-	public void setGrupoFamiliaBeans(List<GrupoFamiliaBean> grupoFamiliaBeans) {
-		this.grupoFamiliaBeans = grupoFamiliaBeans;
-	}
-
-	public List<ProductosBean> getProductos() {
-		return productos;
-	}
-
-	public void setProductos(List<ProductosBean> productos) {
-		this.productos = productos;
-	}
-
 	public ProductosBean getProductoBean() {
 		return productoBean;
 	}
@@ -192,30 +162,21 @@ public class ControllerSearchProduct implements Serializable{
 		this.productoBean = productoBean;
 	}
 
-	public String getCodigoSap() {
-		return codigoSap;
+	public BusquedaProductosForm getBusquedaProductosForm() {
+		return busquedaProductosForm;
 	}
 
-	public void setCodigoSap(String codigoSap) {
-		this.codigoSap = codigoSap;
+	public void setBusquedaProductosForm(BusquedaProductosForm busquedaProductosForm) {
+		this.busquedaProductosForm = busquedaProductosForm;
 	}
 
-	public String getCodigoBarra() {
-		return codigoBarra;
+	public String getWinVisibleBusqueda() {
+		return winVisibleBusqueda;
 	}
 
-	public void setCodigoBarra(String codigoBarra) {
-		this.codigoBarra = codigoBarra;
+	public void setWinVisibleBusqueda(String winVisibleBusqueda) {
+		this.winVisibleBusqueda = winVisibleBusqueda;
 	}
 
-	public String getOrigen() {
-		return origen;
-	}
-
-	public void setOrigen(String origen) {
-		this.origen = origen;
-	}
-	
-	
 	
 }

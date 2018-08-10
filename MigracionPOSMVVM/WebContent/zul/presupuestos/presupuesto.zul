@@ -163,8 +163,8 @@
 									<textbox value="@load(each.codigo)" width="150px" tooltiptext="Click para ver detalles" 
 										onClick="@command('actualizaDetalles',arg=each)" readonly="true"/>
 									<textbox value="@load(each.descripcion)" width="350px" disabled="true"/>
-									<intbox value="@load(each.precio)"  width="80px" disabled="true"/>
-									<intbox value="@load(each.importe)" width="80px" disabled="true"/>
+									<intbox value="@load(each.precio)"  width="80px" disabled="true" style="text-align:right" format="#,###,##0" locale="it"/>
+									<intbox value="@load(each.importe)" width="80px" disabled="true" style="text-align:right" format="#,###,##0" locale="it"/>
 									<intbox value="@bind(each.cantidad)" width="80px" />
 									<intbox value="@bind(each.descuento)" width="80px" />
 									<button label="X" width="20px" onClick="@command('deleteItem',arg=each)" />
@@ -279,10 +279,10 @@
 								<row>
 									<label value="Fecha de entrega" />
 									<datebox value="@bind(vm.fechaEntrega)" format="dd/MM/yyyy"/>
-									<intbox  value="@bind(vm.presupuestoForm.subTotal)"/>
+									<intbox  value="@bind(vm.presupuestoForm.subTotal)" style="text-align:right" format="#,###,##0" locale="it"/>
 									<intbox  value="@bind(vm.presupuestoForm.descuento)"/>
 									<intbox  />
-									<intbox  value="@bind(vm.presupuestoForm.total)"/>
+									<intbox  value="@bind(vm.presupuestoForm.total)" style="text-align:right" format="#,###,##0" locale="it"/>
 								</row>
 								<row>
 									<label value="Notas" />
