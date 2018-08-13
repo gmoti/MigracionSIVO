@@ -14,6 +14,7 @@ import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
@@ -106,6 +107,17 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		
 		this.setDiferencia_total(ventaDirectaForm.getSumaTotal());
 		this.setDisableDescuento("FALSE");
+		
+		
+		try {
+			seleccionPagoForm.setAccion("");
+			seleccionPagoForm= seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		System.out.println("en init");
 	}
 
@@ -127,6 +139,11 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	@NotifyChange({"seleccionPagoForm"})
 	@Command
 	public void pagarVenta() {	
+		
+		
+		
+		
+		
 		
 		//grabar variables de sesion para el pago
 		sess.setAttribute(Constantes.STRING_LISTA_PAGOS, seleccionPagoForm.getListaPagos());
@@ -171,8 +188,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 			
 			
 			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {			
 			e.printStackTrace();
 		}
 		
@@ -212,8 +228,19 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	@NotifyChange({"seleccionPagoForm","diferencia_total"})
 	@Command
 	public void validaPago() {		
-		System.out.println("validando pago");		
-		seleccionPagoForm.setDiferencia(getDiferencia_total() - seleccionPagoForm.getV_a_pagar());
+		System.out.println("validando pago");
+		
+		int diferencia;		
+		
+		diferencia= this.diferencia_total - seleccionPagoForm.getV_a_pagar();
+		seleccionPagoForm.setDiferencia(diferencia);		
+		
+		if (seleccionPagoForm.getDiferencia() < 0) {			
+			seleccionPagoForm.setV_a_pagar(0);
+			seleccionPagoForm.setDiferencia(this.diferencia_total);
+			Messagebox.show("La diferencia no puede ser menor a 0");		
+			
+		}
 		
 		this.setDiferencia_total(seleccionPagoForm.getDiferencia());
 	}
@@ -222,21 +249,54 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	@NotifyChange({"seleccionPagoForm","disableDescuento"})
 	@Command
 	public void aplicaDescuento() {
-		Integer nuevoMonto=0;
 		
+		
+		
+		
+		/*
 		if (seleccionPagoForm.getDescuento() > 0) {
 			setDisableDescuento("TRUE");
 			nuevoMonto = (int) (seleccionPagoForm.getV_total_parcial() - (seleccionPagoForm.getV_total_parcial() * seleccionPagoForm.getDescuento()/100));
 			seleccionPagoForm.setV_total_parcial(nuevoMonto);
+		}		*/
+	}
+	
+	
+	/*function calculaTotalvtaDirecta()
+	{
+		if (document.getElementById('dto').value != document.getElementById('descuentoTotal').value) {
+			
+			var descuento_max = parseFloat(document.getElementById('descuento_max').value);
+			var dto = parseFloat(document.getElementById('descuentoTotal').value);
+			
+			if (parseInt(dto) <= parseInt(descuento_max)) {
+				document.getElementById('accion').value="descuento_directa";
+				document.getElementById('dto').value = document.getElementById('descuentoTotal').value;
+				document.seleccionPagoForm.submit();
+			} 
+			else 
+			{
+				
+					alert("El descuento debe ser menor o igual al " + descuento_max + "%");
+					document.getElementById('descuentoTotal').value = document.getElementById('dto').value;
+			}
 		}
 		
-	}
+		
+	}*/
+	
+	
 	
 	
 	@NotifyChange({"seleccionPagoForm"})	
 	@Command
 	public void deleteItem(@BindingParam("arg")PagoBean b){
-		seleccionPagoForm.getListaPagos().remove(b);		
+		
+		Window win = (Window)Executions.createComponents(
+                "/zul/venta_directa/AutorizaBorrarPago.zul", null, null);
+		
+		win.doModal(); 	
+		//seleccionPagoForm.getListaPagos().remove(b);		
 	}
 	
 	

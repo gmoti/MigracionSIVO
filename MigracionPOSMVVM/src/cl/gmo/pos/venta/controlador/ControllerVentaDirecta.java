@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -57,14 +58,14 @@ public class ControllerVentaDirecta implements Serializable{
 	private ClienteBean cliente;	
 	private Timestamp fecha;	
 	private ProductosBean productoBean;
-	private Integer total;		
+	//private Integer total;		
 	private VentaDirectaForm ventaDirectaForm;
 	private SeleccionPagoForm seleccionPagoForm;
 	
 	
 	//arreglos
 	private List<FamiliaBean> familiaBeans;
-	private ArrayList<ProductosBean> productos;
+	//private ArrayList<ProductosBean> productos;
 	
 	//Instacias
 	private UtilesDAOImpl utilesDaoImpl;
@@ -99,7 +100,7 @@ public class ControllerVentaDirecta implements Serializable{
 		cliente = new ClienteBean();			
 		productoBean = new ProductosBean();		
 		familiaBeans = new ArrayList<>();	
-		productos = new ArrayList<ProductosBean>();
+		//productos = new ArrayList<ProductosBean>();
 		
 		utilesDaoImpl = new UtilesDAOImpl();	
 		ventaDirectaAccion = new VentaDirectaDispatchActions();
@@ -110,7 +111,7 @@ public class ControllerVentaDirecta implements Serializable{
 		disablePagar="true";
 		
 		fecha = new Timestamp(System.currentTimeMillis());		
-		total=0;
+		
 		
 		//Encabezado venta directa		
 		ventaDirectaForm = new VentaDirectaForm();
@@ -129,7 +130,7 @@ public class ControllerVentaDirecta implements Serializable{
 		
 		fecha = new Timestamp(System.currentTimeMillis());		
 		cliente = new ClienteBean();
-		productos = new ArrayList<ProductosBean>();
+		//productos = new ArrayList<ProductosBean>();
 		disabledGrid="true";		
 		disableGrabar="true";		
 		disablePagar="true";
@@ -137,7 +138,11 @@ public class ControllerVentaDirecta implements Serializable{
 		ventaDirectaForm = ventaDirectaAccion.carga(ventaDirectaForm, sess);
 		ventaDirectaForm.setCajero(glprofile);
 		ventaDirectaForm.setAgente(glprofile);
-		ventaDirectaForm.setNumero_caja(caja);	
+		ventaDirectaForm.setNumero_caja(caja);
+		ventaDirectaForm.setSumaTotal(0);
+		ventaDirectaForm.setSumaTotalFinal(0);
+		
+		ventaDirectaForm.setListaProductos(new ArrayList<ProductosBean>());
 		
 		System.out.println(ventaDirectaForm.getCajero());
 		System.out.println(ventaDirectaForm.getAgente());
@@ -190,15 +195,15 @@ public class ControllerVentaDirecta implements Serializable{
 	public void grabaVenta() {
 		
 		//valida grabar venta
-		if (total < 1) {
+		if (ventaDirectaForm.getSumaTotal() < 1) {
 			Messagebox.show("Venta sin lineas");
 			return;
 		}	
 		
 		//venta_directa.js
 		ventaDirectaForm.setAccion(Constantes.STRING_AGREGAR_VENTA_DIRECTA);
-		ventaDirectaForm.setSumaTotal(total);		
-		ventaDirectaForm.setListaProductos(productos);		
+		//ventaDirectaForm.setSumaTotal(total);		
+		//ventaDirectaForm.setListaProductos(productos);		
 		
 		try {
 			
@@ -232,81 +237,107 @@ public class ControllerVentaDirecta implements Serializable{
 		
 	}
 	
-	@NotifyChange({"productos","total"})
+	@NotifyChange({"ventaDirectaForm"})
     @GlobalCommand
 	public void actProdGrid(@BindingParam("arg")ProductosBean arg) {		
 		
-		productoBean = arg;
-		productoBean.setImporte(productoBean.getPrecio());
-		productoBean.setCantidad(1);
-		productos.add(productoBean);		
-		actTotal(productos);
+		arg.setImporte(arg.getPrecio());
+		arg.setCantidad(1);
+		
+		ArrayList<ProductosBean> productos = new ArrayList<ProductosBean>();
+		
+		if (ventaDirectaForm.getListaProductos() == null) {
+			productos.add(arg);
+			ventaDirectaForm.setListaProductos(productos);
+		}else {
+			productos = ventaDirectaForm.getListaProductos();
+			productos.add(arg);
+			ventaDirectaForm.setListaProductos(productos);
+		}		
+		
+		actTotal(ventaDirectaForm.getListaProductos());
 		System.out.println("estoy en otro controlador "+arg.getDescripcion());
 				
 	}
 	
 	 
-	@NotifyChange({"productoBean","productos","total"})
+	@NotifyChange({"ventaDirectaForm"})
 	@Command
 	public void actImporteGrid(@BindingParam("arg")ProductosBean arg){
 		Integer newImport=0;		
 		
 		newImport = arg.getPrecio() * arg.getCantidad();
-		arg.setImporte(newImport);
-		//productoBean = arg;	
 		
-		for(int i=0; i< productos.size(); i++) {
-			
-			if (productos.get(i).getCod_barra().equals(arg.getCod_barra())){
-				productos.get(i).setImporte(newImport);
+		for(ProductosBean b : ventaDirectaForm.getListaProductos()) {
+			if(b.getCod_barra().equals(arg.getCod_barra())) {
+				b.setImporte(newImport);
 				break;
 			}
-            
-        }	
+		}	
 		
-		actTotal(productos);
+		/*Optional<ProductosBean> p = ventaDirectaForm.getListaProductos()
+				.stream()
+				.filter(s -> s.getCod_barra().equals(arg.getCod_barra()))
+				.findFirst()	;*/
+		
+		actTotal(ventaDirectaForm.getListaProductos());
 		System.out.println("nuevo importe " + newImport);
 	}
 	
 	
-	@NotifyChange("total")	
+	@NotifyChange("ventaDirectaForm")	
 	public void actTotal(List<ProductosBean> arg){
 		int sumar=0;
 		
-		//arg.stream().mapToInt(ProductosBean::getImporte).sum();
+		sumar = arg.stream().mapToInt(s -> s.getImporte()).sum();	
 		
-		for (ProductosBean pb:arg){
-			sumar += pb.getImporte();
-		}
-		
-		total=sumar;
-		System.out.println("nuevo total:" + total);
+		ventaDirectaForm.setSumaTotal(sumar);
+		System.out.println("nuevo total:" + sumar);
 	}	
 	
-	@NotifyChange({"productos","total"})	
+	@NotifyChange({"ventaDirectaForm"})	
 	@Command
 	public void deleteItem(@BindingParam("arg")ProductosBean b){
-		productos.remove(b);
-		actTotal(productos);
+		ventaDirectaForm.getListaProductos().remove(b);		
+		actTotal(ventaDirectaForm.getListaProductos());
 	}
 	
 	
 	@Command
 	public void pagoVenta() {
 		
-		seleccionPagoForm = new SeleccionPagoForm();
-		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaDirectaForm.getListaProductos());				
 		
-		objetos = new HashMap<String,Object>();
-		objetos.put("cliente",cliente);
-		objetos.put("pagoForm",seleccionPagoForm);
-		objetos.put("ventaDirectaForm",ventaDirectaForm);		
+		if (ventaDirectaForm.getSumaTotal() > 0) {				
+			try {
+				
+				ventaDirectaForm.setAccion("valida_venta_directa");	
+				ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);
+				
+				System.out.println(ventaDirectaForm.getEstado());
+				//validacion de multioferta
+				
+				
+				seleccionPagoForm = new SeleccionPagoForm();
+				sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaDirectaForm.getListaProductos());				
+				
+				objetos = new HashMap<String,Object>();
+				objetos.put("cliente",cliente);
+				objetos.put("pagoForm",seleccionPagoForm);
+				objetos.put("ventaDirectaForm",ventaDirectaForm);		
+				
+				Window window = (Window)Executions.createComponents(
+		                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
+				
+		        window.doModal();  				
+				
+				
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+			}
+			
+		}
 		
-		
-		Window window = (Window)Executions.createComponents(
-                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
-		
-        window.doModal();        
 	}
 	
 	
@@ -362,28 +393,12 @@ public class ControllerVentaDirecta implements Serializable{
 		this.productoBean = productoBean;
 	}
 
-	public ArrayList<ProductosBean> getProductos() {
-		return productos;
-	}
-
-	public void setProductos(ArrayList<ProductosBean> productos) {
-		this.productos = productos;
-	}
-
 	public String getDisabledGrid() {
 		return disabledGrid;
 	}
 
 	public void setDisabledGrid(String disabledGrid) {
 		this.disabledGrid = disabledGrid;
-	}
-
-	public Integer getTotal() {
-		return total;
-	}
-
-	public void setTotal(Integer total) {
-		this.total = total;
 	}
 
 	public Timestamp getFecha() {

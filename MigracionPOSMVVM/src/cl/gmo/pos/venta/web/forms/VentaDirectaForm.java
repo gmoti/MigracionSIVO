@@ -67,6 +67,26 @@ public class VentaDirectaForm{
 	private String estado_boleta;
     
 	
+	public VentaDirectaForm() {
+		
+		listaAgentes = new ArrayList<AgenteBean>();
+		listaProductos = new ArrayList<ProductosBean>();
+		listaAlbaranes = new ArrayList<TipoAlbaranBean>();
+		listaCajas = new ArrayList<CajaBean>();
+		
+		numero_caja=0;
+		cliente=0;
+		cambio=0;
+		cantidad=0;
+		sumaTotal=0;
+		sumaTotalFinal=0;
+		descuentoTotal=0;
+		porcentaje_descuento_max=0;
+		cantidad_productos=0;
+		index_multi=0;
+		index_multi_eliminar=0;
+	}
+	
 
 	public String getEstado_boleta() {
 		return estado_boleta;
