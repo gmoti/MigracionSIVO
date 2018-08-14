@@ -25,7 +25,7 @@ import cl.gmo.pos.venta.web.beans.VentaPedidoBean;
  *
  * @author Advice70
  */
-public class VentaPedidoForm{
+public class VentaPedidoForm extends GenericForm{
     
     /**
 	 * 

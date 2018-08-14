@@ -127,7 +127,7 @@
 	     								<textbox value="@load(each.fecha)" width="100px" readonly="true"/>
 	     								<textbox value="@load(each.detalle_forma_pago)" readonly="true"/>
 	     								<intbox value="@load(each.cantidad)" style="text-align:right" format="#,###,##0" locale="it" width="100px" readonly="true"/>
-	     								<button image="/image/Remove_32x32.png" onClick="@command('deleteItem',arg=each)"/>
+	     								<button image="/image/Remove_32x32.png" onClick="@command('deleteItemAutoriza',arg=each)"/>
 	     								</row>     							
 	     						</template>
 	     					</grid>

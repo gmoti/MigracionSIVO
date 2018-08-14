@@ -5,12 +5,14 @@ import java.io.Serializable;
 //pendiente los productos gratis
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.ExecutionArgParam;
+import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Component;
@@ -48,6 +50,8 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	@Wire("#winPagoVentaDirecta")
 	private Window win;
 	
+	HashMap<String,Object> objetos;
+	
 	private SeleccionPagoForm seleccionPagoForm;
 	private ClienteBean cliente;
 	private VentaDirectaForm ventaDirectaForm;
@@ -60,6 +64,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	private FormaPagoBean formaPagoBean;
 	private ArrayList<FormaPagoBean> listaFormasPago;
 	private String disableDescuento;
+	private PagoBean pagoBeanAux;
 	
 	
 	@Init
@@ -71,7 +76,8 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		
 		Selectors.wireComponents(view, this, false);
 		
-		formaPagoBean = new FormaPagoBean();		
+		formaPagoBean = new FormaPagoBean();
+		pagoBeanAux   = new PagoBean();
 		utilesDAOImpl = new UtilesDAOImpl();		
 		cargaFormaPago();		
 		
@@ -290,13 +296,26 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	
 	@NotifyChange({"seleccionPagoForm"})	
 	@Command
-	public void deleteItem(@BindingParam("arg")PagoBean b){
+	public void deleteItemAutoriza(@BindingParam("arg")PagoBean b){
+		
+		objetos = new HashMap<String,Object>();		
+		objetos.put("seleccionPagoForm",seleccionPagoForm);
+		pagoBeanAux = new PagoBean();
+		pagoBeanAux = b;
 		
 		Window win = (Window)Executions.createComponents(
-                "/zul/venta_directa/AutorizaBorrarPago.zul", null, null);
+                "/zul/venta_directa/AutorizaBorrarPago.zul", null, objetos);
 		
-		win.doModal(); 	
-		//seleccionPagoForm.getListaPagos().remove(b);		
+		win.doModal();			
+	}
+	
+	
+	@NotifyChange({"seleccionPagoForm"})	
+	@GlobalCommand
+	public void deleteItem() {
+		
+		seleccionPagoForm.getListaPagos().remove(pagoBeanAux);
+		pagoBeanAux=null;
 	}
 	
 	

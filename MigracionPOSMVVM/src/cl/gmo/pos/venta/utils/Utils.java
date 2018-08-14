@@ -44,6 +44,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.zkoss.zk.ui.Session;
 
 import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.AlbaranBean;
@@ -3435,7 +3436,7 @@ public class Utils {
    	 *@DESC: Metodo que genera el XML que consume el Aeropuerto
    	 *@DATE: 20180328
    	 */
-    public void generaXMLAeropuerto(SeleccionPagoForm spago,String foliocl,HttpSession session) throws Exception {
+    public void generaXMLAeropuerto(SeleccionPagoForm spago,String foliocl, Session session) throws Exception {
        	
 	       	DocumentBuilderFactory doc_fac = DocumentBuilderFactory.newInstance();
 	       	DocumentBuilder doc_buil = doc_fac.newDocumentBuilder();
