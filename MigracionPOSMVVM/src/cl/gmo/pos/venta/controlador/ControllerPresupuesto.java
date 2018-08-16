@@ -214,6 +214,10 @@ public class ControllerPresupuesto implements Serializable{
 	@Command
 	public void cerrarVentana(@BindingParam("arg")Window arg) {
 		
+		if (!bWin) {
+			wBusqueda.detach();
+		}
+		
 		arg.detach();
 	}
 	
@@ -222,7 +226,7 @@ public class ControllerPresupuesto implements Serializable{
 		
 		if (bWin) {
 			objetos = new HashMap<String,Object>();
-			objetos.put("presupuestoForm",presupuestoForm);		
+			objetos.put("objetoForm",presupuestoForm);		
 			wBusqueda = (Window)Executions.createComponents(
 	                "/zul/presupuestos/SearchProducto.zul", null, objetos);
 			
@@ -236,7 +240,7 @@ public class ControllerPresupuesto implements Serializable{
 	
 	@NotifyChange({"productos","presupuestoForm"})
     @GlobalCommand
-	public void actProdGridPresupuesto(@BindingParam("arg")ProductosBean arg) {		
+	public void actProdGridPresupuesto(@BindingParam("producto")ProductosBean arg) {		
 		
 		
 		productoBean = arg;
@@ -286,6 +290,29 @@ public class ControllerPresupuesto implements Serializable{
 		Messagebox.show("Grabacion exitosa");
 		
 	}	
+	
+	@NotifyChange({"productos","presupuestoForm"})
+	@Command
+	public void actImporteGrid(@BindingParam("arg")ProductosBean arg){
+		Integer newImport=0;		
+		
+		newImport = arg.getPrecio() * arg.getCantidad();
+		
+		for(ProductosBean b : productos) {
+			if(b.getCod_barra().equals(arg.getCod_barra())) {
+				b.setImporte(newImport);
+				break;
+			}
+		}	
+		
+		/*Optional<ProductosBean> p = ventaDirectaForm.getListaProductos()
+				.stream()
+				.filter(s -> s.getCod_barra().equals(arg.getCod_barra()))
+				.findFirst()	;*/
+		
+		actTotal(productos);
+		System.out.println("nuevo importe " + newImport);
+	}
 	
 	
 	@Command

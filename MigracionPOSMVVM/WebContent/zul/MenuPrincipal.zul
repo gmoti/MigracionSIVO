@@ -9,7 +9,7 @@
 				<menuseparator />
 				<menuitem label="Presupuestos" onClick="@command('seleccionMenu',arg='M1_2')"/>
 				<menuseparator />
-				<menuitem label="Encargos" />
+				<menuitem label="Encargos" onClick="@command('seleccionMenu',arg='M1_3')"/>
 				<menuseparator />
 				<menuitem label="Liberacion de encargos" />
 			</menupopup>

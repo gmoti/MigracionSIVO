@@ -28,7 +28,7 @@
 						<label value="Busqueda Productos" />
 						<!--  <div style="text-align: right;">-->
 						<space width="400px"/>
-						<toolbarbutton image="/image/Remove_32x32.png" onClick="@command('seleccionaProducto',win=winBuscaProducto)"/>							
+						<toolbarbutton image="/image/Remove_32x32.png" onClick="@command('cierraVentana')"/>							
 					</div>	
 							
 					<hbox>
@@ -235,8 +235,9 @@
 								<textbox value="@load(each.descripcion)" width="400px" readonly="true"/>  
 								<doublebox value="@load(each.precio)" width="80px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>
 								<textbox value="@load(each.grupo)" width="60px" readonly="true"/> 
-								<button label="Sel" 
-									onClick="@command('seleccionaProducto',win=winBuscaProducto) @global-command('actProdGridPresupuesto',arg=each)" width="60px"/>
+								<button label="Sel" onClick="@command('seleccionaProducto',producto=each)" width="60px"/>
+									<!-- onClick="@command('seleccionaProducto',producto=each) @global-command('actProdGridPresupuesto',arg=each)" width="60px"/> -->
+									
 							</row>							
 						</template>
 						</grid>	

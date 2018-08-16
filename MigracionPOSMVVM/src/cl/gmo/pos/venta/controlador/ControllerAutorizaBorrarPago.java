@@ -13,7 +13,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.Selectors;
-import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
@@ -34,15 +33,12 @@ public class ControllerAutorizaBorrarPago implements Serializable {
 	@Wire
 	private Window winAutorizaBorrarPago;
 	
-	
 	private SeleccionPagoForm seleccionPagoForm;	
 	private VentaPedidoDispatchActions ventaPedidoDispatchActions;
 	
 	private String user;
 	private String pass;
 	private String procedimiento;
-	private Boolean aprobado;
-	
 	
 	@Init
 	public void inicio(@ContextParam(ContextType.VIEW) Component view, 
@@ -52,16 +48,12 @@ public class ControllerAutorizaBorrarPago implements Serializable {
 		
 		user="";
 		pass="";
-		procedimiento="";
-		aprobado=false;
-		
-		
+		procedimiento="";		
 		ventaPedidoDispatchActions = new VentaPedidoDispatchActions();
 		seleccionPagoForm = new SeleccionPagoForm();
 		seleccionPagoForm = arg;		
 		
 	}
-
 
 	
 	@NotifyChange({"aprobado"})
@@ -83,9 +75,9 @@ public class ControllerAutorizaBorrarPago implements Serializable {
 				Messagebox.show("Debes estar autorizado para borrar formas de Pago");
 				break;
 			case 1:				
-				this.setAprobado(true);
-				BindUtils.postGlobalCommand(null, "deleteItem", null, null);
-				//winAutorizaBorrarPago.detach();
+				//EventQueues.APPLICATION 2 param
+				BindUtils.postGlobalCommand(null, null, "deleteItem", null);
+				winAutorizaBorrarPago.detach();
 				break;
 			case 2:
 				Messagebox.show("No tienes asignado este local para realizar cambios");
@@ -105,8 +97,7 @@ public class ControllerAutorizaBorrarPago implements Serializable {
 		
 	}
 	
-	
-	
+		
 	
 	//Getter and Setter
 
@@ -133,21 +124,5 @@ public class ControllerAutorizaBorrarPago implements Serializable {
 	public void setProcedimiento(String procedimiento) {
 		this.procedimiento = procedimiento;
 	}
-
-
-
-	public Boolean getAprobado() {
-		return aprobado;
-	}
-
-
-	public void setAprobado(Boolean aprobado) {
-		this.aprobado = aprobado;
-	}
-
-	
-	
-	
-	
 
 }

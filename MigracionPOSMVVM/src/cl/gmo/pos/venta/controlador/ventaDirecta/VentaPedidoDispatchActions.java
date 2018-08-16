@@ -39,7 +39,7 @@ public class VentaPedidoDispatchActions {
 	private String agentePago;
 	public VentaPedidoDispatchActions(){}
 
-	public void cargaInicial(VentaPedidoForm formulario, String local, Session session)
+	public VentaPedidoForm cargaInicial(VentaPedidoForm formulario, String local, Session session)
 	{
 		log.info("VentaPedidoDispatchActions:cargaInicial  inicio");
 		formulario.setListaFormaPago(helper.traeFormasPago());
@@ -56,6 +56,7 @@ public class VentaPedidoDispatchActions {
 		formulario.setCliente_dto(Constantes.STRING_BLANCO);
 		formulario.setVenta_seguro(Constantes.STRING_BLANCO);
 		formulario.setEncargo_garantia(Constantes.STRING_BLANCO);
+		
 		session.setAttribute("DTOWEB","0");
 		session.setAttribute("se_encargo_padre","");	
 		session.setAttribute("se_cupon","");
@@ -63,6 +64,8 @@ public class VentaPedidoDispatchActions {
 
 		helper.traeDatosFormulario(formulario, session);
 		log.info("VentaPedidoDispatchActions:cargaInicial  fin");
+		
+		return formulario;
 	}
 
 	public VentaPedidoForm IngresaVentaPedido(VentaPedidoForm form,	Session request) throws Exception

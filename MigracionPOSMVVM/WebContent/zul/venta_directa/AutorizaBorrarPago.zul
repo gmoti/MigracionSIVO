@@ -42,8 +42,7 @@
 			</grid>
 			
 			<div  width="100%" align="center">
-				<button label="Aceptar" onClick="@command('autoriza')" />	
-				<!-- <checkbox checked="@bind(vm.aprobado)" value="@bind(vm.aprobado)"  onCheck="@global-command('deleteItemXYZ')" visible="true"/>	 -->			
+				<button label="Aceptar" onClick="@command('autoriza')" />							
 			</div>
 
 		</div>

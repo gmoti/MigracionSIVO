@@ -2,7 +2,10 @@ package cl.gmo.pos.venta.controlador;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
@@ -27,6 +30,7 @@ import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.SubFamiliaBean;
 import cl.gmo.pos.venta.web.forms.BusquedaProductosForm;
 import cl.gmo.pos.venta.web.forms.PresupuestoForm;
+import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
 import cl.gmo.pos.venta.web.helper.BusquedaProductosHelper;
 
 public class ControllerSearchProductPres implements Serializable {
@@ -59,6 +63,7 @@ public class ControllerSearchProductPres implements Serializable {
 	
 	private String winVisibleBusqueda;
 	private PresupuestoForm presupuesto;
+	private VentaPedidoForm ventaPedido;
 	private BusquedaProductosForm busquedaProductosForm;
 	private BusquedaProductosDispatchActions busquedaProductosDispatchActions;
 	
@@ -68,22 +73,37 @@ public class ControllerSearchProductPres implements Serializable {
 	private String busquedaAvanzada;
 	private String busquedaAvanzadaLentilla;
 	
+	private int instancia=0;
+	HashMap<String,Object> objetos;
 	
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view, 
-			@ExecutionArgParam("presupuestoForm")PresupuestoForm arg) {
+			//@ExecutionArgParam("presupuestoForm")PresupuestoForm arg) {
+			@ExecutionArgParam("objetoForm")Object arg) {
 		
 		Selectors.wireComponents(view, this, false);
 		
-		winVisibleBusqueda = "TRUE";
-		presupuesto = new PresupuestoForm();
-		busquedaProductosForm = new BusquedaProductosForm(); 
-		busquedaProductosDispatchActions = new BusquedaProductosDispatchActions();
+		if (arg instanceof PresupuestoForm) {
+			presupuesto = new PresupuestoForm();
+			presupuesto = (PresupuestoForm)arg;
+			sess.setAttribute(Constantes.STRING_GRADUACION, presupuesto.getGraduacion());
+			sess.setAttribute(Constantes.STRING_GRADUACION_LENTILLA, presupuesto.getGraduacion_lentilla());
+			instancia=1;
+		}
 		
-		presupuesto = arg;
-		sess.setAttribute(Constantes.STRING_GRADUACION, arg.getGraduacion());
-		sess.setAttribute(Constantes.STRING_GRADUACION_LENTILLA, arg.getGraduacion_lentilla());
+        if (arg instanceof VentaPedidoForm) {
+        	ventaPedido = new VentaPedidoForm();
+        	ventaPedido = (VentaPedidoForm)arg;
+			sess.setAttribute(Constantes.STRING_GRADUACION, ventaPedido.getGraduacion());
+			sess.setAttribute(Constantes.STRING_GRADUACION_LENTILLA, ventaPedido.getGraduacion_lentilla());
+			instancia=2;
+		}
+		
+		
+		winVisibleBusqueda = "TRUE";		
+		busquedaProductosForm = new BusquedaProductosForm(); 
+		busquedaProductosDispatchActions = new BusquedaProductosDispatchActions();	
 		
 		familiaBean = new FamiliaBean();
 		subFamiliaBean = new SubFamiliaBean();
@@ -102,8 +122,7 @@ public class ControllerSearchProductPres implements Serializable {
 		ojoIzquierdo=false;
 		cerca=false;
 		busquedaAvanzada = "false";
-		busquedaAvanzadaLentilla= "false";
-		
+		busquedaAvanzadaLentilla= "false";		
 		
 		sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");	
 		busquedaProductosForm = busquedaProductosDispatchActions.cargaBusquedaProductos(busquedaProductosForm, sess);
@@ -113,10 +132,27 @@ public class ControllerSearchProductPres implements Serializable {
 	
 	@NotifyChange("winVisibleBusqueda")
 	@Command
-	public void seleccionaProducto(@BindingParam("win")Window win) {		
-		//win.detach();	
+	public void seleccionaProducto(@BindingParam("producto")ProductosBean producto) {	
+		
+		objetos = new HashMap<String,Object>();
+		objetos.put("producto",producto);
+				
+		if (instancia==1)
+			BindUtils.postGlobalCommand(null, null, "actProdGridPresupuesto", objetos);
+			
+		if (instancia==2)
+			BindUtils.postGlobalCommand(null, null, "actProdGridVentaPedido", objetos);			
+		
 		winVisibleBusqueda="FALSE";
 	}
+	
+	@NotifyChange("winVisibleBusqueda")
+	@Command
+	public void cierraVentana() {	
+		
+		winVisibleBusqueda="FALSE";
+	}
+	
 	
 	
 	@NotifyChange("busquedaProductosForm")

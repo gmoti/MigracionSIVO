@@ -165,7 +165,7 @@
 									<textbox value="@load(each.descripcion)" width="350px" disabled="true"/>
 									<intbox value="@load(each.precio)"  width="80px" disabled="true" style="text-align:right" format="#,###,##0" locale="it"/>
 									<intbox value="@load(each.importe)" width="80px" disabled="true" style="text-align:right" format="#,###,##0" locale="it"/>
-									<intbox value="@bind(each.cantidad)" width="80px" />
+									<intbox value="@bind(each.cantidad)" width="80px" onChange="@command('actImporteGrid',arg=each)"/>
 									<intbox value="@bind(each.descuento)" width="80px" />
 									<button label="X" width="20px" onClick="@command('deleteItem',arg=each)" />
 								</row>
