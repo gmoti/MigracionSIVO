@@ -48,11 +48,7 @@ public class ControllerPresupuesto implements Serializable{
 	private ClienteBean cliente;
 	
 	private Date fecha;
-	private Date fechaEntrega;
-	
-	private Double esfera;
-	private Double cilindro;
-	private Double Diametro;
+	private Date fechaEntrega;	
 	
 	private AgenteBean agenteBean;
 	private FormaPagoBean formaPagoBean;
@@ -64,8 +60,6 @@ public class ControllerPresupuesto implements Serializable{
 	private String agenteDisable;
 	
 	private List<FamiliaBean> familiaBeans;
-	private ArrayList<ProductosBean> productos;
-
 	
 	HashMap<String,Object> objetos;
 	private Window wBusqueda;
@@ -77,10 +71,6 @@ public class ControllerPresupuesto implements Serializable{
 		
 		fecha 		 = new Date(System.currentTimeMillis());
 		fechaEntrega = new Date(System.currentTimeMillis());
-		
-		esfera=0.00;
-		cilindro=0.00;
-		Diametro=0.00;
 		
 		fpagoDisable="True";
 		agenteDisable="True";
@@ -97,7 +87,6 @@ public class ControllerPresupuesto implements Serializable{
 		cliente = new ClienteBean();
 		
 		familiaBeans = new ArrayList<>();
-		productos = new ArrayList<ProductosBean>();
 		
 		sess.setAttribute(Constantes.STRING_PRESUPUESTO, 0);
 		presupuestoDispatchActions.cargaFormulario(presupuestoForm, sess);
@@ -160,7 +149,7 @@ public class ControllerPresupuesto implements Serializable{
 	}
 	
 	
-	@NotifyChange({"presupuestoForm","productos","agenteBean","divisaBean","formaPagoBean","idiomaBean"})
+	@NotifyChange({"presupuestoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean"})
 	@GlobalCommand
 	public void presupuestoSeleccionado(@BindingParam("arg")PresupuestosBean arg) {			
 		
@@ -168,26 +157,20 @@ public class ControllerPresupuesto implements Serializable{
 		presupuestoForm.setAccion(Constantes.STRING_SELECCIONA_PRESUPUESTO);
 		presupuestoForm = presupuestoDispatchActions.cargaPresupuestos(presupuestoForm, sess);	
 		
-		
-		productos = presupuestoForm.getListaProductos();
-		
 		posicionaCombos();
 		
 	}
 	
 	
-	@NotifyChange({"esfera","cilindro","diametro"})
+	@NotifyChange({"productoBean"})
 	@Command
 	public void actualizaDetalles(@BindingParam("arg")ProductosBean arg ) {
 		
-		setEsfera(arg.getEsfera());
-		setCilindro(arg.getCilindro());
-		setDiametro(arg.getDiametro());
-		
+		productoBean = arg;			
 	}
 	
 	
-	@NotifyChange({"presupuestoForm","productos","fpagoDisable","agenteDisable","divisaBean","idiomaBean"})
+	@NotifyChange({"presupuestoForm","fpagoDisable","agenteDisable","divisaBean","idiomaBean"})
 	@Command
 	public void nuevoPresupuesto() {		
 		
@@ -200,14 +183,13 @@ public class ControllerPresupuesto implements Serializable{
 		
 		presupuestoForm.setDivisa("PESO");
 		presupuestoForm.setIdioma("CAST");
-		productos = new ArrayList<ProductosBean>();
+		
 		posicionComboNuevo();
 		
 		if (!bWin) {
 			wBusqueda.detach();
 			bWin=true;
-		}
-		
+		}		
 	}
 	
 	
@@ -238,26 +220,35 @@ public class ControllerPresupuesto implements Serializable{
        
 	}
 	
-	@NotifyChange({"productos","presupuestoForm"})
+	@NotifyChange({"presupuestoForm"})
     @GlobalCommand
-	public void actProdGridPresupuesto(@BindingParam("producto")ProductosBean arg) {		
+	public void actProdGridPresupuesto(@BindingParam("producto")ProductosBean arg) {	
 		
 		
-		productoBean = arg;
-		productoBean.setImporte(productoBean.getPrecio());
-		productoBean.setCantidad(1);	
+		arg.setImporte(arg.getPrecio());
+		arg.setCantidad(1);
 		
-		productos.add(productoBean);
+		ArrayList<ProductosBean> productos = new ArrayList<ProductosBean>();
+		
+		if (presupuestoForm.getListaProductos() == null) {
+			productos.add(arg);
+			presupuestoForm.setListaProductos(productos);
+		}else {
+			productos = presupuestoForm.getListaProductos();
+			productos.add(arg);
+			presupuestoForm.setListaProductos(productos);
+		}	
 			
-		actTotal(productos);
+		actTotal(presupuestoForm.getListaProductos());
 		System.out.println("estoy en otro controlador "+arg.getDescripcion());				
 	}
 	
-	@NotifyChange({"productos"})	
+	@NotifyChange({"presupuestoForm"})	
 	@Command
 	public void deleteItem(@BindingParam("arg")ProductosBean b){
-		productos.remove(b);
-		actTotal(productos);
+		
+		presupuestoForm.getListaProductos().remove(b);		
+		actTotal(presupuestoForm.getListaProductos());
 	}
 	
 	@NotifyChange("presupuestoForm")	
@@ -266,6 +257,7 @@ public class ControllerPresupuesto implements Serializable{
 		
 		sumar = arg.stream().mapToInt(ProductosBean::getImporte).sum();
 		presupuestoForm.setSubTotal(sumar);
+		presupuestoForm.setTotal(sumar);
 		
 		//System.out.println("nuevo total:" + total);
 	}
@@ -277,13 +269,11 @@ public class ControllerPresupuesto implements Serializable{
 		
 		//sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");
 		presupuestoForm.setEstado(Constantes.STRING_FORMULARIO);
-		presupuestoForm.setAccion("ingresa_presupuesto");
-		presupuestoForm.setListaProductos(productos);
+		presupuestoForm.setAccion("ingresa_presupuesto");		
 		
 		//presupuestoForm.setCodigo(Constantes.STRING_BLANCO);		
 		presupuestoForm.setForma_pago(formaPagoBean.getId());
-		presupuestoForm.setAgente(agenteBean.getUsuario());
-		
+		presupuestoForm.setAgente(agenteBean.getUsuario());		
 		
 		presupuestoForm = presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);		
 		
@@ -291,14 +281,14 @@ public class ControllerPresupuesto implements Serializable{
 		
 	}	
 	
-	@NotifyChange({"productos","presupuestoForm"})
+	@NotifyChange({"presupuestoForm"})
 	@Command
 	public void actImporteGrid(@BindingParam("arg")ProductosBean arg){
 		Integer newImport=0;		
 		
 		newImport = arg.getPrecio() * arg.getCantidad();
 		
-		for(ProductosBean b : productos) {
+		for(ProductosBean b : presupuestoForm.getListaProductos()) {
 			if(b.getCod_barra().equals(arg.getCod_barra())) {
 				b.setImporte(newImport);
 				break;
@@ -310,7 +300,7 @@ public class ControllerPresupuesto implements Serializable{
 				.filter(s -> s.getCod_barra().equals(arg.getCod_barra()))
 				.findFirst()	;*/
 		
-		actTotal(productos);
+		actTotal(presupuestoForm.getListaProductos());
 		System.out.println("nuevo importe " + newImport);
 	}
 	
@@ -392,31 +382,6 @@ public class ControllerPresupuesto implements Serializable{
 		this.fechaEntrega = fechaEntrega;
 	}
 
-	public Double getEsfera() {
-		return esfera;
-	}
-
-	public void setEsfera(Double esfera) {
-		this.esfera = esfera;
-	}
-
-	public Double getCilindro() {
-		return cilindro;
-	}
-
-	public void setCilindro(Double cilindro) {
-		this.cilindro = cilindro;
-	}
-
-	public Double getDiametro() {
-		return Diametro;
-	}
-
-	public void setDiametro(Double diametro) {
-		Diametro = diametro;
-	}
-
-
 	public AgenteBean getAgenteBean() {
 		return agenteBean;
 	}
@@ -477,18 +442,16 @@ public class ControllerPresupuesto implements Serializable{
 	}
 
 
-	public ArrayList<ProductosBean> getProductos() {
-		return productos;
+	public ProductosBean getProductoBean() {
+		return productoBean;
 	}
 
 
-	public void setProductos(ArrayList<ProductosBean> productos) {
-		this.productos = productos;
+	public void setProductoBean(ProductosBean productoBean) {
+		this.productoBean = productoBean;
 	}
-
 	
 	
 
-	
 
 }

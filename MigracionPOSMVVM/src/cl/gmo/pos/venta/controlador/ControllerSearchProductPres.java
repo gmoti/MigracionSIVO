@@ -24,7 +24,9 @@ import org.zkoss.zul.Window;
 import cl.gmo.pos.venta.controlador.ventaDirecta.BusquedaProductosDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.UtilesDAOImpl;
+import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.FamiliaBean;
+import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.GrupoFamiliaBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.SubFamiliaBean;
@@ -259,6 +261,27 @@ public class ControllerSearchProductPres implements Serializable {
 			productos = busquedaProdhelper.traeProductos(arg.getCodigo(), arg2.getCodigo(), 
 				arg3.getCodigo(), "", "", "", arg4, arg5, SUCURSAL, TIPO_BUSQUEDA);		
 	}*/
+	
+	
+	@NotifyChange({"familiaBean","subFamiliaBean","grupoFamiliaBean"})
+	@Command
+	public void comboSetNull(@BindingParam("objetoBean")Object arg) {
+		
+		if (arg instanceof FamiliaBean) 
+			familiaBean=null;
+			
+			
+		
+		if (arg instanceof SubFamiliaBean)
+			subFamiliaBean=null;
+				
+				
+		
+		if (arg instanceof GrupoFamiliaBean) 
+			grupoFamiliaBean=null;
+				
+			
+	}
 	
 	
 	

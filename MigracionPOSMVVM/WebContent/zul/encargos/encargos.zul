@@ -21,8 +21,8 @@
 						<button label="Print" onClick="" />
 						<button label="Search" onClick="" />
 						<button label="X" onClick="" />
-						<button label="Save" onClick="" />
-						<button label="Exit" onClick="winEncargos.detach()" />						
+						<button label="Save" onClick="@command('grabarVentaPedido')"/>
+						<button label="Exit" onClick="@command('cerrarVentana', arg=winEncargos)" />						
 						</div>						
 					</div>
 					
@@ -56,9 +56,12 @@
 							<div width="300px">
 								<label value="Forma pago" />
 								<space width="5px"/>									
-								<combobox model="@bind(vm.ventaPedidoForm.listaFormasPago)" 
-									      width="180px" disabled="false" 
-									      constraint="no empty: Indique la forma de pago">
+								<combobox model="@bind(vm.ventaPedidoForm.listaFormasPago)"
+									      width="180px" disabled="false"									      
+									      placeholder="Seleccione"
+									      onRightClick="@command('comboSetNull',objetoBean=vm.formaPagoBean)" 					      
+									      selectedItem="@bind(vm.formaPagoBean)">
+									      
 								   <template name="model">
 									<comboitem label="@load(each.descripcion)"/>
 								   </template>	
@@ -68,7 +71,10 @@
 							<div width="350px">			
 								<label value="Divisa" />							
 								<combobox model="@bind(vm.ventaPedidoForm.listaDivisas)"  
-										  width="180px" disabled="false">
+										  width="180px" disabled="true" 
+										  placeholder="Seleccione" 
+										  selectedItem="@bind(vm.divisaBean)">
+										  
 								  <template name="model">
 									<comboitem label="@load(each.descripcion)" />
 								  </template>	
@@ -91,7 +97,11 @@
 								<label value="Agente" />	
 								<space width="38px"/>									
 								<combobox model="@bind(vm.ventaPedidoForm.listaAgentes)" 
-										  width="180px"  disabled="false">
+										  width="180px"  disabled="false" 
+										  selectedItem="@bind(vm.agenteBean)"
+										  placeholder="Seleccione"
+										  onRightClick="@command('comboSetNull',objetoBean=vm.agenteBean)">
+										  
 								  <template name="model">
 									<comboitem label="@load(each.usuario)" />
 								  </template>	
@@ -101,7 +111,10 @@
 							<div width="350px">	
 								<label value="Idioma" />
 								<combobox model="@load(vm.ventaPedidoForm.listaIdiomas)" 
-										  width="180px" disabled="false">
+										  width="180px" disabled="true" 
+										  placeholder="Seleccione" 
+										  selectedItem="@bind(vm.idiomaBean)">
+										  
 								  <template name="model">
 									<comboitem label="@load(each.descripcion)" />
 								  </template>
@@ -136,7 +149,7 @@
 							<div width="350px">	
 								<label value="Promocion" />
 								<combobox model="@load(vm.ventaPedidoForm.listaPromociones)" 
-										  width="180px">
+										  width="180px" placeholder="Seleccione">
 								  <template name="model">
 									<comboitem label="@load(each.descripcion)" />
 								  </template>
@@ -161,31 +174,32 @@
 					<div width="100%" height="90%">
 					
 						<!-- Encabezado de la grid -->
-						<div width="100%" style="background-color:black;color: white">
-							<label value="Articulo" />
-							<space width="30px"/>
+						<div width="100%" style="background-color:black;color:white; font-size: 6px;">
+							<space width="10px"/>
+							<label value="Articulo"/>
+							<space width="90px"/>
 							<label value="Descripcion" />
-							<space width="260px"/>
+							<space width="265px"/>
 							<label value="Precio IVA" />
-							<space width="30px"/>
+							<space width="20px"/>
 							
-							<label value="Cantidad" />
-							<space width="30px"/>
-							<label value="Descuento" />
-							<space width="30px"/>						
 							<label value="Importe" />
-							<space width="30px"/>
+							<space width="20px"/>
+							<label value="Cantidad" />
+							<space width="20px"/>						
+							<label value="Descuento" />
+							<space width="15px"/>
 							
 							<label value="Grupo" />
-							<space width="30px"/>
+							<space width="15px"/>
 							<label value="Estado" />
-							<space width="30px"/>
+							<space width="15px"/>
 							<label value="Tipo" />
-							<space width="30px"/>
+							<space width="15px"/>
 							<label value="Ver Tratami" />
-							<space width="30px"/>
+							<space width="20px"/>
 							<label value="Multi" />
-							<space width="30px"/>
+							<space width="20px"/>
 							
 							<button label="B" onClick="@command('buscaProducto')" width="5px"/>
 							<button label="A" onClick="@command('buscaProducto')" width="5px"/>
@@ -194,38 +208,39 @@
 						<grid model="@bind(vm.ventaPedidoForm.listaProductos)" 
 						width="100%" height="80%"	sclass="MyGridRowHeight" style="overflow: scroll;">
 							<columns>
-								<column hflex="1" />
-								<column hflex="3" />
-								<column hflex="1" />
-								<column hflex="1" />
-								<column hflex="1" />
-								<column hflex="1" />
-								<column hflex="1" />
+								<column width="155px" />
+								<column width="355px" />
+								<column width="85px" />
+								<column width="85px" />
+								<column width="85px" />
+								<column width="85px" />
 								
-								<column hflex="1" />
-								<column hflex="1" />
-								<column hflex="1" />
-								<column hflex="1" />
-								<column hflex="1" />
+								<column width="65px" />								
+								<column width="65px" />
+								<column width="65px" />
+								<column width="65px" />
+								<column width="65px" />
+								<column width="45px" />
 							</columns>
 							<template name="model">
 								<row>
 									<textbox value="@load(each.codigo)" width="150px" 
 										tooltiptext="Click para ver detalles" 
-										onClick="@command('actualizaDetalles',arg=each)" readonly="true"/>
+										onClick="@command('actualizaDetalles',arg=each)" 
+										readonly="true"/>
 									<textbox value="@load(each.descripcion)" width="350px" disabled="true"/>
 									<intbox value="@load(each.precio)"  width="80px" disabled="true" style="text-align:right" format="#,###,##0" locale="it"/>
 									<intbox value="@load(each.importe)" width="80px" disabled="true" style="text-align:right" format="#,###,##0" locale="it"/>
-									<intbox value="@bind(each.cantidad)" width="80px" />
-									<intbox value="@bind(each.descuento)" width="80px" />
+									<intbox value="@bind(each.cantidad)" width="80px" onChange="@command('actImporteGrid',arg=each)" style="text-align:right"/>
+									<intbox value="@bind(each.descuento)" width="80px" style="text-align:right"/>
 									
-									<textbox value="@load(each.grupo)" width="350px" disabled="true"/>
-									<textbox value="@load(each.estado)" width="350px" disabled="true"/>
-									<textbox value="@load(each.tipo)" width="350px" disabled="true"/>
-									<textbox value="" width="350px" disabled="true"/>
-									<textbox value="" width="350px" disabled="true"/>
+									<textbox value="@load(each.grupo)" width="60px" disabled="true"/>
+									<textbox value="@load(each.estado)" width="60px" disabled="true"/>
+									<textbox value="@load(each.tipo)" width="60px" disabled="true"/>
+									<textbox value="" width="60px" disabled="true"/>
+									<textbox value="" width="60px" disabled="true"/>
 									
-									<button label="X" width="20px" onClick="@command('deleteItem',arg=each)" />
+									<button label="X" width="40px" onClick="@command('deleteItem',arg=each)" />
 								</row>
 							</template>
 						</grid>
@@ -238,18 +253,18 @@
 						<div>
 							<hbox>
 								<label value="Esfera" />
-								<doublebox value="@load(vm.esfera)" width="60px" disabled="true" style="text-align:right"/>
+								<doublebox value="@load(vm.productoBean.esfera)" width="60px" disabled="true" style="text-align:right"/>
 								<label value="Cilindro" />
-								<doublebox value="@load(vm.cilindro)" width="60px" disabled="true" style="text-align:right"/>
+								<doublebox value="@load(vm.productoBean.cilindro)" width="60px" disabled="true" style="text-align:right"/>
 								<label value="Diametro" />
-								<doublebox value="@load(vm.diametro)" width="60px" disabled="true" style="text-align:right"/>
+								<doublebox value="@load(vm.productoBean.diametro)" width="60px" disabled="true" style="text-align:right"/>
 								
 								<label value="F.Grad" />
-								<textbox value="@load(vm.fecha_grad)" width="60px" disabled="true" style="text-align:right"/>
+								<textbox value="@load(vm.productoBean.fecha_graduacion)" width="60px" disabled="true" style="text-align:right"/>
 								<label value="No.Grad" />
-								<textbox value="@load(vm.numero_grad)" width="60px" disabled="true" style="text-align:right"/>
+								<textbox value="@load(vm.productoBean.numero_graduacion)" width="60px" disabled="true" style="text-align:right"/>
 								<label value="Ojo" />
-								<textbox value="@load(vm.ojo2)" width="60px" disabled="true" style="text-align:right"/>								
+								<textbox value="@load(vm.productoBean.ojo)" width="60px" disabled="true" style="text-align:right"/>								
 							</hbox>
 						</div>						
 					</div>

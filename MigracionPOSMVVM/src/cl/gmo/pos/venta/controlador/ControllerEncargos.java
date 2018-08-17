@@ -3,7 +3,10 @@ package cl.gmo.pos.venta.controlador;
 import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -13,14 +16,20 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.presupuesto.PresupuestoHelper;
 import cl.gmo.pos.venta.controlador.ventaDirecta.VentaPedidoDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
+import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
+import cl.gmo.pos.venta.web.beans.DivisaBean;
+import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.GraduacionesBean;
+import cl.gmo.pos.venta.web.beans.IdiomaBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
 
@@ -30,6 +39,7 @@ public class ControllerEncargos implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -3904397835765271540L;
+	
 	
 	Session sess = Sessions.getCurrent();
 	PresupuestoHelper helper = new PresupuestoHelper();
@@ -42,13 +52,13 @@ public class ControllerEncargos implements Serializable {
 	private VentaPedidoForm ventaPedidoForm;
 	private VentaPedidoDispatchActions ventaPedidoDispatchActions;
 	
+	private AgenteBean agenteBean;
+	private FormaPagoBean formaPagoBean;
+	private DivisaBean divisaBean;
+	private IdiomaBean idiomaBean;
+	
 	private ClienteBean cliente;
-	private Double esfera;
-	private Double cilindro;
-	private Double diametro;
-	private String fecha_grad;
-	private String numero_grad;
-	private String ojo2;
+	private ProductosBean productoBean;
 	
 	private String fpagoDisable;
 	private String agenteDisable;
@@ -62,15 +72,15 @@ public class ControllerEncargos implements Serializable {
 		
 		ventaPedidoForm            = new VentaPedidoForm();
 		ventaPedidoDispatchActions = new VentaPedidoDispatchActions();
-		cliente = new ClienteBean();
-		esfera  =0.00;
-		cilindro=0.00;
-		diametro=0.00;
-		fecha_grad ="";
-		numero_grad="";
-		ojo2="";
+		cliente      = new ClienteBean();
+		productoBean = new ProductosBean();	
 		
-		fpagoDisable="True";
+		agenteBean = new AgenteBean(); 
+		formaPagoBean = new FormaPagoBean();
+		divisaBean = new DivisaBean();
+		idiomaBean = new IdiomaBean();
+		
+		fpagoDisable ="True";
 		agenteDisable="True";	
 		
 		fecha= new Date(System.currentTimeMillis());
@@ -123,16 +133,33 @@ public class ControllerEncargos implements Serializable {
 	}
 	
 	
-	@NotifyChange({"ventaPedidoForm"})
+	@NotifyChange({"ventaPedidoForm","divisaBean","idiomaBean","formaPagoBean"})
 	@Command
 	public void nuevoFormulario() {
 		
 		ventaPedidoForm = ventaPedidoDispatchActions.nuevoFormulario(ventaPedidoForm, sess);
 		
+		ventaPedidoForm.setDivisa("PESO");
+		ventaPedidoForm.setIdioma("CAST");
+		ventaPedidoForm.setForma_pago("1");
+		
+		posicionComboNuevo();
+		
 		if (!bWin) {
 			wBusqueda.detach();
 			bWin=true;
 		}
+		
+	}
+	
+	@NotifyChange("ventaPedidoForm")
+	@Command
+	public void grabarVentaPedido() {		
+		
+		System.out.println("forma de pago" + formaPagoBean.getDescripcion());
+		System.out.println("Agente de la venta" + agenteBean.getUsuario());
+		
+		Messagebox.show("Grabacion exitosa");
 		
 	}
 	
@@ -154,22 +181,110 @@ public class ControllerEncargos implements Serializable {
        
 	}
 	
+	@Command
+	public void cerrarVentana(@BindingParam("arg")Window arg) {
+		
+		if (!bWin) {
+			wBusqueda.detach();
+		}
+		
+		arg.detach();
+	}
+	
 	@NotifyChange({"ventaPedidoForm"})
     @GlobalCommand
 	public void actProdGridVentaPedido(@BindingParam("producto")ProductosBean arg) {		
 		
 		
-		/*productoBean = arg;
-		productoBean.setImporte(productoBean.getPrecio());
-		productoBean.setCantidad(1);	
+		arg.setImporte(arg.getPrecio());
+		arg.setCantidad(1);
 		
-		productos.add(productoBean);
+		ArrayList<ProductosBean> productos = new ArrayList<ProductosBean>();
+		
+		if (ventaPedidoForm.getListaProductos() == null) {
+			productos.add(arg);
+			ventaPedidoForm.setListaProductos(productos);
+		}else {
+			productos = ventaPedidoForm.getListaProductos();
+			productos.add(arg);
+			ventaPedidoForm.setListaProductos(productos);
+		}	
 			
-		actTotal(productos);*/
+		actTotal(ventaPedidoForm.getListaProductos());
 		System.out.println("estoy en otro controlador de venta pedido");				
 	}
 	
+	@NotifyChange({"ventaPedidoForm"})	
+	@Command
+	public void deleteItem(@BindingParam("arg")ProductosBean b){
+		
+		ventaPedidoForm.getListaProductos().remove(b);		
+		actTotal(ventaPedidoForm.getListaProductos());
+	}
 	
+	@NotifyChange("ventaPedidoForm")	
+	public void actTotal(List<ProductosBean> arg){
+		int sumar=0;
+		
+		sumar = arg.stream().mapToInt(ProductosBean::getImporte).sum();
+		ventaPedidoForm.setSubTotal(sumar);
+		ventaPedidoForm.setTotal(sumar);		
+	}
+	
+	@NotifyChange({"productoBean"})
+	@Command
+	public void actualizaDetalles(@BindingParam("arg")ProductosBean arg ) {
+		
+		productoBean = arg;			
+	}
+	
+	
+	@NotifyChange({"ventaPedidoForm"})
+	@Command
+	public void actImporteGrid(@BindingParam("arg")ProductosBean arg){
+		Integer newImport=0;		
+		
+		newImport = arg.getPrecio() * arg.getCantidad();
+		
+		for(ProductosBean b : ventaPedidoForm.getListaProductos()) {
+			if(b.getCod_barra().equals(arg.getCod_barra())) {
+				b.setImporte(newImport);
+				break;
+			}
+		}	
+		
+		/*Optional<ProductosBean> p = ventaDirectaForm.getListaProductos()
+				.stream()
+				.filter(s -> s.getCod_barra().equals(arg.getCod_barra()))
+				.findFirst()	;*/
+		
+		actTotal(ventaPedidoForm.getListaProductos());
+		System.out.println("nuevo importe " + newImport);
+	}
+	
+	
+	public void posicionComboNuevo() {
+		
+		Optional<DivisaBean> b = ventaPedidoForm.getListaDivisas().stream().filter(s -> ventaPedidoForm.getDivisa().equals(s.getId())).findFirst();
+		divisaBean = b.get();		
+		
+		Optional<IdiomaBean> d = ventaPedidoForm.getListaIdiomas().stream().filter(s -> ventaPedidoForm.getIdioma().equals(s.getId())).findFirst();
+		idiomaBean = d.get();	
+		
+		Optional<FormaPagoBean> e = ventaPedidoForm.getListaFormasPago().stream().filter(s -> ventaPedidoForm.getForma_pago().equals(s.getId())).findFirst();
+		formaPagoBean = e.get();	
+	}
+	
+	
+	@NotifyChange({"formaPagoBean","agenteBean"})
+	@Command
+	public void comboSetNull(@BindingParam("objetoBean")Object arg) {
+		
+		if (arg instanceof FormaPagoBean)		
+		    formaPagoBean=null;
+		if (arg instanceof AgenteBean)		
+		    agenteBean=null;		
+	}
 	
 	
 	//Getter and Setter
@@ -180,54 +295,6 @@ public class ControllerEncargos implements Serializable {
 
 	public void setVentaPedidoForm(VentaPedidoForm ventaPedidoForm) {
 		this.ventaPedidoForm = ventaPedidoForm;
-	}
-
-	public Double getEsfera() {
-		return esfera;
-	}
-
-	public void setEsfera(Double esfera) {
-		this.esfera = esfera;
-	}
-
-	public Double getCilindro() {
-		return cilindro;
-	}
-
-	public void setCilindro(Double cilindro) {
-		this.cilindro = cilindro;
-	}
-
-	public Double getDiametro() {
-		return diametro;
-	}
-
-	public void setDiametro(Double diametro) {
-		this.diametro = diametro;
-	}
-
-	public String getFecha_grad() {
-		return fecha_grad;
-	}
-
-	public void setFecha_grad(String fecha_grad) {
-		this.fecha_grad = fecha_grad;
-	}
-
-	public String getNumero_grad() {
-		return numero_grad;
-	}
-
-	public void setNumero_grad(String numero_grad) {
-		this.numero_grad = numero_grad;
-	}
-	
-	public String getOjo2() {
-		return ojo2;
-	}
-
-	public void setOjo2(String ojo2) {
-		this.ojo2 = ojo2;
 	}
 
 	public String getFpagoDisable() {
@@ -261,6 +328,56 @@ public class ControllerEncargos implements Serializable {
 	public void setFechaEntrega(Date fechaEntrega) {
 		this.fechaEntrega = fechaEntrega;
 	}
+
+
+	public ProductosBean getProductoBean() {
+		return productoBean;
+	}
+
+	public void setProductoBean(ProductosBean productoBean) {
+		this.productoBean = productoBean;
+	}
+
+
+	public AgenteBean getAgenteBean() {
+		return agenteBean;
+	}
+
+
+	public void setAgenteBean(AgenteBean agenteBean) {
+		this.agenteBean = agenteBean;
+	}
+
+
+	public FormaPagoBean getFormaPagoBean() {
+		return formaPagoBean;
+	}
+
+
+	public void setFormaPagoBean(FormaPagoBean formaPagoBean) {
+		this.formaPagoBean = formaPagoBean;
+	}
+
+
+	public DivisaBean getDivisaBean() {
+		return divisaBean;
+	}
+
+
+	public void setDivisaBean(DivisaBean divisaBean) {
+		this.divisaBean = divisaBean;
+	}
+
+
+	public IdiomaBean getIdiomaBean() {
+		return idiomaBean;
+	}
+
+
+	public void setIdiomaBean(IdiomaBean idiomaBean) {
+		this.idiomaBean = idiomaBean;
+	}	
+	
 	
 	
 	

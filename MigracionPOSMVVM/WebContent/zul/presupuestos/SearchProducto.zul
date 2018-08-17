@@ -37,7 +37,9 @@
 					<combobox model="@load(vm.busquedaProductosForm.listaFamilias)" 
 								selectedItem="@bind(vm.familiaBean)" 
 								onSelect="@command('cargaSubFamilias')" 
-								onRightClick="self.setValue(null)" width="300px">						
+								placeholder="Seleccione"
+								onRightClick="@command('comboSetNull',objetoBean=vm.familiaBean)" width="300px">								
+													
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -50,7 +52,9 @@
 					<combobox model="@load(vm.busquedaProductosForm.listaSubFamilias)" 
 								selectedItem="@bind(vm.subFamiliaBean)" 
 								onSelect="@command('cargaGrupoFamilias')" 
-								onRightClick="self.setValue(null)" width="300px">													
+								placeholder="Seleccione"
+								onRightClick="@command('comboSetNull',objetoBean=vm.subFamiliaBean)" width="300px">		
+																			
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -62,7 +66,9 @@
 					<space width="85px"/>
 					<combobox model="@load(vm.busquedaProductosForm.listaGruposFamilias)" 
 								selectedItem="@bind(vm.grupoFamiliaBean)" 
-								onRightClick="self.setValue(null)" width="300px">														
+								placeholder="Seleccione"
+								onRightClick="@command('comboSetNull',objetoBean=vm.grupoFamiliaBean)" width="300px">
+																						
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
