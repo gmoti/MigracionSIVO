@@ -3,18 +3,27 @@ package cl.gmo.pos.venta.controlador;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
+import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
@@ -65,9 +74,13 @@ public class ControllerPresupuesto implements Serializable{
 	private Window wBusqueda;
 	private boolean bWin=true;
 	
+	@Wire
+	private Window winPresupuesto;
+	
 	
 	@Init
-	public void inicio() {
+	public void inicial(@ContextParam(ContextType.VIEW) Component view) {
+            Selectors.wireComponents(view, this, false);
 		
 		fecha 		 = new Date(System.currentTimeMillis());
 		fechaEntrega = new Date(System.currentTimeMillis());
@@ -106,6 +119,142 @@ public class ControllerPresupuesto implements Serializable{
 		
 	}
 	
+	
+	//===================== Acciones de la ToolBar ======================
+	//===================================================================
+	
+	//============ Nuevo Presupuesto ===============
+	//==============================================
+	
+	@NotifyChange({"presupuestoForm","fpagoDisable","agenteDisable","divisaBean","idiomaBean","formaPagoBean","agenteBean"})
+	@Command
+	public void nuevoPresupuesto() {		
+		
+		fpagoDisable="False";
+		agenteDisable="False";
+		
+		//presupuestoForm = new PresupuestoForm();
+		//sess.setAttribute(Constantes.STRING_PRESUPUESTO, 0);
+		presupuestoForm = presupuestoDispatchActions.nuevoFormulario(presupuestoForm, sess);
+		
+		presupuestoForm.setDivisa("PESO");
+		presupuestoForm.setIdioma("CAST");		
+		presupuestoForm.setAgente(sess.getAttribute("agente").toString());
+		presupuestoForm.setForma_pago("1");
+		
+		posicionaCombos();
+		
+		if (!bWin) {
+			wBusqueda.detach();
+			bWin=true;
+		}		
+	}
+	
+	//=========== Graba Presupuesto ===============
+	//=============================================
+	
+	@NotifyChange("presupuestoForm")
+	@Command
+	public void grabarPresupuesto() {		
+		
+		//sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");
+		presupuestoForm.setEstado(Constantes.STRING_FORMULARIO);
+		presupuestoForm.setAccion("ingresa_presupuesto");		
+		
+		//presupuestoForm.setCodigo(Constantes.STRING_BLANCO);		
+		presupuestoForm.setForma_pago(formaPagoBean.getId());
+		presupuestoForm.setAgente(agenteBean.getUsuario());		
+		
+		presupuestoForm = presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);		
+		Messagebox.show("Grabacion exitosa");		
+	}
+	
+	//=========== Selecciona Presupuesto ============
+	//===============================================	
+	
+	@NotifyChange({"presupuestoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean"})
+	@GlobalCommand
+	public void presupuestoSeleccionado(@BindingParam("arg")PresupuestoForm arg,
+										@BindingParam("arg2")PresupuestosBean arg2) {		
+		
+		int index=0;
+		
+		for (PresupuestosBean p : arg.getListaPresupuestos()) {			
+			if (p.getCodigo().equals(arg2.getCodigo())) break;
+			index++;			
+		}		
+		
+		presupuestoForm = arg;		
+		
+		sess.setAttribute(Constantes.STRING_PRESUPUESTO, index);
+		presupuestoForm.setAccion(Constantes.STRING_SELECCIONA_PRESUPUESTO);
+		presupuestoForm = presupuestoDispatchActions.cargaPresupuestos(presupuestoForm, sess);	
+		
+		posicionaCombos();		
+	}
+	
+	//============ Imprimir Presupuesto ==============
+	//================================================	
+	
+	@Command
+	public void imprimirPresupuesto() {
+		
+		Window window = (Window)Executions.createComponents(
+                "/zul/reportes/ReportePresupuesto.zul", null, objetos);		
+        window.doModal();
+	}	
+	
+	//================= Crear Encargo =================
+	//=================================================
+	
+	@NotifyChange({"presupuestoForm"})
+	@Command
+	public void crearEncargo() {
+		
+		HashMap<String,Object> objetos = new HashMap<String,Object>();			
+		
+		if (!presupuestoForm.getEstado().equals("cerrado")){		
+		
+			Messagebox.show("Esta seguro que desea traspasar el Presupuesto a un Encargo","Traspaso de Presupuesto", 
+					Messagebox.YES | 
+					Messagebox.NO, 
+					Messagebox.QUESTION, new EventListener<Event>() {			
+			@Override
+			public void onEvent(Event e) throws Exception {				
+					if( ((Integer) e.getData()).intValue() == Messagebox.YES ) {
+						
+						BeanGlobal bg = presupuestoDispatchActions.traspasoPedido(presupuestoForm, sess);						
+						
+						presupuestoForm = (PresupuestoForm)bg.getObj_1();
+						String accion = (String)bg.getObj_2();
+						
+						if (accion.equals(Constantes.FORWARD_ENCARGO)) {			
+							if (!bWin) {
+								wBusqueda.detach();
+							}
+							
+							winPresupuesto.detach();
+							
+							objetos.put("origen", "presupuesto");							
+							Window window = (Window)Executions.createComponents(
+					                "/zul/encargos/encargos.zul", null, objetos);			
+					        window.doModal();			
+						}
+					}						
+				}
+			});	
+			
+		} else {
+			
+			Messagebox.show("Este presupuesto, ya ha sido transferido a Encargo");
+		}
+		
+		
+	}	
+	
+	
+	//===================== Acciones comunes de la ventana ======================
+	//===========================================================================
 	
 	@NotifyChange({"presupuestoForm"})
 	@Command
@@ -149,60 +298,6 @@ public class ControllerPresupuesto implements Serializable{
 	}
 	
 	
-	@NotifyChange({"presupuestoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean"})
-	@GlobalCommand
-	public void presupuestoSeleccionado(@BindingParam("arg")PresupuestosBean arg) {			
-		
-		sess.setAttribute(Constantes.STRING_PRESUPUESTO, 0);
-		presupuestoForm.setAccion(Constantes.STRING_SELECCIONA_PRESUPUESTO);
-		presupuestoForm = presupuestoDispatchActions.cargaPresupuestos(presupuestoForm, sess);	
-		
-		posicionaCombos();
-		
-	}
-	
-	
-	@NotifyChange({"productoBean"})
-	@Command
-	public void actualizaDetalles(@BindingParam("arg")ProductosBean arg ) {
-		
-		productoBean = arg;			
-	}
-	
-	
-	@NotifyChange({"presupuestoForm","fpagoDisable","agenteDisable","divisaBean","idiomaBean"})
-	@Command
-	public void nuevoPresupuesto() {		
-		
-		fpagoDisable="False";
-		agenteDisable="False";
-		
-		//presupuestoForm = new PresupuestoForm();
-		//sess.setAttribute(Constantes.STRING_PRESUPUESTO, 0);
-		presupuestoForm = presupuestoDispatchActions.nuevoFormulario(presupuestoForm, sess);
-		
-		presupuestoForm.setDivisa("PESO");
-		presupuestoForm.setIdioma("CAST");
-		
-		posicionComboNuevo();
-		
-		if (!bWin) {
-			wBusqueda.detach();
-			bWin=true;
-		}		
-	}
-	
-	
-	@Command
-	public void cerrarVentana(@BindingParam("arg")Window arg) {
-		
-		if (!bWin) {
-			wBusqueda.detach();
-		}
-		
-		arg.detach();
-	}
-	
 	@Command
 	public void buscaProducto() {		
 		
@@ -219,6 +314,26 @@ public class ControllerPresupuesto implements Serializable{
 		}
        
 	}
+	
+	
+	@NotifyChange({"productoBean"})
+	@Command
+	public void actualizaDetalles(@BindingParam("arg")ProductosBean arg ) {
+		
+		productoBean = arg;			
+	}	
+	
+	
+	@Command
+	public void cerrarVentana(@BindingParam("arg")Window arg) {
+		
+		if (!bWin) {
+			wBusqueda.detach();
+		}
+		
+		arg.detach();
+	}	
+	
 	
 	@NotifyChange({"presupuestoForm"})
     @GlobalCommand
@@ -260,26 +375,7 @@ public class ControllerPresupuesto implements Serializable{
 		presupuestoForm.setTotal(sumar);
 		
 		//System.out.println("nuevo total:" + total);
-	}
-	
-	
-	@NotifyChange("presupuestoForm")
-	@Command
-	public void grabarPresupuesto() {		
-		
-		//sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");
-		presupuestoForm.setEstado(Constantes.STRING_FORMULARIO);
-		presupuestoForm.setAccion("ingresa_presupuesto");		
-		
-		//presupuestoForm.setCodigo(Constantes.STRING_BLANCO);		
-		presupuestoForm.setForma_pago(formaPagoBean.getId());
-		presupuestoForm.setAgente(agenteBean.getUsuario());		
-		
-		presupuestoForm = presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);		
-		
-		Messagebox.show("Grabacion exitosa");
-		
-	}	
+	}		
 	
 	@NotifyChange({"presupuestoForm"})
 	@Command
@@ -302,17 +398,7 @@ public class ControllerPresupuesto implements Serializable{
 		
 		actTotal(presupuestoForm.getListaProductos());
 		System.out.println("nuevo importe " + newImport);
-	}
-	
-	
-	@Command
-	public void imprimirPresupuesto() {
-		
-		Window window = (Window)Executions.createComponents(
-                "/zul/reportes/ReportePresupuesto.zul", null, objetos);		
-        window.doModal();
 	}	
-	
 	
 	public void posicionaCombos() {
 			
@@ -329,15 +415,6 @@ public class ControllerPresupuesto implements Serializable{
 		idiomaBean = d.get();
 	}
 	
-	public void posicionComboNuevo() {
-		
-		Optional<DivisaBean> b = presupuestoForm.getListaDivisas().stream().filter(s -> presupuestoForm.getDivisa().equals(s.getId())).findFirst();
-		divisaBean = b.get();		
-		
-		Optional<IdiomaBean> d = presupuestoForm.getListaIdiomas().stream().filter(s -> presupuestoForm.getIdioma().equals(s.getId())).findFirst();
-		idiomaBean = d.get();		
-		
-	}
 	
 	
 	//Combos Precargados para evitar recargas

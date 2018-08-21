@@ -19,7 +19,7 @@
 						<div style="text-align: right;">
 						<button label="New" onClick="@command('nuevoFormulario')" />
 						<button label="Print" onClick="" />
-						<button label="Search" onClick="" />
+						<button label="Search" onClick="@command('busquedaEncargo')" />
 						<button label="X" onClick="" />
 						<button label="Save" onClick="@command('grabarVentaPedido')"/>
 						<button label="Exit" onClick="@command('cerrarVentana', arg=winEncargos)" />						

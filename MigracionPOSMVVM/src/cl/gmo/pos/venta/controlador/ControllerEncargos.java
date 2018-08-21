@@ -10,12 +10,17 @@ import java.util.Optional;
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
+import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Messagebox;
@@ -27,10 +32,15 @@ import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.DivisaBean;
+import cl.gmo.pos.venta.web.beans.FamiliaBean;
 import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.GraduacionesBean;
 import cl.gmo.pos.venta.web.beans.IdiomaBean;
+import cl.gmo.pos.venta.web.beans.PedidosPendientesBean;
+import cl.gmo.pos.venta.web.beans.PresupuestosBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
+import cl.gmo.pos.venta.web.forms.BusquedaPedidosForm;
+import cl.gmo.pos.venta.web.forms.PresupuestoForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
 
 public class ControllerEncargos implements Serializable {
@@ -61,14 +71,18 @@ public class ControllerEncargos implements Serializable {
 	private ProductosBean productoBean;
 	
 	private String fpagoDisable;
-	private String agenteDisable;
+	private String agenteDisable;	
+	
 	private Date fecha;
 	private Date fechaEntrega;
 	private String sucursal;
 	
 	
 	@Init
-	public void incio() {
+	public void inicial(@ContextParam(ContextType.VIEW) Component view, 
+			@ExecutionArgParam("origen")String arg) {	
+
+			Selectors.wireComponents(view, this, false);
 		
 		ventaPedidoForm            = new VentaPedidoForm();
 		ventaPedidoDispatchActions = new VentaPedidoDispatchActions();
@@ -90,8 +104,103 @@ public class ControllerEncargos implements Serializable {
 		sucursal = sess.getAttribute(Constantes.STRING_SUCURSAL).toString();
 		
 		ventaPedidoForm = ventaPedidoDispatchActions.cargaInicial(ventaPedidoForm, sucursal, sess);
+		
+		//Si el encargo es invocado desde presupuesto, debe pasar por aqui
+		if(arg.equals("presupuesto")) {			
+			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedidoDesdePresupuesto(ventaPedidoForm, sess);
+			posicionComboNuevo();
+		}		
+		
 	}
-
+	
+	
+	//===================== Acciones de la ToolBar ======================
+	//===================================================================
+	
+	//============ Nuevo Pedido ====================
+	//==============================================
+	@NotifyChange({"ventaPedidoForm","divisaBean","idiomaBean","formaPagoBean","agenteBean"})
+	@Command
+	public void nuevoFormulario() {
+		
+		ventaPedidoForm = ventaPedidoDispatchActions.nuevoFormulario(ventaPedidoForm, sess);
+		
+		ventaPedidoForm.setDivisa("PESO");
+		ventaPedidoForm.setIdioma("CAST");
+		ventaPedidoForm.setForma_pago("1");
+		ventaPedidoForm.setAgente(sess.getAttribute("agente").toString());
+		
+		posicionComboNuevo();
+		
+		if (!bWin) {
+			wBusqueda.detach();
+			bWin=true;
+		}		
+	}
+	
+	
+	//============== Graba Pedido =================
+	//=============================================
+	@NotifyChange("ventaPedidoForm")
+	@Command
+	public void grabarVentaPedido() {		
+		
+		System.out.println("forma de pago" + formaPagoBean.getDescripcion());
+		System.out.println("Agente de la venta" + agenteBean.getUsuario());
+		
+		Messagebox.show("Grabacion exitosa");
+		
+	}
+	
+	
+	//=========== Busqueda de presupuesto ===========
+	//===============================================	
+	@NotifyChange("ventaPedidoForm")
+	@Command
+	public void busquedaEncargo() {
+		
+		BusquedaPedidosForm busquedaPedidosForm = new BusquedaPedidosForm();
+		
+		ventaPedidoForm = ventaPedidoDispatchActions.cargaPedidoAnterior(ventaPedidoForm, sess);
+		//Constantes.STRING_ACTION_LISTA_PEDIDOS
+		
+		objetos = new HashMap<String,Object>();		
+		objetos.put("listaPedidos",sess.getAttribute(Constantes.STRING_ACTION_LISTA_PEDIDOS));
+		
+		Window window = (Window)Executions.createComponents(
+                "/zul/encargos/BusquedaEncargo.zul", null, objetos);
+		
+        window.doModal(); 		
+		
+	}
+	
+	//=========== Recupera Encargo seleccionado======
+	//===============================================	
+		
+	@NotifyChange({"ventaPedidoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean"})
+	@GlobalCommand
+	public void encargoSeleccionado(@BindingParam("arg")ArrayList<PedidosPendientesBean> arg,
+									@BindingParam("arg2")PedidosPendientesBean arg2) {		
+		
+		
+		
+		try {
+			sess.setAttribute(Constantes.STRING_ACTION_CDG, arg2.getCdg());
+			ventaPedidoForm.setAccion(Constantes.STRING_ACTION_CARGA_PEDIDO_SELECCION);
+			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+			
+			posicionComboNuevo();
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}	
+		
+	}
+	
+	
+	//===================== Acciones comunes de la ventana ======================
+	//===========================================================================
 	
 	@NotifyChange({"ventaPedidoForm"})
 	@Command
@@ -133,37 +242,6 @@ public class ControllerEncargos implements Serializable {
 	}
 	
 	
-	@NotifyChange({"ventaPedidoForm","divisaBean","idiomaBean","formaPagoBean"})
-	@Command
-	public void nuevoFormulario() {
-		
-		ventaPedidoForm = ventaPedidoDispatchActions.nuevoFormulario(ventaPedidoForm, sess);
-		
-		ventaPedidoForm.setDivisa("PESO");
-		ventaPedidoForm.setIdioma("CAST");
-		ventaPedidoForm.setForma_pago("1");
-		
-		posicionComboNuevo();
-		
-		if (!bWin) {
-			wBusqueda.detach();
-			bWin=true;
-		}
-		
-	}
-	
-	@NotifyChange("ventaPedidoForm")
-	@Command
-	public void grabarVentaPedido() {		
-		
-		System.out.println("forma de pago" + formaPagoBean.getDescripcion());
-		System.out.println("Agente de la venta" + agenteBean.getUsuario());
-		
-		Messagebox.show("Grabacion exitosa");
-		
-	}
-	
-	
 	@Command
 	public void buscaProducto() {		
 		
@@ -177,8 +255,7 @@ public class ControllerEncargos implements Serializable {
 			bWin=false;
 		}else {
 			wBusqueda.setVisible(true);
-		}
-       
+		}       
 	}
 	
 	@Command
@@ -193,7 +270,7 @@ public class ControllerEncargos implements Serializable {
 	
 	@NotifyChange({"ventaPedidoForm"})
     @GlobalCommand
-	public void actProdGridVentaPedido(@BindingParam("producto")ProductosBean arg) {		
+	public void actProdGridVentaPedido(@BindingParam("producto")ProductosBean arg) {	
 		
 		
 		arg.setImporte(arg.getPrecio());
@@ -265,6 +342,9 @@ public class ControllerEncargos implements Serializable {
 	
 	public void posicionComboNuevo() {
 		
+		Optional<AgenteBean> a = ventaPedidoForm.getListaAgentes().stream().filter(s -> ventaPedidoForm.getAgente().equals(s.getUsuario())).findFirst();		
+		agenteBean = a.get();	
+		
 		Optional<DivisaBean> b = ventaPedidoForm.getListaDivisas().stream().filter(s -> ventaPedidoForm.getDivisa().equals(s.getId())).findFirst();
 		divisaBean = b.get();		
 		
@@ -272,7 +352,8 @@ public class ControllerEncargos implements Serializable {
 		idiomaBean = d.get();	
 		
 		Optional<FormaPagoBean> e = ventaPedidoForm.getListaFormasPago().stream().filter(s -> ventaPedidoForm.getForma_pago().equals(s.getId())).findFirst();
-		formaPagoBean = e.get();	
+		formaPagoBean = e.get();		
+		
 	}
 	
 	

@@ -7,8 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.GlobalCommand;
@@ -54,11 +52,10 @@ public class ControllerVentaDirecta implements Serializable{
 	private String nombreSucural="";
 	
 	//Definiciones 
-	private ClienteDAOImpl clienteImp;
-	private ClienteBean cliente;	
+	private ClienteDAOImpl clienteImp;		
 	private Timestamp fecha;	
 	private ProductosBean productoBean;
-	//private Integer total;		
+	private ClienteBean cliente;		
 	private VentaDirectaForm ventaDirectaForm;
 	private SeleccionPagoForm seleccionPagoForm;
 	
@@ -96,8 +93,7 @@ public class ControllerVentaDirecta implements Serializable{
 		gldescripcion = (String) sess.getAttribute("gldescripcion");
 		nombreSucural = (String) sess.getAttribute("nombreSucural");		
 				
-		clienteImp = new ClienteDAOImpl();
-		cliente = new ClienteBean();			
+		clienteImp = new ClienteDAOImpl();					
 		productoBean = new ProductosBean();		
 		familiaBeans = new ArrayList<>();	
 		//productos = new ArrayList<ProductosBean>();
@@ -120,16 +116,16 @@ public class ControllerVentaDirecta implements Serializable{
 		ventaDirectaForm = ventaDirectaAccion.cargaCaja(ventaDirectaForm, sess);		
 		ventaDirectaForm.setCajero(glprofile);
 		ventaDirectaForm.setAgente(glprofile);
-		ventaDirectaForm.setNumero_caja(caja);		
+		ventaDirectaForm.setNumero_caja(caja);
+		ventaDirectaForm.setNombreCliente("");
 	}
 	
 	
-	@NotifyChange({"ventaDirectaForm","cliente","productos","disabledGrid","disableGrabar","disablePagar"})
+	@NotifyChange({"ventaDirectaForm","productos","disabledGrid","disableGrabar","disablePagar"})
 	@Command
 	public void nuevaVenta() {
 		
 		fecha = new Timestamp(System.currentTimeMillis());		
-		cliente = new ClienteBean();
 		//productos = new ArrayList<ProductosBean>();
 		disabledGrid="true";		
 		disableGrabar="true";		
@@ -141,6 +137,7 @@ public class ControllerVentaDirecta implements Serializable{
 		ventaDirectaForm.setNumero_caja(caja);
 		ventaDirectaForm.setSumaTotal(0);
 		ventaDirectaForm.setSumaTotalFinal(0);
+		ventaDirectaForm.setNombreCliente("");
 		
 		ventaDirectaForm.setListaProductos(new ArrayList<ProductosBean>());
 		
@@ -156,19 +153,20 @@ public class ControllerVentaDirecta implements Serializable{
 	}
 	
 	
-	@NotifyChange({"ventaDirectaForm","cliente","disabledGrid","disableGrabar"})
+	@NotifyChange({"ventaDirectaForm","disabledGrid","disableGrabar"})
 	@Command
-	public void buscarCliente(@BindingParam("arg")String arg) {
+	public void buscarCliente() {
 		
 		try {
 			
-			cliente = clienteImp.traeCliente(arg, "");
+			cliente = clienteImp.traeCliente(ventaDirectaForm.getNif(), "");
 			
 			if (!cliente.getNif().equals("")) {
 			
 				ventaDirectaForm.setCodigo_cliente(cliente.getCodigo());
-				ventaDirectaForm.setNombreCliente(cliente.getApellido());
-				ventaDirectaForm.setNombre(cliente.getNombre());
+				ventaDirectaForm.setNombreCliente(cliente.getNombre() +" " + cliente.getApellido());
+				ventaDirectaForm.setNombre(cliente.getNombre());				
+				ventaDirectaForm.setDv(cliente.getDvnif());
 				
 				sess.setAttribute("nombre_cliente",cliente.getNombre() + " " + cliente.getApellido());			
 				sess.setAttribute(Constantes.STRING_CLIENTE, cliente.getCodigo());
@@ -186,9 +184,22 @@ public class ControllerVentaDirecta implements Serializable{
 			
 		} catch (Exception e) {			
 			e.printStackTrace();
-		}
-		
+		}		
 	}
+	
+	
+	@NotifyChange({"ventaDirectaForm","disabledGrid","disableGrabar"})
+	@Command
+	public void buscarClienteGenerico() {		
+		ventaDirectaForm.setNif("66666666");
+		disabledGrid="false";
+		disableGrabar="false";
+		
+		buscarCliente();
+	}
+	
+	
+	
 	
 	@NotifyChange({"disablePagar","ventaDirectaForm"})
 	@Command
@@ -376,15 +387,6 @@ public class ControllerVentaDirecta implements Serializable{
 	
 	//********* getter an setter
 	//==================================
-
-	public ClienteBean getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(ClienteBean cliente) {
-		this.cliente = cliente;
-	}
-
 	public ProductosBean getProductoBean() {
 		return productoBean;
 	}

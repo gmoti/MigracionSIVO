@@ -42,14 +42,13 @@
 						<label value="Cliente" />
 					</div>
 					<div width="300px">
-						<textbox value="@bind(vm.cliente.nif)" width="140px"/>
-						<textbox value="@bind(vm.cliente.dvnif)" width="30px"/>
-						<button  onClick="@command('buscarCliente',arg=vm.cliente.nif)" />
-						<button  onClick="" />
+						<textbox value="@bind(vm.ventaDirectaForm.nif)" width="140px"/>
+						<textbox value="@bind(vm.ventaDirectaForm.dv)" width="30px"/>
+						<button  onClick="@command('buscarCliente')" />
+						<button  onClick="@command('buscarClienteGenerico')" />
 					</div>
 					<div width="600px">
-						<textbox value="@bind(vm.cliente.nombre)" width="250px" readonly="true"/>
-						<textbox value="@bind(vm.cliente.apellido)" width="250px" readonly="true"/>
+						<textbox value="@bind(vm.ventaDirectaForm.nombreCliente)" width="500px" readonly="true"/>						
 					</div>
 					</hbox>
 				</div>
@@ -66,7 +65,14 @@
 						<label value="Cajero" />
 					</div>	
 					<div width="250px">
-						<textbox value = "@load(vm.ventaDirectaForm.cajero)" readonly="true"/>
+						
+						<combobox model = "@load(vm.ventaDirectaForm.listaAgentes)" 
+								disabled="true" placeholder="Seleccione">
+							<template name="model">
+						  		<comboitem label="@load(each.usuario)"/>
+						  	</template>								
+						</combobox>
+											
 					</div>					
 					<div width="150px">
 						<label value="Fecha" />
@@ -92,23 +98,21 @@
 						<label value="Agente" />
 					</div>	
 					<div width="250px">				
-						<textbox value = "@load(vm.ventaDirectaForm.cajero)" readonly="true"/>	
+						<combobox model = "@load(vm.ventaDirectaForm.listaAgentes)" 
+								  disabled="true" placeholder="Seleccione">
+							<template name="model">
+						  		<comboitem label="@load(each.usuario)"/>
+						  	</template>								
+						</combobox>	
 					</div>								
 					
-					<label value="Divisa" />
-					<textbox value="@bind(vm.ventaDirectaForm.divisa)" readonly="true"/>
+					<label value="Divisa" />					
+					<textbox value="@bind(vm.ventaDirectaForm.divisa)" width="100px" readonly="true"/>
 					
 					<label value="Cambio" />
 					<textbox value="@bind(vm.ventaDirectaForm.cambio)" width="50px" readonly="true"/>				
 				</hbox>
-				</div>
-				
-				<!-- <combobox id="cbx_agente" model="@load(vm.ventaDirectaForm.listaAgentes)" >
-									<template name="model">
-										<comboitem label="@load(each.usuario)"  description="@load(each.nombre_completo)"/>
-									</template>						
-								</combobox>  -->
-				
+				</div>				
 		   </div>
 		
 		</north>

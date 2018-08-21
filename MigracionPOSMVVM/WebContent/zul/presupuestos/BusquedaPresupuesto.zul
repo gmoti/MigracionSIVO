@@ -17,7 +17,7 @@
 		<div>
 			<div width="100%" height="10%" style="background-color:black;color: white">
 			    <label>Selecciona Presupuesto</label> 
-			    <space width="250px"/>
+			    <space width="100px"/>
 			    <button iconSclass="z-icon-times-circle fa-3x" 
 			    		onClick="@command('seleccionaProducto',win=winBusquedaPresupuesto)" />															
 			</div>
@@ -36,7 +36,7 @@
 			</div>
 		
 			<div height="90%">
-				<grid model="@load(vm.presupuesto.listaPresupuestos)"  sclass="MyGridRowHeight" >
+				<grid model="@load(vm.presupuesto.listaPresupuestos)"  sclass="MyGridRowHeight" style="overflow: scroll;" height="300px">
 					<columns>
 						<column width="100px" />
 						<column width="100px" />
@@ -51,7 +51,8 @@
 							<textbox value="@load(each.codigo)" readonly="true"/>
 							<textbox value="@load(each.cerrado)" readonly="true"/>					
 							<button label="Sel" 
-								onClick="@command('seleccionaProducto',win=winBusquedaPresupuesto) @global-command('presupuestoSeleccionado',arg=each)" />
+								onClick="@command('seleccionaProducto',win=winBusquedaPresupuesto) 
+										@global-command('presupuestoSeleccionado', arg=vm.presupuesto, arg2=each)" />
 						</row>
 					</template>
 				</grid>

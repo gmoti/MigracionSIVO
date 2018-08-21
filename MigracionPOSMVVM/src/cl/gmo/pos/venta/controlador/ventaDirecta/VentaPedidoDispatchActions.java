@@ -997,6 +997,7 @@ public class VentaPedidoDispatchActions {
 		helper.limpiaPreliminar(formulario, session);
 		formulario.setGraduacion(new GraduacionesBean());
 		helper.limpiaCliente(formulario);
+		
 		helper.cargaPedidoDesdePresupuesto(formulario, local, cdg, session);
 		helper.validaProductosArcliDesdePresupuesto(formulario);
 		

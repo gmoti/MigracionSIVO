@@ -1,6 +1,7 @@
 package cl.gmo.pos.venta.controlador;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -15,6 +16,7 @@ public class ControllerMenuPrincipal implements Serializable{
 	 */
 	private static final long serialVersionUID = 7591341824630787025L;
 	private Window window;
+	HashMap<String,Object> objetos;
 	
 	
 	@Init
@@ -42,8 +44,10 @@ public class ControllerMenuPrincipal implements Serializable{
 	        break;
 	        
 		case "M1_3":
+			objetos = new HashMap<String,Object>();
+			objetos.put("origen", "menu");
 			window = (Window)Executions.createComponents(
-	                "/zul/encargos/encargos.zul", null, null);			
+	                "/zul/encargos/encargos.zul", null, objetos);			
 	        window.doModal();
 	        break;    
 			

@@ -29,13 +29,9 @@ public class ControllerBusquedaPresupuesto implements Serializable{
 
 
 	Session sess = Sessions.getCurrent();
-	
-	
-	
+		
 	private PresupuestoForm presupuesto;
-	private PresupuestoDispatchActions presupuestoDispatchActions;
-	private PresupuestosBean presupuestosBean;
-	
+	private PresupuestoDispatchActions presupuestoDispatchActions;	
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view, 
@@ -66,17 +62,5 @@ public class ControllerBusquedaPresupuesto implements Serializable{
 	public void setPresupuesto(PresupuestoForm presupuesto) {
 		this.presupuesto = presupuesto;
 	}
-
-
-	public PresupuestosBean getPresupuestosBean() {
-		return presupuestosBean;
-	}
-
-
-	public void setPresupuestosBean(PresupuestosBean presupuestosBean) {
-		this.presupuestosBean = presupuestosBean;
-	}
-	
-	
 	
 }

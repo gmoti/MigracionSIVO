@@ -20,7 +20,7 @@
 						<button label="New" onClick="@command('nuevoPresupuesto')" />
 						<button label="Print" onClick="@command('imprimirPresupuesto')" />
 						<button label="Search" onClick="@command('busquedaPresupuesto')" />
-						<button label="X" onClick="" />
+						<button label="Encargo" onClick="@command('crearEncargo')" />
 						<button label="Save" onClick="@command('grabarPresupuesto')" />
 						<button label="Exit" onClick="@command('cerrarVentana', arg=winPresupuesto)" />						
 						</div>						
@@ -57,7 +57,10 @@
 								<label value="Forma pago" />
 								<space width="5px"/>									
 								<combobox id="cbx_fpago" model="@bind(vm.presupuestoForm.listaFormasPago)" 
-									width="180px" selectedItem="@bind(vm.formaPagoBean)" disabled="@bind(vm.fpagoDisable)" constraint="no empty: Indique la forma de pago">
+									width="180px" selectedItem="@bind(vm.formaPagoBean)" 
+									disabled="@bind(vm.fpagoDisable)"
+									placeholder="Seleccione" 
+									constraint="no empty: Indique la forma de pago">
 								   <template name="model">
 									<comboitem label="@load(each.descripcion)"/>
 								   </template>	
@@ -67,7 +70,7 @@
 							<div width="350px">			
 								<label value="Divisa" />							
 								<combobox id="cbx_divisa" model="@load(vm.presupuestoForm.listaDivisas)"  
-									width="180px" selectedItem="@bind(vm.divisaBean)" disabled="true">
+									width="180px" selectedItem="@bind(vm.divisaBean)" disabled="true" placeholder="Seleccione">
 								  <template name="model">
 									<comboitem label="@load(each.descripcion)" />
 								  </template>	
@@ -92,7 +95,10 @@
 								<label value="Agente" />	
 								<space width="38px"/>									
 								<combobox id="cbx_agente" model="@bind(vm.presupuestoForm.listaAgentes)" 
-									width="180px" selectedItem="@bind(vm.agenteBean)" disabled="@bind(vm.agenteDisable)" constraint="no empty: Indique un agente">
+									width="180px" selectedItem="@bind(vm.agenteBean)" 
+									disabled="@bind(vm.agenteDisable)" 
+									placeholder="Seleccione"
+									constraint="no empty: Indique un agente">
 								  <template name="model">
 									<comboitem label="@load(each.usuario)" />
 								  </template>	
@@ -102,7 +108,7 @@
 							<div width="350px">	
 								<label value="Idioma" />
 								<combobox id="cbx_idioma" model="@load(vm.presupuestoForm.listaIdiomas)" 
-									width="180px" selectedItem="@bind(vm.idiomaBean)" disabled="true">
+									width="180px" selectedItem="@bind(vm.idiomaBean)" disabled="true" placeholder="Seleccione">
 								  <template name="model">
 									<comboitem label="@load(each.descripcion)" />
 								  </template>

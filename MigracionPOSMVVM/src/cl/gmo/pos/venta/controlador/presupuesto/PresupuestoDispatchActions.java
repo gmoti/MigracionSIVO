@@ -6,6 +6,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
 
+import cl.gmo.pos.venta.controlador.BeanGlobal;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.GraduacionesBean;
@@ -62,9 +63,12 @@ public class PresupuestoDispatchActions {
 		return formulario;
 	}
 	
-	public PresupuestoForm traspasoPedido(PresupuestoForm form,Session request)
+	public BeanGlobal traspasoPedido(PresupuestoForm form,Session request)
 	{
 		log.info("PresupuestoDispatchActions:traspasoPedido  inicio");
+		
+		BeanGlobal bg;
+		
 		PresupuestoForm formulario = (PresupuestoForm)form;
 		//HttpSession session = request.getSession(true);
 		Session session = request;
@@ -94,7 +98,10 @@ public class PresupuestoDispatchActions {
 			
 		log.info("PresupuestoDispatchActions:traspasoPedido  fin");
 		//return mapping.findForward(action);
-		return formulario;
+		
+		bg = new BeanGlobal(formulario,action);
+		
+		return bg;
 	}
 	
 	public PresupuestoForm eliminarPresupuesto(PresupuestoForm form,

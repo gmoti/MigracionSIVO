@@ -131,9 +131,9 @@ public class VentaPedidoForm extends GenericForm{
     
     //Historial del Encargo
     private boolean mostrarDev;
-    private String encargo_padre;
-    private String encargo_padre_valido;
-	private String grupoSing;
+    private String encargo_padre=Constantes.STRING_BLANCO;
+    private String encargo_padre_valido=Constantes.STRING_BLANCO;
+	private String grupoSing=Constantes.STRING_BLANCO;
 	
 	//Segundo cristal
 	private String seg_cristal;
@@ -161,7 +161,7 @@ public class VentaPedidoForm extends GenericForm{
 	private String venta_seguro;
 	
 	//LMARIN 20180220
-	private String numero_cupon;
+	private String numero_cupon=Constantes.STRING_BLANCO;
 	
 
 	private String muestra_ftaller;

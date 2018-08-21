@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -24,9 +25,7 @@ import org.zkoss.zul.Window;
 import cl.gmo.pos.venta.controlador.ventaDirecta.BusquedaProductosDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.UtilesDAOImpl;
-import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.FamiliaBean;
-import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.GrupoFamiliaBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.SubFamiliaBean;
@@ -159,12 +158,27 @@ public class ControllerSearchProductPres implements Serializable {
 	
 	@NotifyChange("busquedaProductosForm")
 	@Command
-	public void despachador(@BindingParam("arg")String arg) {
+	public void despachador(@BindingParam("arg")String arg) {	
 		
+		Optional<FamiliaBean> fam    = Optional.ofNullable(familiaBean);
+		Optional<SubFamiliaBean> subfam = Optional.ofNullable(subFamiliaBean);
+		Optional<GrupoFamiliaBean> grufam = Optional.ofNullable(grupoFamiliaBean);
 		
-		busquedaProductosForm.setFamilia(familiaBean.getCodigo());
-		busquedaProductosForm.setSubFamilia(subFamiliaBean.getCodigo());
-		busquedaProductosForm.setGrupo(grupoFamiliaBean.getCodigo());		
+		if (fam.isPresent())		
+			busquedaProductosForm.setFamilia(fam.get().getCodigo());
+		else
+			busquedaProductosForm.setFamilia("");
+		
+		if(subfam.isPresent())
+			busquedaProductosForm.setSubFamilia(subfam.get().getCodigo());
+		else	
+			busquedaProductosForm.setSubFamilia("");
+		
+		if(grufam.isPresent())		
+			busquedaProductosForm.setGrupo(grufam.get().getCodigo());
+		else
+			busquedaProductosForm.setGrupo("");
+		
 	    busquedaProductosForm.setAccion(arg);     	
      	
      	if (arg.equals("buscar")) { 
@@ -268,18 +282,13 @@ public class ControllerSearchProductPres implements Serializable {
 	public void comboSetNull(@BindingParam("objetoBean")Object arg) {
 		
 		if (arg instanceof FamiliaBean) 
-			familiaBean=null;
-			
-			
+			familiaBean=null;			
 		
 		if (arg instanceof SubFamiliaBean)
-			subFamiliaBean=null;
-				
-				
+			subFamiliaBean=null;				
 		
 		if (arg instanceof GrupoFamiliaBean) 
-			grupoFamiliaBean=null;
-				
+			grupoFamiliaBean=null;				
 			
 	}
 	
