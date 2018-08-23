@@ -95,6 +95,7 @@ public class BusquedaProductosDispatchActions {
     	log.info("BusquedaProductosDispatchActions:cargaBusquedaProductosDirecto inicio");
     	log.info("BusquedaProductosDispatchActions:cargaBusquedaProductosDirecto fin");
     	//return mapping.findForward(Constantes.FORWARD_BUSQUEDA_DIRECTA);
+    	
     	return form;
     }
     

@@ -92,7 +92,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		seleccionPagoForm = (SeleccionPagoForm)arg2;
 		ventaDirectaForm  = (VentaDirectaForm)arg3;
 		
-		seleccionPagoForm.setFecha(ventaDirectaForm.getFecha());
+		/*seleccionPagoForm.setFecha(ventaDirectaForm.getFecha());
 		seleccionPagoForm.setNif(cliente.getNif());
 		seleccionPagoForm.setRazon(cliente.getRazon_social());
 		seleccionPagoForm.setDireccion(cliente.getDireccion());
@@ -121,8 +121,10 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
+		seleccionPagoDispatchActions.carga_formulario(seleccionPagoForm, sess, ventaDirectaForm.getFecha());
+		this.setDiferencia_total(ventaDirectaForm.getSumaTotal());
 		
 		System.out.println("en init");
 	}
@@ -145,10 +147,6 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	@NotifyChange({"seleccionPagoForm"})
 	@Command
 	public void pagarVenta() {	
-		
-		
-		
-		
 		
 		
 		//grabar variables de sesion para el pago
@@ -203,7 +201,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	
 	private void creaPagoExitoso() {		
 		
-		Messagebox.show("Desea Imprimir Ticket de cambio? ","Impresion de tecket", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
+		Messagebox.show("Desea Imprimir Ticket de cambio? ","Impresion de ticket", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
 			
 			@Override
 			public void onEvent(Event e) throws Exception {
@@ -257,14 +255,29 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	public void aplicaDescuento() {
 		
 		
-		
-		
-		/*
-		if (seleccionPagoForm.getDescuento() > 0) {
-			setDisableDescuento("TRUE");
-			nuevoMonto = (int) (seleccionPagoForm.getV_total_parcial() - (seleccionPagoForm.getV_total_parcial() * seleccionPagoForm.getDescuento()/100));
-			seleccionPagoForm.setV_total_parcial(nuevoMonto);
-		}		*/
+		if (seleccionPagoForm.getDescuento() != ventaDirectaForm.getDescuentoTotal()) {
+			
+			Double descuento_max = Double.parseDouble(String.valueOf(ventaDirectaForm.getPorcentaje_descuento_max()));
+			Double dto = ventaDirectaForm.getDescuentoTotal();
+			
+			if (dto <= descuento_max) {
+				
+				seleccionPagoForm.setDescuento(ventaDirectaForm.getDescuentoTotal());
+				seleccionPagoForm.setAccion("descuento_directa");
+				
+				try {
+					seleccionPagoForm =seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
+					
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+				}
+				
+			}else {
+				
+				
+			}			
+		}		
 	}
 	
 	

@@ -9,6 +9,8 @@ import java.util.HashMap;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
+
+import cl.gmo.pos.venta.controlador.BeanGlobal;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.utils.Utils;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
@@ -53,7 +55,7 @@ public class VentaDirectaDispatchActions {
     	String local = sess.getAttribute(Constantes.STRING_SUCURSAL).toString();
     	
     	VentaDirectaForm ventaDirectaForm = (VentaDirectaForm)form;
-    	//ventaDirectaForm.setEstaGrabado(2);    	
+    	ventaDirectaForm.setEstaGrabado(2);    	
     	
     	ventaDirectaForm.setEstado(Constantes.STRING_INICIO);
     	sess.removeAttribute(Constantes.STRING_LISTA_PRODUCTOS);
@@ -74,7 +76,6 @@ public class VentaDirectaDispatchActions {
     	ventaDirectaForm.setEstado_boleta("-1");
     	ventaDirectaForm.setDivisa("PESO");
     	ventaDirectaForm.setTipoAlbaran("N");
-
     	
     	//ventaHelper.ingresaVenta(ventaDirectaForm, local, null);
     	log.info("VentaDirectaDispatchActions:carga  fin");
@@ -92,7 +93,7 @@ public class VentaDirectaDispatchActions {
 		String local = sess.getAttribute(Constantes.STRING_SUCURSAL).toString().trim();
 		
 		formulario.setEstado(Constantes.STRING_FORMULARIO);
-		//formulario.setEstaGrabado(2);		
+		formulario.setEstaGrabado(2);		
 		
 		if (Constantes.STRING_AGREGAR_PRODUCTOS.equals(formulario.getAccion())) {
 			formulario.setListaProductos((ArrayList<ProductosBean>)sess.getAttribute(Constantes.STRING_LISTA_PRODUCTOS));
@@ -210,10 +211,10 @@ public class VentaDirectaDispatchActions {
 				}
 			}
 			
-			//fquiroz
-			/*if (!formulario.getEstado().equals("ERROR_GUARDADO")) {
+			
+			if (!formulario.getEstado().equals("ERROR_GUARDADO")) {
 				formulario.setEstaGrabado(2);
-			}*/
+			}
 			
 		}
 		if (Constantes.STRING_PAGO_EXITOSO.equals(formulario.getAccion()))
@@ -307,8 +308,8 @@ public class VentaDirectaDispatchActions {
     	
     	log.info("VentaDirectaDispatchActions:generaVentaDirecta  inicio");
     	VentaDirectaForm formulario = (VentaDirectaForm)form;
-    	//fquiroz
-    	//formulario.setEstaGrabado(2);
+    	
+    	formulario.setEstaGrabado(2);
     	formulario.setSumaTotalFinal(formulario.getSumaTotal());    	
     	sess.setAttribute(Constantes.STRING_TOTAL, formulario.getSumaTotalFinal());   	
     	
@@ -330,13 +331,16 @@ public class VentaDirectaDispatchActions {
     	sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, ventaHelper.traeProductosGratuitos(lista , sess.getAttribute(Constantes.STRING_NOMBRE_SUCURSAL).toString(), sess.getAttribute(Constantes.STRING_SUCURSAL).toString()));
     	log.info("VentaDirectaDispatchActions:generaVentaDirecta  fin");
     	
+    	//return mapping.findForward(Constantes.FORWARD_GENERA_VENTA);
     	return formulario;
         
     	
     }
     
-    public JSONObject validaCantidadProductosMultiofertas(Session sess)            
+    public BeanGlobal validaCantidadProductosMultiofertas(Session sess)            
     {
+    	
+    	BeanGlobal global = new BeanGlobal();
     	
     	BusquedaProductosHelper helper = new BusquedaProductosHelper();
     	HashMap hm = new HashMap();
@@ -372,6 +376,10 @@ public class VentaDirectaDispatchActions {
 	        			 if(contador < tfam.getCantidad()){
 	        				 hm.put("cantidad", "menor");
 	        				 hm.put("codigoMulti", multi.getCodigo());
+	        				 
+	        				 global.setObj_1("menor");
+	        				 global.setObj_2(multi.getCodigo());
+	        				 
 	        				 estado = false;
 	        				 break;
 	        			 }
@@ -380,19 +388,23 @@ public class VentaDirectaDispatchActions {
         		 }
         		 
         	 } 
+        	 
         	 if(estado){
 	        	 hm.put("cantidad", "ok");
 				 hm.put("codigoMulti", "");
+				 
+				 global.setObj_1("ok");
+				 global.setObj_2("");
         	 }   	
         	
     	}catch(Exception ex){
     		ex.printStackTrace();    		
     	}
     	
-    	JSONObject json = JSONObject.fromObject(hm);
+    	//JSONObject json = JSONObject.fromObject(hm);
 		//response.setHeader("X-JSON", json.toString());
 		
-    	return json;
+    	return global;
     }
   	/*
 	 * Metodo que trae los datos del cliente mediante ajax

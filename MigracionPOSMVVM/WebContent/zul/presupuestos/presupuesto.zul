@@ -80,7 +80,7 @@
 							<label value="Cambio" />
 							<textbox value="@bind(vm.presupuestoForm.cambio)" width="30px" disabled="true"/>					
 							
-							<space width="100px"></space>
+							<space width="160px"></space>
 							<label value="Hora" />
 							<datebox value="@bind(vm.fecha)" format="hh:mm:ss" disabled="true"/>
 						</hbox>
@@ -117,12 +117,12 @@
 							
 							<checkbox label="Cerrado" value="@load(vm.presupuestoForm.cerrado)" disabled="true"/>															
 							
-							<div width="400px">
+							<div width="450px">
 								<label value="Convenio" />	
-								<textbox value="@bind(vm.presupuestoForm.convenio)" width="30px" />
+								<textbox value="@bind(vm.presupuestoForm.convenio)" width="80px" />
 								<textbox value="@bind(vm.presupuestoForm.convenio_det)" width="150px"/>
-								<button label="B" onClick="" />
-								<button label="B" onClick="" />
+								<button label="B" onClick="@command('busquedaRapidaConvenio')" />
+								<button label="B" onClick="@command('busquedaConvenio')" />
 							</div>
 						</hbox>
 					</div>									

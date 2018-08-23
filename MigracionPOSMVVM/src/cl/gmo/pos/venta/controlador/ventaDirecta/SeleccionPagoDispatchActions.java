@@ -23,7 +23,7 @@ public class SeleccionPagoDispatchActions{
 	SeleccionPagoHelper helper = new SeleccionPagoHelper();
 	public SeleccionPagoDispatchActions(){}
 
-	private SeleccionPagoForm carga_formulario(SeleccionPagoForm formulario, Session session, String fecha_formulario)
+	public SeleccionPagoForm carga_formulario(SeleccionPagoForm formulario, Session session, String fecha_formulario)
 	{
 		log.info("SeleccionPagoDispatchActions:carga_formulario  inicio");
 		formulario = helper.cargaInicial(formulario, session, fecha_formulario);

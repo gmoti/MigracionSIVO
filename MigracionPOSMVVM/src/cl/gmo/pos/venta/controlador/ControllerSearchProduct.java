@@ -3,6 +3,8 @@ package cl.gmo.pos.venta.controlador;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
@@ -18,6 +20,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.ventaDirecta.BusquedaProductosDispatchActions;
+import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.UtilesDAOImpl;
 import cl.gmo.pos.venta.web.beans.FamiliaBean;
 import cl.gmo.pos.venta.web.beans.GrupoFamiliaBean;
@@ -74,23 +77,26 @@ public class ControllerSearchProduct implements Serializable{
 		utilesDaoImpl = new UtilesDAOImpl();
 		busquedaProdhelper = new BusquedaProductosHelper();	
 			
-		cargaFamilias();	
+		sess.setAttribute(Constantes.STRING_FORMULARIO, Constantes.STRING_DIRECTA);	
+		busquedaProductosForm = busquedaProductosDispatchActions.cargaBusquedaProductos(busquedaProductosForm, sess);
+		//cargaFamilias();	
 	}
 	
-	@NotifyChange("busquedaProductosForm")
+	/*@NotifyChange("busquedaProductosForm")
 	public void cargaFamilias() {		
 		try {			
 			busquedaProductosForm.setListaFamilias(utilesDaoImpl.traeFamilias(TIPO_BUSQUEDA));
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}		
-	}
+	}*/
 	
 	@NotifyChange("busquedaProductosForm")
 	@Command
 	public void cargaSubFamilias() {	
 		try {					
 			busquedaProductosForm.setListaSubFamilias(utilesDaoImpl.traeSubfamilias(familiaBean.getCodigo()));
+			cleanProducts();
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}
@@ -101,9 +107,39 @@ public class ControllerSearchProduct implements Serializable{
 	public void cargaGrupoFamilias() {	
 		try {			
 			busquedaProductosForm.setListaGruposFamilias(utilesDaoImpl.traeGruposFamilias(familiaBean.getCodigo(), subFamiliaBean.getCodigo() ));
+			cleanProducts();
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}
+	}
+	
+	
+	@NotifyChange("busquedaProductosForm")
+	@Command
+	public void despachador(@BindingParam("arg")String arg) {	
+		
+		Optional<FamiliaBean> fam    = Optional.ofNullable(familiaBean);
+		Optional<SubFamiliaBean> subfam = Optional.ofNullable(subFamiliaBean);
+		Optional<GrupoFamiliaBean> grufam = Optional.ofNullable(grupoFamiliaBean);
+		
+		if (fam.isPresent())		
+			busquedaProductosForm.setFamilia(fam.get().getCodigo());
+		else
+			busquedaProductosForm.setFamilia("");
+		
+		if(subfam.isPresent())
+			busquedaProductosForm.setSubFamilia(subfam.get().getCodigo());
+		else	
+			busquedaProductosForm.setSubFamilia("");
+		
+		if(grufam.isPresent())		
+			busquedaProductosForm.setGrupo(grufam.get().getCodigo());
+		else
+			busquedaProductosForm.setGrupo("");
+		
+		busquedaProductosForm.setAccion(arg); 
+		busquedaProductosForm = busquedaProductosDispatchActions.buscar(busquedaProductosForm, sess);
+		
 	}
 	
 	
@@ -114,8 +150,7 @@ public class ControllerSearchProduct implements Serializable{
 			@BindingParam("arg3")GrupoFamiliaBean arg3,
 			@BindingParam("arg4")String arg4, @BindingParam("arg5")String arg5){
 		
-			//productos = busquedaProdhelper.traeProductos(arg.getCodigo(), arg2.getCodigo(), 
-			//	arg3.getCodigo(), "", "", "", arg4, arg5, SUCURSAL, TIPO_BUSQUEDA);		
+				
 			
 		busquedaProductosForm.setListaProductos(busquedaProdhelper.traeProductos(arg.getCodigo(), arg2.getCodigo(), 
 					arg3.getCodigo(), "", "", "", arg4, arg5, SUCURSAL, TIPO_BUSQUEDA));		
@@ -129,6 +164,28 @@ public class ControllerSearchProduct implements Serializable{
 		winVisibleBusqueda="FALSE";
 	}
 
+	
+	@NotifyChange({"familiaBean","subFamiliaBean","grupoFamiliaBean"})
+	@Command
+	public void comboSetNull(@BindingParam("objetoBean")Object arg) {
+		
+		if (arg instanceof FamiliaBean) 
+			familiaBean=null;			
+		
+		if (arg instanceof SubFamiliaBean)
+			subFamiliaBean=null;				
+		
+		if (arg instanceof GrupoFamiliaBean) 
+			grupoFamiliaBean=null;				
+			
+	}
+	
+	@NotifyChange({"busquedaProductosForm"})
+	@Command
+	public void cleanProducts() {
+		
+		busquedaProductosForm.setListaProductos(new ArrayList<ProductosBean>());
+	}
 
 	//---------getter and setter-----------
 	//-------------------------------------

@@ -1,7 +1,7 @@
 <?page title="Busca Producto" contentType="text/html;charset=UTF-8"?>
 <zk>
 	<window id="winBuscaProductoVenta"  border="none" width="900px" visible="@bind(vm.winVisibleBusqueda)"
-		height="800px" position="center" closable="false" mode="modal" sizable="false" 		
+		height="700px" position="center" closable="false" mode="modal" sizable="false" 		
 		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerSearchProduct')">
 		
 <style>    
@@ -26,7 +26,7 @@
 					<div width="100%" style="background-color:black;color: white">
 						<label value="Busqueda Productos" />						
 						<space width="400px"/>
-						<toolbarbutton image="/image/Remove_32x32.png" onClick="winBuscaProductoVenta.detach()"/>													
+						<toolbarbutton image="/image/Remove_32x32.png" onClick="@command('seleccionaProducto',win=winBuscaProductoVenta)"/>													
 					</div>	
 							
 					<hbox>
@@ -35,7 +35,8 @@
 					<combobox model="@load(vm.busquedaProductosForm.listaFamilias)" 
 								selectedItem="@bind(vm.familiaBean)" 
 								onSelect="@command('cargaSubFamilias')" 
-								onRightClick="self.setValue(null)" width="300px">						
+								placeholder="Seleccione"
+								onRightClick="@command('comboSetNull',objetoBean=vm.familiaBean)" width="300px">						
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -48,7 +49,8 @@
 					<combobox model="@load(vm.busquedaProductosForm.listaSubFamilias)" 
 								selectedItem="@bind(vm.subFamiliaBean)" 
 								onSelect="@command('cargaGrupoFamilias')" 
-								onRightClick="self.setValue(null)" width="300px">													
+								placeholder="Seleccione"
+								onRightClick="@command('comboSetNull',objetoBean=vm.subFamiliaBean)" width="300px">													
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -60,7 +62,8 @@
 					<space width="85px"/>
 					<combobox model="@load(vm.busquedaProductosForm.listaGruposFamilias)" 
 								selectedItem="@bind(vm.grupoFamiliaBean)" 
-								onRightClick="self.setValue(null)" width="300px">														
+								placeholder="Seleccione"
+								onRightClick="@command('comboSetNull',objetoBean=vm.grupoFamiliaBean)" width="300px">														
 						<template name='model'>
 							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
 						</template>
@@ -78,8 +81,7 @@
 					<space width="66px"/>
 					<textbox value = "@bind(vm.busquedaProductosForm.codigoBarraBusqueda)"/>
 					
-					<!-- <button label="click" onClick="@command('despachador',arg='buscar')"/> -->
-					<button label="click" onClick="@command('buscarProducto',arg=vm.familiaBean,arg2=vm.subFamiliaBean,arg3=vm.grupoFamiliaBean)"/>
+					<button label="click" onClick="@command('despachador',arg='buscar')"/>					
 					</hbox>						
 				</div>			
 				

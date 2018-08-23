@@ -3,7 +3,6 @@ package cl.gmo.pos.venta.controlador;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +11,6 @@ import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
 import org.zkoss.bind.annotation.ContextType;
-import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
@@ -27,6 +25,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
+import cl.gmo.pos.venta.controlador.presupuesto.BusquedaConveniosDispatchActions;
 import cl.gmo.pos.venta.controlador.presupuesto.PresupuestoDispatchActions;
 import cl.gmo.pos.venta.controlador.presupuesto.PresupuestoHelper;
 import cl.gmo.pos.venta.utils.Constantes;
@@ -34,12 +33,12 @@ import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.ClienteDAOImpl;
 import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.DivisaBean;
-import cl.gmo.pos.venta.web.beans.FamiliaBean;
 import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.GraduacionesBean;
 import cl.gmo.pos.venta.web.beans.IdiomaBean;
 import cl.gmo.pos.venta.web.beans.PresupuestosBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
+import cl.gmo.pos.venta.web.forms.BusquedaConveniosForm;
 import cl.gmo.pos.venta.web.forms.PresupuestoForm;
 
 public class ControllerPresupuesto implements Serializable{
@@ -52,7 +51,9 @@ public class ControllerPresupuesto implements Serializable{
 	PresupuestoHelper helper = new PresupuestoHelper();
 	
 	private PresupuestoForm presupuestoForm;
+	private BusquedaConveniosForm busquedaConveniosForm;
 	private PresupuestoDispatchActions presupuestoDispatchActions;
+	private BusquedaConveniosDispatchActions busquedaConveniosDispatchActions;
 	private ClienteDAOImpl clienteImp;
 	private ClienteBean cliente;
 	
@@ -67,8 +68,6 @@ public class ControllerPresupuesto implements Serializable{
 	
 	private String fpagoDisable;
 	private String agenteDisable;
-	
-	private List<FamiliaBean> familiaBeans;
 	
 	HashMap<String,Object> objetos;
 	private Window wBusqueda;
@@ -94,12 +93,13 @@ public class ControllerPresupuesto implements Serializable{
 		idiomaBean = new IdiomaBean();		
 		productoBean = new ProductosBean();	
 		
-		presupuestoDispatchActions = new PresupuestoDispatchActions(); 
-		presupuestoForm = new PresupuestoForm();
 		clienteImp = new ClienteDAOImpl();
 		cliente = new ClienteBean();
 		
-		familiaBeans = new ArrayList<>();
+		presupuestoDispatchActions = new PresupuestoDispatchActions();
+		busquedaConveniosDispatchActions = new BusquedaConveniosDispatchActions();
+		presupuestoForm = new PresupuestoForm();
+		busquedaConveniosForm = new BusquedaConveniosForm();		
 		
 		sess.setAttribute(Constantes.STRING_PRESUPUESTO, 0);
 		presupuestoDispatchActions.cargaFormulario(presupuestoForm, sess);
@@ -112,6 +112,7 @@ public class ControllerPresupuesto implements Serializable{
 		
 		objetos = new HashMap<String,Object>();		
 		objetos.put("presupuestoForm",presupuestoForm);
+		
 		Window window = (Window)Executions.createComponents(
                 "/zul/presupuestos/BusquedaPresupuesto.zul", null, objetos);
 		
@@ -200,7 +201,7 @@ public class ControllerPresupuesto implements Serializable{
 	public void imprimirPresupuesto() {
 		
 		Window window = (Window)Executions.createComponents(
-                "/zul/reportes/ReportePresupuesto.zul", null, objetos);		
+                "/zul/reportes/ReportePresupuesto.zul", null, null);		
         window.doModal();
 	}	
 	
@@ -255,6 +256,60 @@ public class ControllerPresupuesto implements Serializable{
 	
 	//===================== Acciones comunes de la ventana ======================
 	//===========================================================================
+	
+	//===================== BUsqueda de convenios ===============================
+	
+	@NotifyChange({"presupuestoForm","busquedaConveniosForm"})
+	@Command
+	public void busquedaRapidaConvenio() {
+		
+		if(!presupuestoForm.getEstado().equals("cerrado")) {
+		
+			if (!presupuestoForm.getConvenio().equals("")) {				
+				
+				sess.setAttribute("convenio", presupuestoForm.getConvenio());
+				
+				BeanGlobal bg = busquedaConveniosDispatchActions.buscarConvenioAjax(busquedaConveniosForm, sess);
+				//param1 : descripcion
+				//param2 : cdg
+				//param3 : isapre				
+				presupuestoForm.setConvenio_det((String)bg.getObj_1());				
+				busquedaConveniosDispatchActions.selecciona_convenio_cdg(busquedaConveniosForm, sess);
+				
+				objetos = new HashMap<String,Object>();		
+				objetos.put("busquedaConvenios",busquedaConveniosForm);
+				objetos.put("origen","presupuesto");
+				
+				//se llama ventana convenio
+				Window window = (Window)Executions.createComponents(
+		                "/zul/presupuestos/SeleccionaConvenio.zul", null, objetos);		
+		        window.doModal();		
+				
+				
+			}else {				
+				Messagebox.show("Debe ingresar un código de convenio");			
+			}		
+		}else {
+			Messagebox.show("No se pueden modificar convenio, presupuesto esta cerrado");	
+		}
+	}
+	
+	
+	@NotifyChange({"presupuestoForm","busquedaConveniosForm"})
+	@Command
+	public void busquedaConvenio() {
+		
+		if(!presupuestoForm.getEstado().equals("cerrado")) {
+			
+			Window window = (Window)Executions.createComponents(
+	                "/zul/presupuestos/BusquedaConvenio.zul", null, null);		
+	        window.doModal();			
+			
+		}else {
+			Messagebox.show("No se pueden modificar convenio, presupuesto esta cerrado");	
+		}		
+	}	
+	
 	
 	@NotifyChange({"presupuestoForm"})
 	@Command
@@ -400,6 +455,7 @@ public class ControllerPresupuesto implements Serializable{
 		System.out.println("nuevo importe " + newImport);
 	}	
 	
+	
 	public void posicionaCombos() {
 			
 		Optional<AgenteBean> a = presupuestoForm.getListaAgentes().stream().filter(s -> presupuestoForm.getAgente().equals(s.getUsuario())).findFirst();		
@@ -526,6 +582,16 @@ public class ControllerPresupuesto implements Serializable{
 
 	public void setProductoBean(ProductosBean productoBean) {
 		this.productoBean = productoBean;
+	}
+
+
+	public BusquedaConveniosForm getBusquedaConveniosForm() {
+		return busquedaConveniosForm;
+	}
+
+
+	public void setBusquedaConveniosForm(BusquedaConveniosForm busquedaConveniosForm) {
+		this.busquedaConveniosForm = busquedaConveniosForm;
 	}
 	
 	

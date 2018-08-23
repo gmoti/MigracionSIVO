@@ -1,0 +1,104 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window  id="winSeleccionaConvenio" border="none" width="80%" height="40%" 
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerSeleccionaConvenio')">
+		
+				<style>
+					.MyGridRowHeight tr.z-row td.z-row-inner div.z-row-content{
+					border:1px solid white; border-right:1px solid transparent;
+					padding:0px; margin:0px; }
+				</style>		
+		
+		<div width="100%" style="background-color:black;color: white">
+			<label value="Descuentos del convenio" />
+			<space width="50px"/>
+			<toolbarbutton image="/image/Remove_32x32.png" onClick="winSeleccionaConvenio.detach()"/>	
+		</div>
+		
+		<div width="100%" height="100%">
+			<borderlayout width="100%">
+				<west width="50%">
+					<div>
+						<div width="100%" style="background-color:black;color: white">
+							<space width="10px"/>
+			                <label value="F Pago" />
+			                <space width="50px"/>
+			                <label value="Descripcion" />
+			                <space width="90px"/>
+			                <label value="% Descuento" />
+			                <space width="5px"/>
+			                <label value="Sel" />
+						</div>	
+						<div width="100%" height="100%">
+							<!-- Grid de descuentos por convenio -->
+							
+							<grid model="@load(vm.busquedaConveniosForm.lista_formas_pago)" 
+									 height="220px" emptyMessage="Sin registros seleccionados" sclass="MyGridRowHeight">
+								<columns>
+									<column width="100px" />
+									<column width="200px" />
+									<column width="100px" />
+									<column width="30px" />
+								</columns>
+								<template name="model">
+									<row>
+										<textbox value="@load(each.forma_pago)" width="95px" style="text-align:right" disabled="true"/>
+										<textbox value="@load(each.forma_pago_desc)" width="195px" disabled="true"/>
+										<textbox value="@load(each.dto)" width="95%" style="text-align:right" disabled="true"/>
+										<button onClick="@command('seleccionaConvenio',arg=each)"/>									
+									</row>
+								</template>
+							</grid>									
+						</div>
+					</div>
+				</west>
+				
+				<east width="50%">
+					<div>
+						<div width="100%" style="background-color:black;color: white">
+							<space width="10px"/>
+			                <label value="Familia" />
+			                <space width="90px"/>
+			                <label value="SubFamilia" />
+			                <space width="60px"/>
+			                <label value="GrupoFamilia" />
+						</div>	
+						<div width="100%" height="100%">
+						   <!-- Grid de familias -->
+						  
+						   <grid model="@load(vm.busquedaConveniosForm.lista_formas_pago_familias)" 
+						   		height="220px" emptyMessage="Sin registros seleccionados" sclass="MyGridRowHeight">
+								<columns>
+									<column width="150px" />
+									<column width="150px" />
+									<column width="150px" />
+								</columns>
+								
+								<template name="model">
+									<row>
+										<textbox value="@load(each.familia)"/>
+										<textbox value="@load(each.subfamilia)"/>
+										<textbox value="@load(each.grupofamilia)"/>
+										<button/>									
+									</row>
+								</template>
+						   </grid>	
+										   
+						</div>
+					</div>
+				</east>
+				
+				<south>
+					<div width="100%" height="10%" align="center">
+						<label value="Convenio Seleccionado"/>
+						<textbox value="@bind(vm.convenioLnBean.forma_pago)" width="50px" disabled="true"/>
+						<textbox value="@bind(vm.convenioLnBean.dto)" width="50px" disabled="true"/>
+						<button width="30px"/>
+						<button onClick="winSeleccionaConvenio.detach()" width="30px"/>
+					</div>				
+				</south>				
+			</borderlayout>
+		</div>
+
+</window>
+</zk>

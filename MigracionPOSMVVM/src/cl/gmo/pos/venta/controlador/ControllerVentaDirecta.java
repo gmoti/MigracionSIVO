@@ -2,21 +2,25 @@ package cl.gmo.pos.venta.controlador;
 
 
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
@@ -24,7 +28,7 @@ import org.zkoss.zul.Window;
 import cl.gmo.pos.venta.controlador.ventaDirecta.VentaDirectaDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.ClienteDAOImpl;
-import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.UtilesDAOImpl;
+import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.FamiliaBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
@@ -41,119 +45,194 @@ public class ControllerVentaDirecta implements Serializable{
 	Session sess = Sessions.getCurrent();
 	
 	@Wire
-	Window win;
-		
-	//constantes	
-
-	private String local="";
-	private int caja=0;
-	private String glprofile="";
-	private String gldescripcion="";
-	private String nombreSucural="";
+	Window winVentaDirecta;	
+	private Window wBusqueda;
+	private Window wBusquedaDirecta;
+	private boolean bWin=true;
 	
 	//Definiciones 
 	private ClienteDAOImpl clienteImp;		
-	private Timestamp fecha;	
 	private ProductosBean productoBean;
 	private ClienteBean cliente;		
 	private VentaDirectaForm ventaDirectaForm;
 	private SeleccionPagoForm seleccionPagoForm;
-	
-	
-	//arreglos
-	private List<FamiliaBean> familiaBeans;
-	//private ArrayList<ProductosBean> productos;
-	
-	//Instacias
-	private UtilesDAOImpl utilesDaoImpl;
 	private VentaDirectaDispatchActions ventaDirectaAccion;
 	
-	//Modelos
-	HashMap<String,Object> objetos;
+	//arreglos
+	private List<FamiliaBean> familiaBeans;		
 	
-	//Banderas e indicadores	
-	private String disabledGrid;
-	private String disableNew;
-	private String disablePagar;
-	private String disableGrabar;
+	//Generales
+	HashMap<String,Object> objetos;		
+	private BeanControlBotones controlBotones;		
+	private AgenteBean agenteBean;
 	
-	
-	SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy");
-	SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss");
-	private boolean bWin=true;
-	private Window wBusqueda;
-	
+		
 	
 	@Init
-	public void inicio() {	
+	public void inicial(@ContextParam(ContextType.VIEW) Component view) {
 		
-		local = (String) sess.getAttribute("sucursal");	
-		caja  = (int) sess.getAttribute("caja");
-		glprofile = (String) sess.getAttribute("glprofile");	
-		gldescripcion = (String) sess.getAttribute("gldescripcion");
-		nombreSucural = (String) sess.getAttribute("nombreSucural");		
+        Selectors.wireComponents(view, this, false);		
 				
 		clienteImp = new ClienteDAOImpl();					
 		productoBean = new ProductosBean();		
-		familiaBeans = new ArrayList<>();	
-		//productos = new ArrayList<ProductosBean>();
+		familiaBeans = new ArrayList<>();		
+		ventaDirectaAccion = new VentaDirectaDispatchActions();	
 		
-		utilesDaoImpl = new UtilesDAOImpl();	
-		ventaDirectaAccion = new VentaDirectaDispatchActions();
+		agenteBean = new AgenteBean();
 		
-		disabledGrid="true";
-		disableGrabar="true";
-		disableNew="false";
-		disablePagar="true";
-		
-		fecha = new Timestamp(System.currentTimeMillis());		
-		
+		controlBotones = new BeanControlBotones();
+		controlBotones.setEnableGrid("true");
+		controlBotones.setEnableGrabar("true");
+		controlBotones.setEnableNew("false");
+		controlBotones.setEnablePagar("true");			
 		
 		//Encabezado venta directa		
 		ventaDirectaForm = new VentaDirectaForm();
 		
 		ventaDirectaForm = ventaDirectaAccion.carga(ventaDirectaForm, sess);
-		ventaDirectaForm = ventaDirectaAccion.cargaCaja(ventaDirectaForm, sess);		
-		ventaDirectaForm.setCajero(glprofile);
-		ventaDirectaForm.setAgente(glprofile);
-		ventaDirectaForm.setNumero_caja(caja);
+		ventaDirectaForm = ventaDirectaAccion.cargaCaja(ventaDirectaForm, sess);
+		
+		ventaDirectaForm.setCajero(sess.getAttribute("glprofile").toString());
+		ventaDirectaForm.setAgente(sess.getAttribute("glprofile").toString());
+		ventaDirectaForm.setNumero_caja((int)sess.getAttribute("caja"));
 		ventaDirectaForm.setNombreCliente("");
+		ventaDirectaForm.setAgente(sess.getAttribute("agente").toString());
+		
+		posicionaCombos();
 	}
 	
 	
-	@NotifyChange({"ventaDirectaForm","productos","disabledGrid","disableGrabar","disablePagar"})
-	@Command
-	public void nuevaVenta() {
+	//===================== Acciones de la ToolBar ======================
+	//===================================================================
+	
+	//============ Nuevo Venta directa  ============
+	//==============================================
 		
-		fecha = new Timestamp(System.currentTimeMillis());		
-		//productos = new ArrayList<ProductosBean>();
-		disabledGrid="true";		
-		disableGrabar="true";		
-		disablePagar="true";
+	
+	@NotifyChange({"ventaDirectaForm","controlBotones","agenteBean"})
+	@Command
+	public void nuevaVenta() {		
+		
+		controlBotones.setEnableGrid("true");
+		controlBotones.setEnableGrabar("true");
+		controlBotones.setEnablePagar("true");
+		ventaDirectaForm.setAgente(sess.getAttribute("agente").toString());
 		
 		ventaDirectaForm = ventaDirectaAccion.carga(ventaDirectaForm, sess);
-		ventaDirectaForm.setCajero(glprofile);
-		ventaDirectaForm.setAgente(glprofile);
-		ventaDirectaForm.setNumero_caja(caja);
+		ventaDirectaForm.setCajero(sess.getAttribute("glprofile").toString());
+		ventaDirectaForm.setAgente(sess.getAttribute("glprofile").toString());
+		ventaDirectaForm.setNumero_caja((int)sess.getAttribute("caja"));
 		ventaDirectaForm.setSumaTotal(0);
 		ventaDirectaForm.setSumaTotalFinal(0);
 		ventaDirectaForm.setNombreCliente("");
 		
 		ventaDirectaForm.setListaProductos(new ArrayList<ProductosBean>());
 		
-		System.out.println(ventaDirectaForm.getCajero());
-		System.out.println(ventaDirectaForm.getAgente());
-		System.out.println(ventaDirectaForm.getNumero_caja());
+		posicionaCombos();
 		
 		if (!bWin) {
 			wBusqueda.detach();
 			bWin=true;
-		}
-		
+		}		
 	}
 	
 	
-	@NotifyChange({"ventaDirectaForm","disabledGrid","disableGrabar"})
+	//=========== Graba Venta directa =============
+	//=============================================
+	
+	@NotifyChange({"ventaDirectaForm","controlBotones"})
+	@Command
+	public void grabaVenta() {
+		
+		//valida grabar venta
+		if (ventaDirectaForm.getSumaTotal() < 1) {
+			Messagebox.show("La venta esta sin lineas", "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION);			
+			return;
+		}			
+		
+		ventaDirectaForm.setAccion(Constantes.STRING_AGREGAR_VENTA_DIRECTA);			
+		
+		try {
+			
+			ventaDirectaForm = ventaDirectaAccion.generaVentaDirecta(ventaDirectaForm, sess);			
+			ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);			
+			Messagebox.show("Venta almacenada");
+			
+			
+			controlBotones.setEnablePagar("false");
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	//=========== Graba Pago Venta ================
+	//=============================================
+	
+	@Command
+	public void pagoVenta() {	
+		
+		String respuesta;
+		String codigo;
+		
+		if (ventaDirectaForm.getSumaTotal() > 0) {				
+			try {
+				
+				ventaDirectaForm.setAccion("valida_venta_directa");	
+				ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);
+				
+				if(ventaDirectaForm.getEstado().equals("VALIDACION_MULTIOFERTA_OK")) {					
+					if(ventaDirectaForm.getNumero_ticket() !="") {
+						if(ventaDirectaForm.getSumaTotal() > 0) {
+							
+							//param 1:cantidad, param 2:codigoMulti
+							BeanGlobal global = ventaDirectaAccion.validaCantidadProductosMultiofertas(sess);
+							
+							respuesta = (String)global.getObj_1();
+							codigo = (String)global.getObj_2();
+							
+							if(!respuesta.equals("menor")) {
+								
+								ventaDirectaForm = ventaDirectaAccion.generaVentaDirecta(ventaDirectaForm, sess);
+								
+								//llamo a la ventana de pago
+								
+								seleccionPagoForm = new SeleccionPagoForm();
+								sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaDirectaForm.getListaProductos());				
+								
+								objetos = new HashMap<String,Object>();
+								objetos.put("cliente",cliente);
+								objetos.put("pagoForm",seleccionPagoForm);
+								objetos.put("ventaDirectaForm",ventaDirectaForm);		
+								
+								Window window = (Window)Executions.createComponents(
+						                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
+								
+						        window.doModal();							
+								
+								//FIN
+							}else {
+								Messagebox.show("La cantidad de productos en la multioferta "+codigo+" no esta completa", "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION);
+							}
+						}else {
+							Messagebox.show("Debe ingresar articulos para generar la venta", "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION);							
+						}
+					}else {						
+						Messagebox.show("Debe guardar la venta, antes de cobrar", "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION);
+					}
+				}				
+				
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+			}			
+		}		
+	}
+	
+	//===================== Acciones comunes de la ventana ======================
+	//===========================================================================
+	
+	@NotifyChange({"ventaDirectaForm","controlBotones"})
 	@Command
 	public void buscarCliente() {
 		
@@ -161,8 +240,7 @@ public class ControllerVentaDirecta implements Serializable{
 			
 			cliente = clienteImp.traeCliente(ventaDirectaForm.getNif(), "");
 			
-			if (!cliente.getNif().equals("")) {
-			
+			if (!cliente.getNif().equals("")) {			
 				ventaDirectaForm.setCodigo_cliente(cliente.getCodigo());
 				ventaDirectaForm.setNombreCliente(cliente.getNombre() +" " + cliente.getApellido());
 				ventaDirectaForm.setNombre(cliente.getNombre());				
@@ -172,13 +250,30 @@ public class ControllerVentaDirecta implements Serializable{
 				sess.setAttribute(Constantes.STRING_CLIENTE, cliente.getCodigo());
 	        	sess.setAttribute(Constantes.STRING_CLIENTE_VENTA, cliente.getCodigo());	        	
 	        	sess.setAttribute("NOMBRE_CLIENTE",cliente.getNombre() + " " + cliente.getApellido());       	
-	    	    sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());			
+	    	    sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());				
 				
-				disabledGrid="false";
-				disableGrabar="false";
-				//disablePagar="false";		
-			}else {
-				Messagebox.show("El cliente no existe");
+				controlBotones.setEnableGrid("false");
+				controlBotones.setEnableGrabar("false");
+			}else {				
+				
+				Messagebox.show("El cliente no existe, desea Ingresarlo","Crear cliente", 
+						Messagebox.YES | 
+						Messagebox.NO, 
+						Messagebox.QUESTION, new EventListener<Event>() {			
+					@Override
+					public void onEvent(Event e) throws Exception {				
+							if( ((Integer) e.getData()).intValue() == Messagebox.YES ) {								
+											
+									if (!bWin) wBusqueda.detach();									
+									
+									winVentaDirecta.detach();									
+															
+									Window window = (Window)Executions.createComponents(
+							                "/zul/Cliente.zul", null, null);			
+							        window.doModal();								
+							}						
+						}
+				});					
 			}
 				
 			
@@ -188,48 +283,16 @@ public class ControllerVentaDirecta implements Serializable{
 	}
 	
 	
-	@NotifyChange({"ventaDirectaForm","disabledGrid","disableGrabar"})
+	@NotifyChange({"ventaDirectaForm","controlBotones"})
 	@Command
 	public void buscarClienteGenerico() {		
-		ventaDirectaForm.setNif("66666666");
-		disabledGrid="false";
-		disableGrabar="false";
+		ventaDirectaForm.setNif("66666666");		
+		controlBotones.setEnableGrid("false");
+		controlBotones.setEnableGrabar("false");
 		
 		buscarCliente();
-	}
+	}	
 	
-	
-	
-	
-	@NotifyChange({"disablePagar","ventaDirectaForm"})
-	@Command
-	public void grabaVenta() {
-		
-		//valida grabar venta
-		if (ventaDirectaForm.getSumaTotal() < 1) {
-			Messagebox.show("Venta sin lineas");
-			return;
-		}	
-		
-		//venta_directa.js
-		ventaDirectaForm.setAccion(Constantes.STRING_AGREGAR_VENTA_DIRECTA);
-		//ventaDirectaForm.setSumaTotal(total);		
-		//ventaDirectaForm.setListaProductos(productos);		
-		
-		try {
-			
-			ventaDirectaForm = ventaDirectaAccion.generaVentaDirecta(ventaDirectaForm, sess);
-			
-			ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);			
-			Messagebox.show("Venta almacenada");
-			
-			//activar botn de pago
-			disablePagar="false";
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 	
 	@Command
 	public void buscaProducto() {		
@@ -244,9 +307,19 @@ public class ControllerVentaDirecta implements Serializable{
 	        bWin=false;
 		}else {
 			wBusqueda.setVisible(true);
-		} 
-		
+		}		
 	}
+	
+	@Command
+	public void buscaProductoDirecto() {
+		
+		wBusquedaDirecta = (Window)Executions.createComponents(
+                "/zul/venta_directa/SearchProductoDirecto.zul", null, null);
+		
+		wBusquedaDirecta.doModal();
+		
+	}	
+	
 	
 	@NotifyChange({"ventaDirectaForm"})
     @GlobalCommand
@@ -314,74 +387,34 @@ public class ControllerVentaDirecta implements Serializable{
 	}
 	
 	
-	@Command
-	public void pagoVenta() {
-		
-		
-		if (ventaDirectaForm.getSumaTotal() > 0) {				
-			try {
-				
-				ventaDirectaForm.setAccion("valida_venta_directa");	
-				ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);
-				
-				System.out.println(ventaDirectaForm.getEstado());
-				//validacion de multioferta
-				
-				
-				seleccionPagoForm = new SeleccionPagoForm();
-				sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaDirectaForm.getListaProductos());				
-				
-				objetos = new HashMap<String,Object>();
-				objetos.put("cliente",cliente);
-				objetos.put("pagoForm",seleccionPagoForm);
-				objetos.put("ventaDirectaForm",ventaDirectaForm);		
-				
-				Window window = (Window)Executions.createComponents(
-		                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
-				
-		        window.doModal();  				
-				
-				
-			} catch (Exception e) {
-				
-				e.printStackTrace();
-			}
-			
-		}
-		
-	}
+	
 	
 	
 	@Command
 	public void salir() {
 		
-		Messagebox.show("Aviso","Salir de Ventas Directas",Messagebox.YES|Messagebox.NO,Messagebox.QUESTION ,new EventListener() {
+		Messagebox.show("Salir de Ventas Directas","Notificacion",
+				Messagebox.YES|
+				Messagebox.NO,
+				Messagebox.QUESTION ,new EventListener<Event>() {
 
 			@Override
 			public void onEvent(Event e) throws Exception {				
-				if(  ((Integer) e.getData()).intValue() == Messagebox.YES)
-				    win.detach();
-			}
-			
-			
-		});
+				if(  ((Integer) e.getData()).intValue() == Messagebox.YES) {
+					
+					if (!bWin) wBusqueda.detach();
+					
+					winVentaDirecta.detach();
+				}					
+			}			
+		});		
+	}
+	
+	public void posicionaCombos() {
 		
+		Optional<AgenteBean> a = ventaDirectaForm.getListaAgentes().stream().filter(s -> ventaDirectaForm.getAgente().equals(s.getUsuario())).findFirst();		
+		agenteBean = a.get();		
 	}
-	
-	
-	//Combos Precargados para evitar recargas
-	//========================================
-	
-	public void cargaFamilias() {		
-		try {			
-			familiaBeans = utilesDaoImpl.traeFamilias("DIRECTA");
-			//cargaSubFamilias("");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-	}
-	
 	
 	
 	
@@ -393,66 +426,30 @@ public class ControllerVentaDirecta implements Serializable{
 
 	public void setProductoBean(ProductosBean productoBean) {
 		this.productoBean = productoBean;
-	}
-
-	public String getDisabledGrid() {
-		return disabledGrid;
-	}
-
-	public void setDisabledGrid(String disabledGrid) {
-		this.disabledGrid = disabledGrid;
-	}
-
-	public Timestamp getFecha() {
-		return fecha;
-	}
-
-
-	public void setFecha(Timestamp fecha) {
-		this.fecha = fecha;
-	}
-
+	}	
 
 	public VentaDirectaForm getVentaDirectaForm() {
 		return ventaDirectaForm;
 	}
 
-
 	public void setVentaDirectaForm(VentaDirectaForm ventaDirectaForm) {
 		this.ventaDirectaForm = ventaDirectaForm;
+	}	
+
+	public BeanControlBotones getControlBotones() {
+		return controlBotones;
 	}
 
-
-	public String getDisableNew() {
-		return disableNew;
+	public void setControlBotones(BeanControlBotones controlBotones) {
+		this.controlBotones = controlBotones;
 	}
 
-
-	public void setDisableNew(String disableNew) {
-		this.disableNew = disableNew;
+	public AgenteBean getAgenteBean() {
+		return agenteBean;
 	}
 
-
-	public String getDisablePagar() {
-		return disablePagar;
-	}
-
-
-	public void setDisablePagar(String disablePagar) {
-		this.disablePagar = disablePagar;
-	}
-
-
-	public String getDisableGrabar() {
-		return disableGrabar;
-	}
-
-
-	public void setDisableGrabar(String disableGrabar) {
-		this.disableGrabar = disableGrabar;
-	}
-	
-	
-	
+	public void setAgenteBean(AgenteBean agenteBean) {
+		this.agenteBean = agenteBean;
+	}	
 	
 }

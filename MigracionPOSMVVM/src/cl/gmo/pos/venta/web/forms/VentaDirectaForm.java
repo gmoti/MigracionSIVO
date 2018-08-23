@@ -19,7 +19,7 @@ import cl.gmo.pos.venta.web.beans.ProductosBean;
  * @author UsuarioAdvise
  *
  */
-public class VentaDirectaForm{
+public class VentaDirectaForm extends GenericForm{
     
     
 	private static final long serialVersionUID = 1124195189070323121L;

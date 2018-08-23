@@ -217,7 +217,7 @@ public class ControllerSearchProductPres implements Serializable {
 		busquedaProductosForm.setListaProductos(new ArrayList<ProductosBean>());
 	}
 	
-		
+	/*	
 	@NotifyChange("familiaBeans")
 	public void cargaFamilias() {		
 		try {
@@ -225,7 +225,7 @@ public class ControllerSearchProductPres implements Serializable {
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}		
-	}
+	}*/
 	
 	@NotifyChange({"subFamiliaBeans","busquedaProductosForm","busquedaAvanzada","busquedaAvanzadaLentilla"})
 	@Command
@@ -265,17 +265,7 @@ public class ControllerSearchProductPres implements Serializable {
 		}
 	}	
 	
-	/*@NotifyChange("productos")
-	@Command
-	public void buscarProducto(@BindingParam("arg")FamiliaBean arg,
-			@BindingParam("arg2")SubFamiliaBean arg2,
-			@BindingParam("arg3")GrupoFamiliaBean arg3,
-			@BindingParam("arg4")String arg4, @BindingParam("arg5")String arg5){
 		
-			productos = busquedaProdhelper.traeProductos(arg.getCodigo(), arg2.getCodigo(), 
-				arg3.getCodigo(), "", "", "", arg4, arg5, SUCURSAL, TIPO_BUSQUEDA);		
-	}*/
-	
 	
 	@NotifyChange({"familiaBean","subFamiliaBean","grupoFamiliaBean"})
 	@Command
