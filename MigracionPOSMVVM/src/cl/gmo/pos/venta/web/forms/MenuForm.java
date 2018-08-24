@@ -13,7 +13,7 @@ import cl.gmo.pos.venta.web.beans.SucursalesBean;
  *
  * @author Advice70
  */
-public class MenuForm{
+public class MenuForm extends GenericForm{
     
 	/**
 	 * 

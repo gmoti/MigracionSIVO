@@ -7,29 +7,59 @@
 		<!-- <label value="You are using: ${desktop.webApp.version}"/>
 			<a href="zul/MenuPrincipal.zul">Ir a cliente</a> -->
 			
-			
-		<hbox>
-			<div width="30%" height="100%">
-				<vbox>
-					<div height="300px">
-					</div>
-					<div height="300px">
-						<vbox>
-						<label value="LOGIN"/>
-						<label value="Usuario:"/>
-						<textbox value = "@bind(vm.usuarioForm.nombreUsuario)"   placeholder="Usuario" width="150px"/>
-						<label value="Contraseña:"/>
-						<textbox value = "@bind(vm.usuarioForm.claveUsuario)"  placeholder="Contraseña" width="150px" type="password"/>						
-						<button label="Enviar"/>
-						</vbox>					
-					</div>
-				</vbox>
-			</div>
-			<div width="70%" height="100%">
-
-
-			</div>
-		</hbox>
+		
+		<div visible="@bind(vm.divVisibleLogin)">	
+			<hbox>
+				<div width="30%" height="100%">
+					<vbox>
+						<div height="300px">
+						</div>
+						<div height="300px">
+							<vbox>
+							<label value="LOGIN"/>
+							<label value="Usuario:"/>
+							<textbox value = "@bind(vm.usuarioForm.nombreUsuario)"   placeholder="Usuario" width="150px"/>
+							<label value="Contraseña:"/>
+							<textbox value = "@bind(vm.usuarioForm.claveUsuario)"  placeholder="Contraseña" width="150px" type="password"/>						
+							<button label="Enviar" onClick="@command('validar')"/>
+							</vbox>					
+						</div>
+					</vbox>
+				</div>
+				<div width="70%" height="100%">
+					<!-- lado derecho de la ventana -->
+				</div>
+			</hbox>
+		</div>
+		
+		<div visible="@bind(vm.divVisibleIndex)">
+			<hbox>
+				<div width="30%" height="100%">
+					<vbox>
+						<div height="300px">
+						</div>
+						<div height="300px">
+							<vbox>
+							<label value="SUCURSALES"/>	
+							
+							<combobox model="@bind(vm.menuForm.colSucursales)" 
+									placeholder="Seleccione Sucursal" 
+									selectedItem="@bind(vm.sucursalesBean)">
+								<template name="model">
+									<comboitem label="@load(each.descripcion)"/>
+								</template>
+							</combobox>					
+													
+							<button label="Ingresa Sucursal" onClick="@command('seleccionaSucursal')"/>
+							</vbox>					
+						</div>
+					</vbox>
+				</div>
+				<div width="70%" height="100%">
+					<!-- lado derecho de la ventana -->
+				</div>
+			</hbox>		
+		</div>
 		
 	</window>
 </zk>

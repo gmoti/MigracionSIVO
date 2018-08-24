@@ -29,6 +29,7 @@ import cl.gmo.pos.venta.controlador.ventaDirecta.VentaDirectaDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.ClienteDAOImpl;
 import cl.gmo.pos.venta.web.beans.AgenteBean;
+import cl.gmo.pos.venta.web.beans.CajaBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.FamiliaBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
@@ -65,6 +66,7 @@ public class ControllerVentaDirecta implements Serializable{
 	HashMap<String,Object> objetos;		
 	private BeanControlBotones controlBotones;		
 	private AgenteBean agenteBean;
+	private CajaBean   cajaBean;
 	
 		
 	
@@ -79,12 +81,16 @@ public class ControllerVentaDirecta implements Serializable{
 		ventaDirectaAccion = new VentaDirectaDispatchActions();	
 		
 		agenteBean = new AgenteBean();
+		cajaBean   = new CajaBean();
 		
 		controlBotones = new BeanControlBotones();
 		controlBotones.setEnableGrid("true");
 		controlBotones.setEnableGrabar("true");
 		controlBotones.setEnableNew("false");
-		controlBotones.setEnablePagar("true");			
+		controlBotones.setEnablePagar("true");	
+		
+		controlBotones.setEnableGenerico1("false");
+		controlBotones.setEnableGenerico2("true");		
 		
 		//Encabezado venta directa		
 		ventaDirectaForm = new VentaDirectaForm();
@@ -92,13 +98,13 @@ public class ControllerVentaDirecta implements Serializable{
 		ventaDirectaForm = ventaDirectaAccion.carga(ventaDirectaForm, sess);
 		ventaDirectaForm = ventaDirectaAccion.cargaCaja(ventaDirectaForm, sess);
 		
-		ventaDirectaForm.setCajero(sess.getAttribute("glprofile").toString());
+		/*ventaDirectaForm.setCajero(sess.getAttribute("glprofile").toString());
 		ventaDirectaForm.setAgente(sess.getAttribute("glprofile").toString());
 		ventaDirectaForm.setNumero_caja((int)sess.getAttribute("caja"));
 		ventaDirectaForm.setNombreCliente("");
 		ventaDirectaForm.setAgente(sess.getAttribute("agente").toString());
 		
-		posicionaCombos();
+		posicionaCombos();*/
 	}
 	
 	
@@ -387,7 +393,20 @@ public class ControllerVentaDirecta implements Serializable{
 	}
 	
 	
-	
+	@NotifyChange({"controlBotones","ventaDirectaForm"})	
+	@Command
+	public void seleccionaCaja() {
+		
+		controlBotones.setEnableGenerico1("true");
+		controlBotones.setEnableGenerico2("false");
+		
+		ventaDirectaForm.setCajero(cajaBean.getDescripcion());
+		ventaDirectaForm.setAgente(agenteBean.getUsuario());
+		ventaDirectaForm.setNumero_caja(cajaBean.getCodigo());
+		ventaDirectaForm.setNombreCliente("");		
+		
+		posicionaCombos();	
+	}
 	
 	
 	@Command
@@ -450,6 +469,15 @@ public class ControllerVentaDirecta implements Serializable{
 
 	public void setAgenteBean(AgenteBean agenteBean) {
 		this.agenteBean = agenteBean;
-	}	
+	}
+
+	public CajaBean getCajaBean() {
+		return cajaBean;
+	}
+
+	public void setCajaBean(CajaBean cajaBean) {
+		this.cajaBean = cajaBean;
+	}
+	
 	
 }
