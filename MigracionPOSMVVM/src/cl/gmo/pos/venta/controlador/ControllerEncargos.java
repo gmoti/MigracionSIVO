@@ -77,12 +77,18 @@ public class ControllerEncargos implements Serializable {
 	private Date fechaEntrega;
 	private String sucursal;
 	
+	private BeanControlBotones beanControlBotones;
+	
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view, 
 			@ExecutionArgParam("origen")String arg) {	
 
 			Selectors.wireComponents(view, this, false);
+			
+		beanControlBotones = new BeanControlBotones();	
+		
+		beanControlBotones.setEnableNew("true");	
 		
 		ventaPedidoForm            = new VentaPedidoForm();
 		ventaPedidoDispatchActions = new VentaPedidoDispatchActions();
@@ -107,9 +113,11 @@ public class ControllerEncargos implements Serializable {
 		
 		//Si el encargo es invocado desde presupuesto, debe pasar por aqui
 		if(arg.equals("presupuesto")) {			
-			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedidoDesdePresupuesto(ventaPedidoForm, sess);
-			posicionComboNuevo();
+			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedidoDesdePresupuesto(ventaPedidoForm, sess);			
 		}		
+		
+				
+		posicionCombo();
 		
 	}
 	
@@ -119,18 +127,13 @@ public class ControllerEncargos implements Serializable {
 	
 	//============ Nuevo Pedido ====================
 	//==============================================
-	@NotifyChange({"ventaPedidoForm","divisaBean","idiomaBean","formaPagoBean","agenteBean"})
+	@NotifyChange({"ventaPedidoForm"})
 	@Command
 	public void nuevoFormulario() {
 		
 		ventaPedidoForm = ventaPedidoDispatchActions.nuevoFormulario(ventaPedidoForm, sess);
 		
-		ventaPedidoForm.setDivisa("PESO");
-		ventaPedidoForm.setIdioma("CAST");
-		ventaPedidoForm.setForma_pago("1");
-		ventaPedidoForm.setAgente(sess.getAttribute("agente").toString());
-		
-		posicionComboNuevo();
+		posicionCombo();
 		
 		if (!bWin) {
 			wBusqueda.detach();
@@ -145,10 +148,66 @@ public class ControllerEncargos implements Serializable {
 	@Command
 	public void grabarVentaPedido() {		
 		
-		System.out.println("forma de pago" + formaPagoBean.getDescripcion());
-		System.out.println("Agente de la venta" + agenteBean.getUsuario());
+		//System.out.println("forma de pago" + formaPagoBean.getDescripcion());
+		//System.out.println("Agente de la venta" + agenteBean.getUsuario());
+		String codigoMulti="";
+		String cantidad="";
 		
-		Messagebox.show("Grabacion exitosa");
+		BeanGlobal bg = ventaPedidoDispatchActions.validaCantidadProductosMultiofertas(ventaPedidoForm, sess);
+		
+		cantidad=(String)bg.getObj_1(); 
+		codigoMulti=(String)bg.getObj_2();
+		
+		
+		if(cantidad.equals("menor")) {
+			Messagebox.show("La cantidad de productos en la multioferta "+codigoMulti+" no esta completa");
+		}else {
+			
+				if (ventaPedidoForm.getEstado().equals("cerrado")) {				
+					Messagebox.show("Venta finalizada, no es posible generar cobros");
+				}else {
+					
+					if(ventaPedidoForm.getNombre_cliente().equals("")) {
+						
+						int canti_prod = ventaPedidoForm.getCantidadProductos();
+						
+						if(canti_prod == 0)
+		           		{
+		            		
+		            		Messagebox.show("Debe ingresar articulos para generar cobros");
+		            	}else
+		            	{
+		            		if (ventaPedidoForm.getPedido().equals("")) {
+	        					try {
+	        						ventaPedidoForm.setAccion("valida_pedido");
+									ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+									
+									
+									
+									
+									
+									
+									
+								} catch (Exception e) {
+									
+									e.printStackTrace();
+								}	        					
+							}
+		            		else
+		            		{
+		            			
+		            			Messagebox.show("Debe guardar la venta, antes de cobrar");
+		            		}
+	        			}		
+						
+					}else {						
+						Messagebox.show("Debe seleccionar un Cliente");
+						
+					}					
+				}				
+		}	
+		
+		//Messagebox.show("Grabacion exitosa");
 		
 	}
 	
@@ -180,9 +239,7 @@ public class ControllerEncargos implements Serializable {
 	@NotifyChange({"ventaPedidoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean"})
 	@GlobalCommand
 	public void encargoSeleccionado(@BindingParam("arg")ArrayList<PedidosPendientesBean> arg,
-									@BindingParam("arg2")PedidosPendientesBean arg2) {		
-		
-		
+									@BindingParam("arg2")PedidosPendientesBean arg2) {				
 		
 		try {
 			sess.setAttribute(Constantes.STRING_ACTION_CDG, arg2.getCdg());
@@ -202,7 +259,7 @@ public class ControllerEncargos implements Serializable {
 	//===================== Acciones comunes de la ventana ======================
 	//===========================================================================
 	
-	@NotifyChange({"ventaPedidoForm"})
+	@NotifyChange({"ventaPedidoForm","beanControlBotones"})
 	@Command
 	public void buscarCliente() {
 		
@@ -227,7 +284,9 @@ public class ControllerEncargos implements Serializable {
 	        	sess.setAttribute("NOMBRE_CLIENTE",cliente.getNombre() + " " + cliente.getApellido());	
 	        	
 	        	ventaPedidoForm.setAccion("agregarCliente");
-	        	ventaPedidoForm.setFlujo(Constantes.STRING_FORMULARIO);                 
+	        	ventaPedidoForm.setFlujo(Constantes.STRING_FORMULARIO);  
+	        	
+	        	beanControlBotones.setEnableListar("true");
 	        	
 					
 			}else {
@@ -342,6 +401,10 @@ public class ControllerEncargos implements Serializable {
 	
 	public void posicionComboNuevo() {
 		
+		ventaPedidoForm.setDivisa("PESO");
+		ventaPedidoForm.setIdioma("CAST");
+		ventaPedidoForm.setForma_pago("1");
+		
 		Optional<AgenteBean> a = ventaPedidoForm.getListaAgentes().stream().filter(s -> ventaPedidoForm.getAgente().equals(s.getUsuario())).findFirst();		
 		agenteBean = a.get();	
 		
@@ -354,6 +417,25 @@ public class ControllerEncargos implements Serializable {
 		Optional<FormaPagoBean> e = ventaPedidoForm.getListaFormasPago().stream().filter(s -> ventaPedidoForm.getForma_pago().equals(s.getId())).findFirst();
 		formaPagoBean = e.get();		
 		
+	}
+	
+	
+   @NotifyChange({"agenteBean","divisaBean","formaPagoBean","idiomaBean"}) 	
+   public void posicionCombo() {
+		
+		ventaPedidoForm.setDivisa("PESO");
+		ventaPedidoForm.setIdioma("CAST");
+		ventaPedidoForm.setForma_pago("1");
+		
+		
+		Optional<DivisaBean> b = ventaPedidoForm.getListaDivisas().stream().filter(s -> ventaPedidoForm.getDivisa().equals(s.getId())).findFirst();
+		divisaBean = b.get();		
+		
+		Optional<IdiomaBean> d = ventaPedidoForm.getListaIdiomas().stream().filter(s -> ventaPedidoForm.getIdioma().equals(s.getId())).findFirst();
+		idiomaBean = d.get();
+		
+		agenteBean=null;
+		formaPagoBean=null;
 	}
 	
 	
@@ -457,6 +539,16 @@ public class ControllerEncargos implements Serializable {
 
 	public void setIdiomaBean(IdiomaBean idiomaBean) {
 		this.idiomaBean = idiomaBean;
+	}
+
+
+	public BeanControlBotones getBeanControlBotones() {
+		return beanControlBotones;
+	}
+
+
+	public void setBeanControlBotones(BeanControlBotones beanControlBotones) {
+		this.beanControlBotones = beanControlBotones;
 	}	
 	
 	

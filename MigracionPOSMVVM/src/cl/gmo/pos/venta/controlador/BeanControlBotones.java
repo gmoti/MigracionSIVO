@@ -14,6 +14,12 @@ public class BeanControlBotones implements Serializable {
 	private String enableGrabar;
 	private String enableBuscar;	
 	
+	private String enablePrint;
+	private String enableCliente;
+	private String enableTaller;
+	private String enableListar;
+	
+	
 	private String enableGenerico1;
 	private String enableGenerico2;
 	private String enableGenerico3;
@@ -26,6 +32,10 @@ public class BeanControlBotones implements Serializable {
 		enablePagar="false";
 		enableGrabar="false";
 		enableBuscar="false";	
+		enablePrint="false";
+		enableCliente="false";
+		enableTaller="false";
+		enableListar="false";
 		
 		enableGenerico1="false";
 		enableGenerico2="false";
@@ -82,6 +92,54 @@ public class BeanControlBotones implements Serializable {
 	}
 	public void setEnableGenerico3(String enableGenerico3) {
 		this.enableGenerico3 = enableGenerico3;
+	}
+
+
+
+	public String getEnablePrint() {
+		return enablePrint;
+	}
+
+
+
+	public void setEnablePrint(String enablePrint) {
+		this.enablePrint = enablePrint;
+	}
+
+
+
+	public String getEnableCliente() {
+		return enableCliente;
+	}
+
+
+
+	public void setEnableCliente(String enableCliente) {
+		this.enableCliente = enableCliente;
+	}
+
+
+
+	public String getEnableTaller() {
+		return enableTaller;
+	}
+
+
+
+	public void setEnableTaller(String enableTaller) {
+		this.enableTaller = enableTaller;
+	}
+
+
+
+	public String getEnableListar() {
+		return enableListar;
+	}
+
+
+
+	public void setEnableListar(String enableListar) {
+		this.enableListar = enableListar;
 	}
 	
 

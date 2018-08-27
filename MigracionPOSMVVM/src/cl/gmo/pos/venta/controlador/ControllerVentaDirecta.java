@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
@@ -115,19 +116,20 @@ public class ControllerVentaDirecta implements Serializable{
 	//==============================================
 		
 	
-	@NotifyChange({"ventaDirectaForm","controlBotones","agenteBean"})
+	@NotifyChange({"ventaDirectaForm","controlBotones"})
 	@Command
 	public void nuevaVenta() {		
 		
 		controlBotones.setEnableGrid("true");
 		controlBotones.setEnableGrabar("true");
 		controlBotones.setEnablePagar("true");
-		ventaDirectaForm.setAgente(sess.getAttribute("agente").toString());
+		controlBotones.setEnableGenerico3("false");
+		ventaDirectaForm.setAgente(agenteBean.getUsuario());
 		
 		ventaDirectaForm = ventaDirectaAccion.carga(ventaDirectaForm, sess);
-		ventaDirectaForm.setCajero(sess.getAttribute("glprofile").toString());
-		ventaDirectaForm.setAgente(sess.getAttribute("glprofile").toString());
-		ventaDirectaForm.setNumero_caja((int)sess.getAttribute("caja"));
+		ventaDirectaForm.setCajero(agenteBean.getUsuario());
+		ventaDirectaForm.setAgente(agenteBean.getUsuario());
+		ventaDirectaForm.setNumero_caja(cajaBean.getCodigo());
 		ventaDirectaForm.setSumaTotal(0);
 		ventaDirectaForm.setSumaTotalFinal(0);
 		ventaDirectaForm.setNombreCliente("");
@@ -164,8 +166,10 @@ public class ControllerVentaDirecta implements Serializable{
 			ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);			
 			Messagebox.show("Venta almacenada");
 			
-			
-			controlBotones.setEnablePagar("false");
+			if (controlBotones.getEnableGenerico3().equals("true"))
+				controlBotones.setEnablePagar("true");
+			else
+				controlBotones.setEnablePagar("false");
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -234,6 +238,20 @@ public class ControllerVentaDirecta implements Serializable{
 			}			
 		}		
 	}
+	
+	//=========== Post Grabacion pago =============
+	//=============================================	
+	@NotifyChange({"ventaDirectaForm","controlBotones"})
+	@GlobalCommand
+	public void postCobro() {
+		
+		controlBotones.setEnablePagar("true");
+		controlBotones.setEnableGenerico3("true");
+		//BindUtils.postNotifyChange(null,null,this,"controlBotones");
+		Messagebox.show("Venta almacenada con exito");
+	}
+	
+	
 	
 	//===================== Acciones comunes de la ventana ======================
 	//===========================================================================
@@ -322,8 +340,7 @@ public class ControllerVentaDirecta implements Serializable{
 		wBusquedaDirecta = (Window)Executions.createComponents(
                 "/zul/venta_directa/SearchProductoDirecto.zul", null, null);
 		
-		wBusquedaDirecta.doModal();
-		
+		wBusquedaDirecta.doModal();		
 	}	
 	
 	
@@ -429,8 +446,7 @@ public class ControllerVentaDirecta implements Serializable{
 		});		
 	}
 	
-	public void posicionaCombos() {
-		
+	public void posicionaCombos() {		
 		Optional<AgenteBean> a = ventaDirectaForm.getListaAgentes().stream().filter(s -> ventaDirectaForm.getAgente().equals(s.getUsuario())).findFirst();		
 		agenteBean = a.get();		
 	}

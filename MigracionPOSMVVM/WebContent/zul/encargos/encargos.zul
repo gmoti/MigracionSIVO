@@ -17,12 +17,17 @@
 						<label value="Encargos" />
 						
 						<div style="text-align: right;">
-						<button label="New" onClick="@command('nuevoFormulario')" />
-						<button label="Print" onClick="" />
-						<button label="Search" onClick="@command('busquedaEncargo')" />
-						<button label="X" onClick="" />
-						<button label="Save" onClick="@command('grabarVentaPedido')"/>
-						<button label="Exit" onClick="@command('cerrarVentana', arg=winEncargos)" />						
+						<button iconSclass="z-icon-file" onClick="@command('nuevoFormulario')" disabled="@bind(vm.beanControlBotones.enableNew)"/>
+						<button iconSclass="z-icon-align-justify" onClick="@command('busquedaEncargo')" disabled="@bind(vm.beanControlBotones.enableListar)"/>
+						<button iconSclass="z-icon-search" onClick="" disabled="@bind(vm.beanControlBotones.enableBuscar)"/>
+						
+						<button iconSclass="z-icon-eye" onClick="" 		disabled="@bind(vm.beanControlBotones.enableListar)"/>
+						<button label="B" onClick="" 					disabled="@bind(vm.beanControlBotones.enableTaller)"/>
+						<button iconSclass="z-icon-address" onClick=""  disabled="@bind(vm.beanControlBotones.enableCliente)"/>
+						
+						<button iconSclass="z-icon-money" onClick="" disabled="@bind(vm.beanControlBotones.enablePagar)"/>
+						<button iconSclass="z-icon-save"  onClick="@command('grabarVentaPedido')" disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
+						<button iconSclass="z-icon-close" onClick="@command('cerrarVentana', arg=winEncargos)"/>						
 						</div>						
 					</div>
 					

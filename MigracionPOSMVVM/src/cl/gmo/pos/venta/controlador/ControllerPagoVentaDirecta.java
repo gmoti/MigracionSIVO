@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ContextParam;
@@ -144,9 +145,11 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	
 	
 	
-	@NotifyChange({"seleccionPagoForm"})
+	@NotifyChange({"seleccionPagoForm","formaPagoBean"})
 	@Command
-	public void pagarVenta() {	
+	public void pagarVenta() {
+		
+		int correcto = 1;
 		
 		
 		//grabar variables de sesion para el pago
@@ -161,46 +164,95 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		seleccionPagoForm.setAccion("pagar");
 		seleccionPagoForm.setOrigen("DIRECTA");
 		
-		try {
+		
+		if(seleccionPagoForm.getEstado().equals("PAGADO_TOTAL")) {			
+			Messagebox.show("No hay saldos pendientes por pagar");
+			correcto = 0;			
+		}else {
 			
-			seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);	
-			
-		    System.out.println("getTiene_pagos 		 " + seleccionPagoForm.getTiene_pagos());
-		    System.out.println("getV_a_pagar  		 " + seleccionPagoForm.getV_a_pagar());
-		    System.out.println("getV_total           " + seleccionPagoForm.getV_total());
-		    System.out.println("getV_total_parcial   " + seleccionPagoForm.getV_total_parcial());
-		    
-		    
-		    if (seleccionPagoForm.getV_a_pagar() == 0) {		    	
-		    	Messagebox.show("Boleta ?","Seleccion Documento", Messagebox.OK | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
-					
-					@Override
-					public void onEvent(Event e) throws Exception {
-						
-						if( ((Integer) e.getData()).intValue() == Messagebox.OK ) {
-							
-							seleccionPagoForm.setAccion("valida_boleta");
-							seleccionPagoForm.setTipo_doc('B');
-							seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
-							creaPagoExitoso();
-						}						
+			if(seleccionPagoForm.getV_a_pagar()==0) {				
+				if (seleccionPagoForm.getDescuento() != 100) {
+					correcto = 0;					
+					Messagebox.show("El monto a pagar debe ser mayor a cero");
+				}
+			}else {
+				if (formaPagoBean.getId().equals("")) {					
+					Messagebox.show("Debe ingresar una forma de pago");
+					correcto = 0;
+				}
+				else
+				{
+					if(getDiferencia_total() == 0)
+					{						
+						Messagebox.show("No hay saldos pendientes por pagar");
+						correcto = 0;
 					}
-				});		    	
-		    } 
-		    
-		    
-			
-			
-			
-		} catch (Exception e) {			
-			e.printStackTrace();
+				}			
+			}		
 		}
 		
+		
+		if (correcto == 1) {			
+			try {
+				seleccionPagoForm.setAccion("pagar");
+				seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
+				
+				
+			} catch (Exception e) {				
+				e.printStackTrace();
+			}				
+		}
+		
+		
+		formaPagoBean = null;
+		
+		
+		
+		//en caso de ser completamente pagado				    
+		    
+	    if (seleccionPagoForm.getV_a_pagar() == 0) {		    	
+	    	Messagebox.show("Boleta ?","Seleccion Documento", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
+				
+				@Override
+				public void onEvent(Event e) throws Exception {
+					
+					if( ((Integer) e.getData()).intValue() == Messagebox.YES ) {
+						
+						seleccionPagoForm.setAccion("valida_boleta");
+						seleccionPagoForm.setTipo_doc('B');
+						seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);				
+						
+						creaPagoExitoso();
+					}						
+				}
+			});		    	
+	    } 			
 	}
 	
 	
 	private void creaPagoExitoso() {		
 		
+		ventaDirectaForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
+		sess.setAttribute(Constantes.STRING_TICKET, ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());
+		sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPagoForm.getTipo_doc());
+		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, new ArrayList<ProductosBean>());
+		sess.setAttribute(Constantes.STRING_DOCUMENTO, 0);
+		sess.setAttribute("SeleccionPagoForm", seleccionPagoForm);
+		sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());					
+		
+		try {
+			ventaDirectaDispatchActions.IngresaVentaDirecta(ventaDirectaForm, sess);
+			win.detach();
+			
+			BindUtils.postGlobalCommand(null, null, "postCobro", null);			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+			
+		
+		/*
 		Messagebox.show("Desea Imprimir Ticket de cambio? ","Impresion de ticket", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
 			
 			@Override
@@ -223,7 +275,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 					
 				}						
 			}
-		});	
+		});	*/
 		
 	}	
 	

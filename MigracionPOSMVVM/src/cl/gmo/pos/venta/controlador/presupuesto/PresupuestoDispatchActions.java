@@ -67,7 +67,7 @@ public class PresupuestoDispatchActions {
 	{
 		log.info("PresupuestoDispatchActions:traspasoPedido  inicio");
 		
-		BeanGlobal bg;
+		BeanGlobal bg = null;
 		
 		PresupuestoForm formulario = (PresupuestoForm)form;
 		//HttpSession session = request.getSession(true);
@@ -97,9 +97,10 @@ public class PresupuestoDispatchActions {
 		}
 			
 		log.info("PresupuestoDispatchActions:traspasoPedido  fin");
-		//return mapping.findForward(action);
+		//return mapping.findForward(action);	
 		
-		bg = new BeanGlobal(formulario,action);
+		bg.setObj_1(formulario);
+		bg.setObj_2(action);
 		
 		return bg;
 	}

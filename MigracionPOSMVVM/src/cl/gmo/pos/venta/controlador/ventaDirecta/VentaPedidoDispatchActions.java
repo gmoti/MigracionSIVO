@@ -12,6 +12,7 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
 
+import cl.gmo.pos.venta.controlador.BeanGlobal;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.utils.SalidaArchivo;
 import cl.gmo.pos.venta.utils.Utils;
@@ -1151,8 +1152,11 @@ public class VentaPedidoDispatchActions {
 	    	return json;
 	    }
 	 
-	  public VentaPedidoForm validaCantidadProductosMultiofertas(VentaPedidoForm form, Session request)
+	  public BeanGlobal validaCantidadProductosMultiofertas(VentaPedidoForm form, Session request)
 	  {
+		  
+		    BeanGlobal global = new BeanGlobal();
+		    
 			System.out.println("Paso 12 VP");
 	    	Session session = request;
 	    	BusquedaProductosHelper helper = new BusquedaProductosHelper();
@@ -1188,6 +1192,10 @@ public class VentaPedidoDispatchActions {
 		        			 if(contador < tfam.getCantidad()){
 		        				 hm.put("cantidad", "menor");
 		        				 hm.put("codigoMulti", multi.getCodigo());
+		        				 
+		        				 global.setObj_1("menor");
+		        				 global.setObj_2(multi.getCodigo());
+		        				 
 		        				 estado = false;
 		        				 break;
 		        			 }
@@ -1199,20 +1207,26 @@ public class VentaPedidoDispatchActions {
 	        	 if(estado){
 		        	 hm.put("cantidad", "ok");
 					 hm.put("codigoMulti", "");
+					 
+					 global.setObj_1("ok");
+					 global.setObj_2("");
 	        	 }   	
 	        	
 	    	}catch(Exception ex){
 	    		if (listaMultiofertas != null && listaMultiofertas.size()>0) {
 	    			hm.put("cantidad", "menor");
-					 hm.put("codigoMulti", Constantes.STRING_BLANCO);
+					hm.put("codigoMulti", Constantes.STRING_BLANCO);
+					
+					global.setObj_1("menor");
+   				 	global.setObj_2(Constantes.STRING_BLANCO);
 				}
 	    		
 				 estado = false;
 	    	}
-	    	JSONObject json = JSONObject.fromObject(hm);
+	    	//JSONObject json = JSONObject.fromObject(hm);
 			//response.setHeader("X-JSON", json.toString());
 			//return mapping.findForward(Constantes.FORWARD_PEDIDO); 
-	    	return formulario;
+	    	return global;
 	    }
 	
 	  public VentaPedidoForm historial_encargo(VentaPedidoForm form, Session request ) throws Exception

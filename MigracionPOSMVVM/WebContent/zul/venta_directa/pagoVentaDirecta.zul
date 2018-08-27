@@ -101,7 +101,8 @@
      							<row>	     							
 	     							<label value="Forma pago" />
 	     							<cell colspan="2" align="left">	
-	     								<combobox model="@bind(vm.seleccionPagoForm.listaFormasPago)" width="200px" selectedItem="@bind(vm.formaPagoBean)">     								
+	     								<combobox model="@bind(vm.seleccionPagoForm.listaFormasPago)" 
+	     										width="250px" selectedItem="@bind(vm.formaPagoBean)" placeholder="Selecciona forma pago">     								
 		     								<template name='model'>
 		     									<comboitem label="@load(each.descripcion)"/>  
 		     								</template>	   									
