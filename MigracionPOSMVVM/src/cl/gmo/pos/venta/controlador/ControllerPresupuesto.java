@@ -428,6 +428,7 @@ public class ControllerPresupuesto implements Serializable{
 		sumar = arg.stream().mapToInt(ProductosBean::getImporte).sum();
 		presupuestoForm.setSubTotal(sumar);
 		presupuestoForm.setTotal(sumar);
+		presupuestoForm.setTotalPendiante(sumar - presupuestoForm.getDescuento());
 		
 		//System.out.println("nuevo total:" + total);
 	}		

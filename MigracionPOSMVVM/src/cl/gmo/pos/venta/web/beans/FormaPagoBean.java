@@ -14,7 +14,11 @@ public class FormaPagoBean {
     private String descripcion;
     private String texto;
     
-    
+    public FormaPagoBean() {
+    	this.id="";
+    	this.descripcion="";
+    	this.texto="";
+    }    
 
     public String getTexto() {
 		return texto;

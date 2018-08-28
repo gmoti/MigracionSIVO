@@ -41,6 +41,7 @@ import cl.gmo.pos.venta.web.beans.PresupuestosBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.forms.BusquedaPedidosForm;
 import cl.gmo.pos.venta.web.forms.PresupuestoForm;
+import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
 
 public class ControllerEncargos implements Serializable {
@@ -88,7 +89,8 @@ public class ControllerEncargos implements Serializable {
 			
 		beanControlBotones = new BeanControlBotones();	
 		
-		beanControlBotones.setEnableNew("true");	
+		beanControlBotones.setEnableNew("false");
+		beanControlBotones.setEnableListar("true");
 		
 		ventaPedidoForm            = new VentaPedidoForm();
 		ventaPedidoDispatchActions = new VentaPedidoDispatchActions();
@@ -110,6 +112,7 @@ public class ControllerEncargos implements Serializable {
 		sucursal = sess.getAttribute(Constantes.STRING_SUCURSAL).toString();
 		
 		ventaPedidoForm = ventaPedidoDispatchActions.cargaInicial(ventaPedidoForm, sucursal, sess);
+		ventaPedidoForm.setEstado(Constantes.STRING_FORMULARIO);
 		
 		//Si el encargo es invocado desde presupuesto, debe pasar por aqui
 		if(arg.equals("presupuesto")) {			
@@ -127,12 +130,13 @@ public class ControllerEncargos implements Serializable {
 	
 	//============ Nuevo Pedido ====================
 	//==============================================
-	@NotifyChange({"ventaPedidoForm"})
+	@NotifyChange({"ventaPedidoForm","beanControlBotones"})
 	@Command
 	public void nuevoFormulario() {
 		
 		ventaPedidoForm = ventaPedidoDispatchActions.nuevoFormulario(ventaPedidoForm, sess);
-		
+		ventaPedidoForm.setEstado(Constantes.STRING_FORMULARIO);
+		beanControlBotones.setEnableListar("true");
 		posicionCombo();
 		
 		if (!bWin) {
@@ -179,13 +183,19 @@ public class ControllerEncargos implements Serializable {
 		            	{
 		            		if (ventaPedidoForm.getPedido().equals("")) {
 	        					try {
+	        						
 	        						ventaPedidoForm.setAccion("valida_pedido");
 									ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
 									
-									
-									
-									
-									
+									if (ventaPedidoForm.getEstado().equals(Constantes.STRING_VALIDA_PEDIDO)) {
+										
+										//este metodo se llama igual venta_pedido.jsp
+										genera_venta();
+										
+									}else {
+										
+										//error en la valñidacion del pedido
+									}								
 									
 									
 								} catch (Exception e) {
@@ -209,6 +219,48 @@ public class ControllerEncargos implements Serializable {
 		
 		//Messagebox.show("Grabacion exitosa");
 		
+	}
+	
+	@NotifyChange("ventaPedidoForm")
+	@Command
+	public void genera_venta() {
+		
+		SeleccionPagoForm seleccionPagoForm;
+		
+		
+		if (!ventaPedidoForm.getEstado().equals("cerrado")) {
+			
+			ventaPedidoDispatchActions.generaVentaPedido(ventaPedidoForm, sess);	
+			seleccionPagoForm = new SeleccionPagoForm();
+			
+			seleccionPagoForm.setFech_pago(ventaPedidoForm.getFecha());
+			seleccionPagoForm.setFecha(ventaPedidoForm.getFecha());
+			seleccionPagoForm.setTipo_doc('G');
+			seleccionPagoForm.setOrigen("PEDIDO");
+			
+			sess.setAttribute(Constantes.STRING_TOTAL, ventaPedidoForm.getTotal());
+			sess.setAttribute(Constantes.STRING_CLIENTE, cliente.getCodigo()  );
+			//sess.setAttribute(Constantes.STRING_TICKET,  ventaPedidoForm.get  .getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket() );
+			sess.setAttribute(Constantes.STRING_FECHA,   ventaPedidoForm.getFecha());		
+			sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaPedidoForm.getListaProductos());		
+			
+			
+			objetos = new HashMap<String,Object>();
+			objetos.put("cliente",cliente);
+			objetos.put("pagoForm",seleccionPagoForm);
+			objetos.put("ventaOrigenForm",ventaPedidoForm);
+			objetos.put("origen","PEDIDO");
+			
+			Window window = (Window)Executions.createComponents(
+	                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
+			
+	        window.doModal();
+			
+			
+		}else {
+			
+			Messagebox.show("Venta finalizada, no es posible generar cobro");
+		}	
 	}
 	
 	
@@ -286,7 +338,7 @@ public class ControllerEncargos implements Serializable {
 	        	ventaPedidoForm.setAccion("agregarCliente");
 	        	ventaPedidoForm.setFlujo(Constantes.STRING_FORMULARIO);  
 	        	
-	        	beanControlBotones.setEnableListar("true");
+	        	beanControlBotones.setEnableListar("false");
 	        	
 					
 			}else {
@@ -364,7 +416,8 @@ public class ControllerEncargos implements Serializable {
 		
 		sumar = arg.stream().mapToInt(ProductosBean::getImporte).sum();
 		ventaPedidoForm.setSubTotal(sumar);
-		ventaPedidoForm.setTotal(sumar);		
+		ventaPedidoForm.setTotal(sumar);
+		ventaPedidoForm.setTotalPendiante(sumar - ventaPedidoForm.getDescuento());
 	}
 	
 	@NotifyChange({"productoBean"})

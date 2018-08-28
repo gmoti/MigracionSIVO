@@ -25,7 +25,7 @@
 						<button label="B" onClick="" 					disabled="@bind(vm.beanControlBotones.enableTaller)"/>
 						<button iconSclass="z-icon-address" onClick=""  disabled="@bind(vm.beanControlBotones.enableCliente)"/>
 						
-						<button iconSclass="z-icon-money" onClick="" disabled="@bind(vm.beanControlBotones.enablePagar)"/>
+						<button iconSclass="z-icon-money" onClick="@command('genera_venta')" disabled="@bind(vm.beanControlBotones.enablePagar)"/>
 						<button iconSclass="z-icon-save"  onClick="@command('grabarVentaPedido')" disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
 						<button iconSclass="z-icon-close" onClick="@command('cerrarVentana', arg=winEncargos)"/>						
 						</div>						

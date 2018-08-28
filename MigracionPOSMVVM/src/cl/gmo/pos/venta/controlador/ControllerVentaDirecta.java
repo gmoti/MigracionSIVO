@@ -208,12 +208,24 @@ public class ControllerVentaDirecta implements Serializable{
 								//llamo a la ventana de pago
 								
 								seleccionPagoForm = new SeleccionPagoForm();
+								
+								seleccionPagoForm.setFech_pago(ventaDirectaForm.getFecha());
+								seleccionPagoForm.setFecha(ventaDirectaForm.getFecha());
+								seleccionPagoForm.setTipo_doc('B');
+								seleccionPagoForm.setOrigen("DIRECTA");
+								
+								sess.setAttribute(Constantes.STRING_TOTAL, ventaDirectaForm.getSumaTotal());
+								sess.setAttribute(Constantes.STRING_CLIENTE, cliente.getCodigo()  );
+								sess.setAttribute(Constantes.STRING_TICKET,  ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket() );
+								sess.setAttribute(Constantes.STRING_FECHA,   ventaDirectaForm.getFecha());								
+								
 								sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaDirectaForm.getListaProductos());				
 								
 								objetos = new HashMap<String,Object>();
 								objetos.put("cliente",cliente);
 								objetos.put("pagoForm",seleccionPagoForm);
-								objetos.put("ventaDirectaForm",ventaDirectaForm);		
+								objetos.put("ventaOrigenForm",ventaDirectaForm);		
+								objetos.put("origen","DIRECTA");
 								
 								Window window = (Window)Executions.createComponents(
 						                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
@@ -239,15 +251,41 @@ public class ControllerVentaDirecta implements Serializable{
 		}		
 	}
 	
-	//=========== Post Grabacion pago =============
-	//=============================================	
+	
+	//======= pago exitoso en venta directa =======
+	
 	@NotifyChange({"ventaDirectaForm","controlBotones"})
-	@GlobalCommand
+	@GlobalCommand	
+    public void creaPagoExitoso() {		
+		
+		ventaDirectaForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
+		sess.setAttribute(Constantes.STRING_TICKET, ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());
+		sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPagoForm.getTipo_doc());
+		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, new ArrayList<ProductosBean>());
+		sess.setAttribute(Constantes.STRING_DOCUMENTO, 0);
+		sess.setAttribute("SeleccionPagoForm", seleccionPagoForm);
+		sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());				
+		
+		try {
+			ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);		
+			postCobro();
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}			
+		
+	}
+	
+	
+	
+	//=========== Post Grabacion pago =============
+	//=============================================		
+	@NotifyChange({"ventaDirectaForm","controlBotones"})
 	public void postCobro() {
 		
 		controlBotones.setEnablePagar("true");
-		controlBotones.setEnableGenerico3("true");
-		//BindUtils.postNotifyChange(null,null,this,"controlBotones");
+		controlBotones.setEnableGenerico3("true");		
 		Messagebox.show("Venta almacenada con exito");
 	}
 	

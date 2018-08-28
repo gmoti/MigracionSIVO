@@ -1,10 +1,6 @@
 package cl.gmo.pos.venta.controlador;
 
 import java.io.Serializable;
-
-//pendiente los productos gratis
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.zkoss.bind.BindUtils;
@@ -28,15 +24,12 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.ventaDirecta.SeleccionPagoDispatchActions;
-import cl.gmo.pos.venta.controlador.ventaDirecta.VentaDirectaDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
-import cl.gmo.pos.venta.web.Integracion.DAO.DAOImpl.UtilesDAOImpl;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.PagoBean;
-import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
-import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
+
 
 
 public class ControllerPagoVentaDirecta implements Serializable{
@@ -54,116 +47,62 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	HashMap<String,Object> objetos;
 	
 	private SeleccionPagoForm seleccionPagoForm;
-	private ClienteBean cliente;
-	private VentaDirectaForm ventaDirectaForm;
+	private ClienteBean cliente;	
 	private SeleccionPagoDispatchActions seleccionPagoDispatchActions;
-	private VentaDirectaDispatchActions ventaDirectaDispatchActions;
 	private Integer diferencia_total;
 	
-	
-	private UtilesDAOImpl utilesDAOImpl;
 	private FormaPagoBean formaPagoBean;
-	private ArrayList<FormaPagoBean> listaFormasPago;
 	private String disableDescuento;
 	private PagoBean pagoBeanAux;
-	
+	private String origen;
+	private BeanControlBotones controlBotones;
 	
 	@Init
 	public void inicio(@ContextParam(ContextType.VIEW) Component view, 
 					   @ExecutionArgParam("cliente")ClienteBean arg,
 					   @ExecutionArgParam("pagoForm")SeleccionPagoForm arg2,
-					   @ExecutionArgParam("ventaDirectaForm")VentaDirectaForm arg3) {
+					   @ExecutionArgParam("ventaOrigenForm")Object arg3,
+					   @ExecutionArgParam("origen")String arg4) {
 		
 		
 		Selectors.wireComponents(view, this, false);
 		
-		formaPagoBean = new FormaPagoBean();
-		pagoBeanAux   = new PagoBean();
-		utilesDAOImpl = new UtilesDAOImpl();		
-		cargaFormaPago();		
-		
-		seleccionPagoDispatchActions = new SeleccionPagoDispatchActions();
-		ventaDirectaDispatchActions = new VentaDirectaDispatchActions(); 
-		
 		cliente           = null;		
-		seleccionPagoForm = null;	
-		ventaDirectaForm  = null;	
+		seleccionPagoForm = null;
+		controlBotones = new BeanControlBotones();
+		controlBotones.setEnableGenerico1("false");
+		
+		formaPagoBean = new FormaPagoBean();
+		pagoBeanAux   = new PagoBean();					
+		
+		seleccionPagoDispatchActions = new SeleccionPagoDispatchActions();		
 		
 		cliente           = (ClienteBean)arg;		
 		seleccionPagoForm = (SeleccionPagoForm)arg2;
-		ventaDirectaForm  = (VentaDirectaForm)arg3;
+		origen            = (String)arg4;
 		
-		/*seleccionPagoForm.setFecha(ventaDirectaForm.getFecha());
-		seleccionPagoForm.setNif(cliente.getNif());
-		seleccionPagoForm.setRazon(cliente.getRazon_social());
-		seleccionPagoForm.setDireccion(cliente.getDireccion());
-		seleccionPagoForm.setProvincia(cliente.getProvincia());
-		seleccionPagoForm.setProvincia_descripcion(cliente.getProvincia_desc());
-		seleccionPagoForm.setPoblacion(cliente.getPoblacion());
-		seleccionPagoForm.setGiro(cliente.getGiro());
+		seleccionPagoDispatchActions.carga_formulario(seleccionPagoForm, sess, seleccionPagoForm.getFecha());
+		seleccionPagoForm.setOrigen(origen);
+		this.setDiferencia_total(seleccionPagoForm.getV_total());
 		
-		seleccionPagoForm.setV_total_parcial(ventaDirectaForm.getSumaTotal());
-		seleccionPagoForm.setV_total(ventaDirectaForm.getSumaTotal());
-		seleccionPagoForm.setV_a_pagar(ventaDirectaForm.getSumaTotal());
-		seleccionPagoForm.setDiferencia(0);	
-		seleccionPagoForm.setSerie(ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());		
-		
-		seleccionPagoForm.setListaFormasPago(listaFormasPago);
-		seleccionPagoForm.setFech_pago(ventaDirectaForm.getFecha());
-		seleccionPagoForm.setFecha(ventaDirectaForm.getFecha());
-		
-		this.setDiferencia_total(ventaDirectaForm.getSumaTotal());
-		this.setDisableDescuento("FALSE");
-		
-		
-		try {
-			seleccionPagoForm.setAccion("");
-			seleccionPagoForm= seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
-		seleccionPagoDispatchActions.carga_formulario(seleccionPagoForm, sess, ventaDirectaForm.getFecha());
-		this.setDiferencia_total(ventaDirectaForm.getSumaTotal());
+		if (origen.equals("G"))
+		   controlBotones.setEnableGenerico1("true");
 		
 		System.out.println("en init");
 	}
 
-
-	public void cargaFormaPago() {
-		
-		try {
-			listaFormasPago = utilesDAOImpl.traeFormasPago();	
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
-	
 	
 	@NotifyChange({"seleccionPagoForm","formaPagoBean"})
 	@Command
 	public void pagarVenta() {
 		
-		int correcto = 1;
-		
+		int correcto = 1;	
 		
 		//grabar variables de sesion para el pago
 		sess.setAttribute(Constantes.STRING_LISTA_PAGOS, seleccionPagoForm.getListaPagos());
 		sess.setAttribute(Constantes.STRING_TOTAL, seleccionPagoForm.getV_a_pagar());
 		sess.setAttribute(Constantes.STRING_LISTA_FORMAS_PAGOS, seleccionPagoForm.getListaFormasPago());
-		sess.setAttribute(Constantes.STRING_FECHA, seleccionPagoForm.getFecha());	
-		
-		//asigno el tipo de pago seleccionado
-		seleccionPagoForm.setForma_pago(formaPagoBean.getId());
-		seleccionPagoForm.setTipo_doc('B');
-		seleccionPagoForm.setAccion("pagar");
-		seleccionPagoForm.setOrigen("DIRECTA");
-		
+		sess.setAttribute(Constantes.STRING_FECHA, seleccionPagoForm.getFecha());			
 		
 		if(seleccionPagoForm.getEstado().equals("PAGADO_TOTAL")) {			
 			Messagebox.show("No hay saldos pendientes por pagar");
@@ -194,9 +133,14 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		
 		if (correcto == 1) {			
 			try {
-				seleccionPagoForm.setAccion("pagar");
-				seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
 				
+				//asigno el tipo de pago seleccionado
+				seleccionPagoForm.setForma_pago(formaPagoBean.getId());
+				//seleccionPagoForm.setTipo_doc('B');				
+				//seleccionPagoForm.setOrigen(origen);
+				
+				seleccionPagoForm.setAccion("pagar");
+				seleccionPagoForm= seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);				
 				
 			} catch (Exception e) {				
 				e.printStackTrace();
@@ -204,9 +148,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		}
 		
 		
-		formaPagoBean = null;
-		
-		
+		//formaPagoBean = null;	
 		
 		//en caso de ser completamente pagado				    
 		    
@@ -220,9 +162,12 @@ public class ControllerPagoVentaDirecta implements Serializable{
 						
 						seleccionPagoForm.setAccion("valida_boleta");
 						seleccionPagoForm.setTipo_doc('B');
-						seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);				
+						seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);	
+						BindUtils.postGlobalCommand(null, null, "creaPagoExitoso", null);						
 						
-						creaPagoExitoso();
+						win.detach();
+						
+						
 					}						
 				}
 			});		    	
@@ -230,54 +175,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	}
 	
 	
-	private void creaPagoExitoso() {		
 		
-		ventaDirectaForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
-		sess.setAttribute(Constantes.STRING_TICKET, ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());
-		sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPagoForm.getTipo_doc());
-		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, new ArrayList<ProductosBean>());
-		sess.setAttribute(Constantes.STRING_DOCUMENTO, 0);
-		sess.setAttribute("SeleccionPagoForm", seleccionPagoForm);
-		sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());					
-		
-		try {
-			ventaDirectaDispatchActions.IngresaVentaDirecta(ventaDirectaForm, sess);
-			win.detach();
-			
-			BindUtils.postGlobalCommand(null, null, "postCobro", null);			
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-			
-		
-		/*
-		Messagebox.show("Desea Imprimir Ticket de cambio? ","Impresion de ticket", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
-			
-			@Override
-			public void onEvent(Event e) throws Exception {
-				
-				if( ((Integer) e.getData()).intValue() == Messagebox.YES ) {
-					
-					//si el pago es exitoso
-					
-					ventaDirectaForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
-					sess.setAttribute(Constantes.STRING_TICKET, ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());
-					sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPagoForm.getTipo_doc());
-					sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, new ArrayList<ProductosBean>());
-					sess.setAttribute(Constantes.STRING_DOCUMENTO, 0);
-					sess.setAttribute("SeleccionPagoForm", seleccionPagoForm);
-					sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());					
-					
-					ventaDirectaDispatchActions.IngresaVentaDirecta(ventaDirectaForm, sess);		
-					win.detach();				
-					
-				}						
-			}
-		});	*/
-		
-	}	
 	
 	
 	//validaciones sobre el pago
@@ -307,7 +205,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	public void aplicaDescuento() {
 		
 		
-		if (seleccionPagoForm.getDescuento() != ventaDirectaForm.getDescuentoTotal()) {
+		/*if (seleccionPagoForm.getDescuento() != ventaDirectaForm.getDescuentoTotal()) {
 			
 			Double descuento_max = Double.parseDouble(String.valueOf(ventaDirectaForm.getPorcentaje_descuento_max()));
 			Double dto = ventaDirectaForm.getDescuentoTotal();
@@ -329,7 +227,8 @@ public class ControllerPagoVentaDirecta implements Serializable{
 				
 				
 			}			
-		}		
+		}	*/	
+		
 	}
 	
 	
@@ -405,47 +304,36 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		this.cliente = cliente;
 	}
 
-
 	public FormaPagoBean getFormaPagoBean() {
 		return formaPagoBean;
 	}
 
-
 	public void setFormaPagoBean(FormaPagoBean formaPagoBean) {
 		this.formaPagoBean = formaPagoBean;
-	}
-	
+	}	
 	
 	public Integer getDiferencia_total() {
 		return diferencia_total;
 	}
 
-
 	public void setDiferencia_total(Integer diferencia_total) {
 		this.diferencia_total = diferencia_total;
 	}
-
-
-	public VentaDirectaForm getVentaDirectaForm() {
-		return ventaDirectaForm;
-	}
-
-
-	public void setVentaDirectaForm(VentaDirectaForm ventaDirectaForm) {
-		this.ventaDirectaForm = ventaDirectaForm;
-	}
-
 
 	public String getDisableDescuento() {
 		return disableDescuento;
 	}
 
-
 	public void setDisableDescuento(String disableDescuento) {
 		this.disableDescuento = disableDescuento;
 	}
-	
-	
-	
+
+	public BeanControlBotones getControlBotones() {
+		return controlBotones;
+	}
+
+	public void setControlBotones(BeanControlBotones controlBotones) {
+		this.controlBotones = controlBotones;
+	}	
 	
 }
