@@ -36,7 +36,7 @@
 					<space width="77px"/>
 					<combobox model="@load(vm.busquedaProductosForm.listaFamilias)" 
 								selectedItem="@bind(vm.familiaBean)" 
-								onSelect="@command('cargaSubFamilias')" 
+								onSelect="@command('cargaSubFamilias')"								
 								placeholder="Seleccione"
 								onRightClick="@command('comboSetNull',objetoBean=vm.familiaBean)" width="300px">								
 													
@@ -65,7 +65,7 @@
 					<label value="Grupo de Productos" />
 					<space width="85px"/>
 					<combobox model="@load(vm.busquedaProductosForm.listaGruposFamilias)" 
-								selectedItem="@bind(vm.grupoFamiliaBean)" 
+								selectedItem="@bind(vm.grupoFamiliaBean)" 								
 								placeholder="Seleccione"
 								onRightClick="@command('comboSetNull',objetoBean=vm.grupoFamiliaBean)" width="300px">
 																						

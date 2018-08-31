@@ -32,7 +32,7 @@ import cl.gmo.pos.venta.web.beans.SubFamiliaBean;
 import cl.gmo.pos.venta.web.forms.BusquedaProductosForm;
 import cl.gmo.pos.venta.web.forms.PresupuestoForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
-import cl.gmo.pos.venta.web.helper.BusquedaProductosHelper;
+
 
 public class ControllerSearchProductPres implements Serializable {
 	
@@ -46,8 +46,6 @@ public class ControllerSearchProductPres implements Serializable {
 	@Wire("#winBuscaProducto")
 	private Window win;
 	
-	//constantes	
-	private final String TIPO_BUSQUEDA="DIRECTA";
 	
 	private FamiliaBean familiaBean;
 	private SubFamiliaBean subFamiliaBean;
@@ -60,7 +58,7 @@ public class ControllerSearchProductPres implements Serializable {
 	private List<ProductosBean> productos;
 	
 	private UtilesDAOImpl utilesDaoImpl;
-	private BusquedaProductosHelper busquedaProdhelper;	
+
 	
 	private String winVisibleBusqueda;
 	private PresupuestoForm presupuesto;
@@ -117,7 +115,7 @@ public class ControllerSearchProductPres implements Serializable {
 		productos = new ArrayList<>();
 		
 		utilesDaoImpl = new UtilesDAOImpl();
-		busquedaProdhelper = new BusquedaProductosHelper();
+		
 		
 		ojoDerecho=false;
 		ojoIzquierdo=false;
@@ -125,26 +123,54 @@ public class ControllerSearchProductPres implements Serializable {
 		busquedaAvanzada = "false";
 		busquedaAvanzadaLentilla= "false";		
 		
-		sess.setAttribute(Constantes.STRING_FORMULARIO, "PRESUPUESTO");	
+		
+		if(instancia==1)		
+			sess.setAttribute(Constantes.STRING_FORMULARIO, Constantes.STRING_ACTION_PRESUPUESTO_MAY);	
+		else
+			sess.setAttribute(Constantes.STRING_FORMULARIO, Constantes.STRING_PEDIDO);	
+			
 		busquedaProductosForm = busquedaProductosDispatchActions.cargaBusquedaProductos(busquedaProductosForm, sess);
 			
 	}
 	
 	
-	@NotifyChange("winVisibleBusqueda")
+	@NotifyChange({"winVisibleBusqueda","busquedaProductosForm"})
 	@Command
 	public void seleccionaProducto(@BindingParam("producto")ProductosBean producto) {	
 		
 		objetos = new HashMap<String,Object>();
 		objetos.put("producto",producto);
-				
-		if (instancia==1)
-			BindUtils.postGlobalCommand(null, null, "actProdGridPresupuesto", objetos);
-			
-		if (instancia==2)
-			BindUtils.postGlobalCommand(null, null, "actProdGridVentaPedido", objetos);			
 		
-		winVisibleBusqueda="FALSE";
+		
+		try {
+			busquedaProductosForm.setTipofamilia(familiaBean.getTipo_fam());			
+			busquedaProductosForm.setCodigo_barras(producto.getCod_barra());
+			
+			
+			producto.setTipoFamilia(familiaBean.getTipo_fam());
+			producto.setGrupo("0");
+			
+			//busquedaProductosForm.setFamilia(familiaBean.getCodigo());
+			//busquedaProductosForm.setSubFamilia(subFamiliaBean.getCodigo());
+			//busquedaProductosForm.setGrupo(grupoFamiliaBean.getCodigo());
+			
+			busquedaProductosDispatchActions.tiene_suple(busquedaProductosForm, sess);
+			
+			winVisibleBusqueda="FALSE";	
+			
+			
+			if (instancia==1)
+				BindUtils.postGlobalCommand(null, null, "actProdGridPresupuesto", objetos);
+				
+			if (instancia==2)
+				BindUtils.postGlobalCommand(null, null, "actProdGridVentaPedido", objetos);				
+			
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}		
+		
 	}
 	
 	@NotifyChange("winVisibleBusqueda")
@@ -175,9 +201,9 @@ public class ControllerSearchProductPres implements Serializable {
 			busquedaProductosForm.setSubFamilia("");
 		
 		if(grufam.isPresent())		
-			busquedaProductosForm.setGrupo(grufam.get().getCodigo());
+			busquedaProductosForm.setGrupo (grufam.get().getCodigo());		    	
 		else
-			busquedaProductosForm.setGrupo("");
+			busquedaProductosForm.setGrupo("0");
 		
 	    busquedaProductosForm.setAccion(arg);     	
      	
@@ -217,15 +243,7 @@ public class ControllerSearchProductPres implements Serializable {
 		busquedaProductosForm.setListaProductos(new ArrayList<ProductosBean>());
 	}
 	
-	/*	
-	@NotifyChange("familiaBeans")
-	public void cargaFamilias() {		
-		try {
-			familiaBeans = utilesDaoImpl.traeFamilias(TIPO_BUSQUEDA);			
-		} catch (Exception e) {			
-			e.printStackTrace();
-		}		
-	}*/
+	
 	
 	@NotifyChange({"subFamiliaBeans","busquedaProductosForm","busquedaAvanzada","busquedaAvanzadaLentilla"})
 	@Command
@@ -233,6 +251,7 @@ public class ControllerSearchProductPres implements Serializable {
 		try {
 			subFamiliaBeans = utilesDaoImpl.traeSubfamilias(familiaBean.getCodigo());
 			busquedaProductosForm.setListaSubFamilias(subFamiliaBeans);	
+			
 			
 			if (familiaBean.getTipo_fam().equals("C")) {
 				setBusquedaAvanzada("true");
@@ -259,7 +278,8 @@ public class ControllerSearchProductPres implements Serializable {
 	public void cargaGrupoFamilias() {	
 		try {
 			grupoFamiliaBeans = utilesDaoImpl.traeGruposFamilias(familiaBean.getCodigo(), subFamiliaBean.getCodigo());
-			busquedaProductosForm.setListaGruposFamilias(grupoFamiliaBeans);
+			busquedaProductosForm.setListaGruposFamilias(grupoFamiliaBeans);					
+			
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}

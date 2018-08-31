@@ -34,7 +34,7 @@ public class VentaPedidoForm extends GenericForm{
 
 
 
-	public VentaPedidoForm(){}
+	
     
     private  ArrayList<DivisaBean> listaDivisas;
     private ArrayList<ConvenioBean> listaConvenios;
@@ -164,11 +164,35 @@ public class VentaPedidoForm extends GenericForm{
 	private String numero_cupon=Constantes.STRING_BLANCO;
 	
 
-	private String muestra_ftaller;
-	
+	private String muestra_ftaller;	
 	private String valor_comodin;
-
 	private String segCris;
+	
+	
+	public VentaPedidoForm(){
+		
+		 listaDivisas = new ArrayList<DivisaBean>();
+		 listaConvenios = new ArrayList<ConvenioBean>();
+		 listaAgentes = new ArrayList<AgenteBean>();
+		 listaIdiomas = new ArrayList<IdiomaBean>();
+		 listaFormasPago = new ArrayList<FormaPagoBean>();
+		 listaPromociones = new ArrayList<PromocionBean>();
+		 listaProductos = new ArrayList<ProductosBean>();
+		 listaTiposPedidos = new ArrayList<TipoPedidoBean>();
+		 listaGrupos = new ArrayList<VentaPedidoBean>();
+		 
+		 nif="";
+		 dvnif="";
+		 codigo_mult="";
+		 index_multi=0;
+		 fecha="";
+		 codigo="";
+		 cliente="";
+		 nombre_cliente="";
+		
+	}
+	
+	
 	
 	public String getEntregado() {
 		return entregado;

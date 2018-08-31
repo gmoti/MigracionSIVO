@@ -12,6 +12,11 @@ public class AgenteBean {
     
     private String Nombre_completo;
     private String usuario;
+    
+    public AgenteBean() {
+    	Nombre_completo="";
+    	usuario="";
+    }
 
 
     public void setNombre_completo(String Nombre_completo) {

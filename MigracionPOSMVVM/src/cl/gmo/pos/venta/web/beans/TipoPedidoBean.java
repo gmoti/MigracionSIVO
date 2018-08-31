@@ -5,6 +5,11 @@ public class TipoPedidoBean {
 	private String codigo;
 	private String descripcion;
 	
+	public TipoPedidoBean() {
+		codigo="";
+		descripcion="";
+	}
+	
 	public String getCodigo() {
 		return codigo;
 	}

@@ -26,7 +26,7 @@
 						<button iconSclass="z-icon-address" onClick=""  disabled="@bind(vm.beanControlBotones.enableCliente)"/>
 						
 						<button iconSclass="z-icon-money" onClick="@command('genera_venta')" disabled="@bind(vm.beanControlBotones.enablePagar)"/>
-						<button iconSclass="z-icon-save"  onClick="@command('grabarVentaPedido')" disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
+						<button iconSclass="z-icon-save"  onClick="@command('ingresa_pedido')" disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
 						<button iconSclass="z-icon-close" onClick="@command('cerrarVentana', arg=winEncargos)"/>						
 						</div>						
 					</div>
@@ -36,20 +36,24 @@
 					   <hbox>
 					    <div width="300px">
 					    	<label value="Codigo" />
-					    	<space width="40px"/>
+					    	<space width="42px"/>
 					    	<textbox value="@bind(vm.ventaPedidoForm.codigo_suc)" width="30px" disabled="true" />
 					    	<textbox value="@bind(vm.ventaPedidoForm.codigo)" 	  width="150px"	disabled="true" />
 					    </div>
 
-						<div width="350px">
-						    <label value="Cliente"/>						
+						<div width="380px">
+						    <label value="Cliente"/>	
+						    <space width="2px"/>					
 							<textbox value="@bind(vm.ventaPedidoForm.nif)"   width="150px"/>
 							<textbox value="@bind(vm.ventaPedidoForm.dvnif)" width="30px"/>
 							<button label="B" onClick="@command('buscarCliente')"  width="30px"/>
-							<button label="B" onClick=""  width="30px"/>						
+							<button label="D" onClick=""  width="30px"/>	
+							<button label="G" onClick="@command('buscarClienteGenerico')"  width="30px"/>					
 						</div>
 						
 						<textbox value="@load(vm.ventaPedidoForm.nombre_cliente)" width="250px" disabled="true"/>
+						
+						<space width="100px"></space>
 						<label value="fecha"/>
 						<datebox value="@bind(vm.fecha)" format="dd/MM/yyyy" disabled="true" />
 						</hbox>					
@@ -58,14 +62,15 @@
 					<!-- Linea 2 del encabezxado -->
 					<div width="100%" style="padding :10px 0px 0px 0px">
 						<hbox>						
-							<div width="300px">
+							<div width="305px">
 								<label value="Forma pago" />
-								<space width="5px"/>									
+								<space width="2px"/>
+								<space width="7px"/>									
 								<combobox model="@bind(vm.ventaPedidoForm.listaFormasPago)"
-									      width="180px" disabled="false"									      
-									      placeholder="Seleccione"
+									      width="180px" placeholder="Seleccione" 
 									      onRightClick="@command('comboSetNull',objetoBean=vm.formaPagoBean)" 					      
-									      selectedItem="@bind(vm.formaPagoBean)">
+									      selectedItem="@bind(vm.formaPagoBean)"									      
+									      disabled="@bind(vm.beanControlCombos.comboFpagoEnable)">
 									      
 								   <template name="model">
 									<comboitem label="@load(each.descripcion)"/>
@@ -76,9 +81,10 @@
 							<div width="350px">			
 								<label value="Divisa" />							
 								<combobox model="@bind(vm.ventaPedidoForm.listaDivisas)"  
-										  width="180px" disabled="true" 
-										  placeholder="Seleccione" 
-										  selectedItem="@bind(vm.divisaBean)">
+										  width="180px" placeholder="Seleccione"
+										  onRightClick="@command('comboSetNull',objetoBean=vm.divisaBean)" 										   
+										  selectedItem="@bind(vm.divisaBean)" 
+										  disabled="@bind(vm.beanControlCombos.comboDivisaEnable)">
 										  
 								  <template name="model">
 									<comboitem label="@load(each.descripcion)" />
@@ -86,8 +92,19 @@
 								</combobox>
 							</div>
 							
-							<label value="Cambio" />
-							<textbox value="@bind(vm.ventaPedidoForm.cambio)" width="30px" disabled="true"/>					
+							<div width="350px">	
+								<label value="Idioma" />
+								<combobox model="@load(vm.ventaPedidoForm.listaIdiomas)" 
+										  width="180px" placeholder="Seleccione" 
+										  onRightClick="@command('comboSetNull',objetoBean=vm.idiomaBean)"										  
+										  selectedItem="@bind(vm.idiomaBean)" 
+										  disabled="@bind(vm.beanControlCombos.comboIdiomaEnable)">
+										  
+								  <template name="model">
+									<comboitem label="@load(each.descripcion)" />
+								  </template>
+								</combobox>
+							</div>											
 							
 							<space width="100px"></space>
 							<label value="Hora" />
@@ -98,35 +115,38 @@
 					<!-- Linea 3 del encabezxado -->
 					<div width="100%" style="padding :10px 0px 0px 0px">
 						<hbox>							
+						
+							<div width="305px">
+								<label value="Tipo encargo" />	
+								<space width="2px"/>									
+								<combobox model="@bind(vm.ventaPedidoForm.listaTiposPedidos)" 
+										  width="180px" placeholder="Seleccione" 
+										  selectedItem="@bind(vm.tipoPedidoBean)"										  
+										  onRightClick="@command('comboSetNull',objetoBean=vm.tipoPedidoBean)" 
+										  disabled="@bind(vm.beanControlCombos.comboTiposEnable)">
+										  
+								  <template name="model">
+									<comboitem label="@load(each.codigo)" description="@load(each.descripcion)"/>
+								  </template>	
+								</combobox>
+							</div>						
+						
 							<div width="300px">
 								<label value="Agente" />	
-								<space width="38px"/>									
+								<space width="8px"/>									
 								<combobox model="@bind(vm.ventaPedidoForm.listaAgentes)" 
-										  width="180px"  disabled="false" 
-										  selectedItem="@bind(vm.agenteBean)"
-										  placeholder="Seleccione"
-										  onRightClick="@command('comboSetNull',objetoBean=vm.agenteBean)">
+										  width="180px"  placeholder="Seleccione"
+										  selectedItem="@bind(vm.agenteBean)"										  
+										  onRightClick="@command('comboSetNull',objetoBean=vm.agenteBean)" 
+										  disabled="@bind(vm.beanControlCombos.comboAgenteEnable)">
 										  
 								  <template name="model">
 									<comboitem label="@load(each.usuario)" />
 								  </template>	
 								</combobox>
-							</div>
+							</div>								
 							
-							<div width="350px">	
-								<label value="Idioma" />
-								<combobox model="@load(vm.ventaPedidoForm.listaIdiomas)" 
-										  width="180px" disabled="true" 
-										  placeholder="Seleccione" 
-										  selectedItem="@bind(vm.idiomaBean)">
-										  
-								  <template name="model">
-									<comboitem label="@load(each.descripcion)" />
-								  </template>
-								</combobox>
-							</div>
-							
-							<checkbox label="Cerrado" value="@load(vm.ventaPedidoForm.cerrado)" disabled="true"/>															
+							<!-- <checkbox label="Cerrado" value="@load(vm.ventaPedidoForm.cerrado)" disabled="true"/>		 -->													
 							
 							<div width="400px">
 								<label value="Convenio" />	
@@ -135,6 +155,9 @@
 								<button label="B" onClick="" />
 								<button label="B" onClick="" />
 							</div>
+							
+							<label value="Cambio" />
+							<textbox value="@bind(vm.ventaPedidoForm.cambio)" width="30px" disabled="true"/>
 						</hbox>
 					</div>
 					
@@ -154,7 +177,8 @@
 							<div width="350px">	
 								<label value="Promocion" />
 								<combobox model="@load(vm.ventaPedidoForm.listaPromociones)" 
-										  width="180px" placeholder="Seleccione">
+										  width="180px" placeholder="Seleccione"
+										  disabled="@bind(vm.beanControlCombos.comboPromoEnable)">
 								  <template name="model">
 									<comboitem label="@load(each.descripcion)" />
 								  </template>
@@ -206,8 +230,8 @@
 							<label value="Multi" />
 							<space width="20px"/>
 							
-							<button label="B" onClick="@command('buscaProducto')" width="5px"/>
-							<button label="A" onClick="@command('buscaProducto')" width="5px"/>
+							<button label="M" onClick="" width="5px"/>
+							<button label="P" onClick="@command('buscaProducto')" width="5px"/>							
 						</div>
 
 						<grid model="@bind(vm.ventaPedidoForm.listaProductos)" 

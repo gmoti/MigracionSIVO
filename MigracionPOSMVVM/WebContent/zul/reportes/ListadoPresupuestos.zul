@@ -28,7 +28,7 @@
 							<column width="150px"/>
 							<column width="230px"/>
 							<column width="150px"/>
-							<column width="230px"/>						
+							<column width="230px"/>												
 						</columns>
 						<rows>
 							<row>
@@ -36,19 +36,28 @@
 								<textbox value = "@bind(vm.listadoPresupuestosForm.codigo)" width="180px"/>
 								
 								<label value="Divisa" />								
-								<combobox model = "@bind(vm.listadoPresupuestosForm.listaDivisas)" width="180px" selectedItem="@bind(vm.divisaBean)">
-								<template name="model">
-									<comboitem label="@load(each.id)"  description="@load(each.descripcion)" />
-								</template>
+								<combobox model = "@bind(vm.listadoPresupuestosForm.listaDivisas)" 
+										width="180px" 
+										selectedItem="@bind(vm.divisaBean)" placeholder="Seleccione" 
+										onRightClick="@command('comboSetNull',objetoBean=vm.divisaBean)">
+									<template name="model">
+										<comboitem label="@load(each.descripcion)" />
+									</template>
 								</combobox>
+								<label/>
+								<label/>								
 							</row>
 							<row>
 								<label value="Fecha inicio" />
-								<datebox value = "@bind(vm.fechaInicio)" format="dd/MM/yyyy"/>								
+								<datebox value = "@bind(vm.fechaInicio)" format="dd/MM/yyyy" />	
+
 								<label value="Fecha termino" />
-								<datebox value = "@bind(vm.fechaFin)" format="dd/MM/yyyy"/>								
+								<datebox value = "@bind(vm.fechaFin)" format="dd/MM/yyyy" />	
+												
 								<label value="Cerrado" />
-								<combobox value="@bind(vm.listadoPresupuestosForm.cerrado)" width="180px">
+								<combobox  width="180px" placeholder="Seleccione" 
+											selectedItem="@bind(vm.listadoPresupuestosForm.cerrado)">
+									<comboitem label="Seleccione" value="0"/>
 									<comboitem label="Si" value="S"/>
 									<comboitem label="No" value="N"/>
 								</combobox>
@@ -56,15 +65,19 @@
 							<row>
 								<label value="Cliente" />
 								<textbox value = "@bind(vm.listadoPresupuestosForm.cliente)" width="180px"/>
-								<button label="click" onClick="" width="30px"/>
+								<button label="B" onClick="" width="30px"/>
 								
-								<label value="Listado detallado" />
-								<checkbox  width="180px"/>
+								
+								<checkbox  width="180px" label="Listado detallado"/>
 								
 								<label value="Forma de pago" />
-								<combobox value="@bind(vm.listadoPresupuestosForm.listaFormasPago)" width="180px">
-									<comboitem label="" />
-									<comboitem label="" />
+								<combobox model="@bind(vm.listadoPresupuestosForm.listaFormasPago)" 
+											width="180px" placeholder="Seleccione" 
+											selectedItem="@bind(vm.formaPagoBean)" 
+											onRightClick="@command('comboSetNull',objetoBean=vm.formaPagoBean)">
+								   <template name="model">
+									<comboitem label="@load(each.descripcion)"/>
+								   </template>										
 								</combobox>							
 							</row>
 						</rows>

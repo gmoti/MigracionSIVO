@@ -21,8 +21,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.Selectors;
-import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
@@ -32,15 +30,13 @@ import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.DivisaBean;
-import cl.gmo.pos.venta.web.beans.FamiliaBean;
 import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.GraduacionesBean;
 import cl.gmo.pos.venta.web.beans.IdiomaBean;
 import cl.gmo.pos.venta.web.beans.PedidosPendientesBean;
-import cl.gmo.pos.venta.web.beans.PresupuestosBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
+import cl.gmo.pos.venta.web.beans.TipoPedidoBean;
 import cl.gmo.pos.venta.web.forms.BusquedaPedidosForm;
-import cl.gmo.pos.venta.web.forms.PresupuestoForm;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
 
@@ -67,6 +63,7 @@ public class ControllerEncargos implements Serializable {
 	private FormaPagoBean formaPagoBean;
 	private DivisaBean divisaBean;
 	private IdiomaBean idiomaBean;
+	private TipoPedidoBean tipoPedidoBean;
 	
 	private ClienteBean cliente;
 	private ProductosBean productoBean;
@@ -79,6 +76,7 @@ public class ControllerEncargos implements Serializable {
 	private String sucursal;
 	
 	private BeanControlBotones beanControlBotones;
+	private BeanControlCombos beanControlCombos;
 	
 	
 	@Init
@@ -88,6 +86,7 @@ public class ControllerEncargos implements Serializable {
 			Selectors.wireComponents(view, this, false);
 			
 		beanControlBotones = new BeanControlBotones();	
+		beanControlCombos  = new BeanControlCombos();
 		
 		beanControlBotones.setEnableNew("false");
 		beanControlBotones.setEnableListar("true");
@@ -101,23 +100,32 @@ public class ControllerEncargos implements Serializable {
 		formaPagoBean = new FormaPagoBean();
 		divisaBean = new DivisaBean();
 		idiomaBean = new IdiomaBean();
+		tipoPedidoBean = new TipoPedidoBean();
 		
 		fpagoDisable ="True";
 		agenteDisable="True";	
 		
 		fecha= new Date(System.currentTimeMillis());
 		fechaEntrega= new Date(System.currentTimeMillis());		
-		//ventaPedidoForm.setFecha(dt.format(new Date(System.currentTimeMillis())));
-		//ventaPedidoForm.setHora(tt.format(new Date(System.currentTimeMillis())));
+		ventaPedidoForm.setFecha(dt.format(new Date(System.currentTimeMillis())));
+		ventaPedidoForm.setHora(tt.format(new Date(System.currentTimeMillis())));
+		
 		sucursal = sess.getAttribute(Constantes.STRING_SUCURSAL).toString();
 		
 		ventaPedidoForm = ventaPedidoDispatchActions.cargaInicial(ventaPedidoForm, sucursal, sess);
-		ventaPedidoForm.setEstado(Constantes.STRING_FORMULARIO);
+		ventaPedidoForm.setFlujo(Constantes.STRING_FORMULARIO);
 		
 		//Si el encargo es invocado desde presupuesto, debe pasar por aqui
 		if(arg.equals("presupuesto")) {			
 			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedidoDesdePresupuesto(ventaPedidoForm, sess);			
 		}		
+		
+		beanControlCombos.setComboAgenteEnable("true");
+		beanControlCombos.setComboDivisaEnable("true");
+		beanControlCombos.setComboFpagoEnable("true");
+		beanControlCombos.setComboIdiomaEnable("true");
+		beanControlCombos.setComboPromoEnable("true");
+		beanControlCombos.setComboTiposEnable("true");
 		
 				
 		posicionCombo();
@@ -130,13 +138,28 @@ public class ControllerEncargos implements Serializable {
 	
 	//============ Nuevo Pedido ====================
 	//==============================================
-	@NotifyChange({"ventaPedidoForm","beanControlBotones"})
+	@NotifyChange({"ventaPedidoForm","beanControlBotones","beanControlCombos"})
 	@Command
 	public void nuevoFormulario() {
 		
 		ventaPedidoForm = ventaPedidoDispatchActions.nuevoFormulario(ventaPedidoForm, sess);
-		ventaPedidoForm.setEstado(Constantes.STRING_FORMULARIO);
+		ventaPedidoForm.setFlujo(Constantes.STRING_FORMULARIO);
 		beanControlBotones.setEnableListar("true");
+		
+		fecha= new Date(System.currentTimeMillis());
+		fechaEntrega= new Date(System.currentTimeMillis());		
+		ventaPedidoForm.setFecha(dt.format(new Date(System.currentTimeMillis())));
+		ventaPedidoForm.setHora(tt.format(new Date(System.currentTimeMillis())));
+		
+		beanControlCombos.setComboAgenteEnable("false");
+		beanControlCombos.setComboDivisaEnable("false");
+		beanControlCombos.setComboFpagoEnable("false");
+		beanControlCombos.setComboIdiomaEnable("false");
+		beanControlCombos.setComboPromoEnable("false");
+		beanControlCombos.setComboTiposEnable("false");
+		
+		
+		
 		posicionCombo();
 		
 		if (!bWin) {
@@ -148,85 +171,164 @@ public class ControllerEncargos implements Serializable {
 	
 	//============== Graba Pedido =================
 	//=============================================
-	@NotifyChange("ventaPedidoForm")
+	@NotifyChange({"ventaPedidoForm"})
 	@Command
-	public void grabarVentaPedido() {		
+	public void ingresa_pedido() {		
 		
-		//System.out.println("forma de pago" + formaPagoBean.getDescripcion());
-		//System.out.println("Agente de la venta" + agenteBean.getUsuario());
-		String codigoMulti="";
-		String cantidad="";
+		boolean valtienda=false;
+		boolean valGrabar=false;
 		
-		BeanGlobal bg = ventaPedidoDispatchActions.validaCantidadProductosMultiofertas(ventaPedidoForm, sess);
-		
-		cantidad=(String)bg.getObj_1(); 
-		codigoMulti=(String)bg.getObj_2();
+		Optional<TipoPedidoBean> tp  = Optional.ofNullable(tipoPedidoBean);	
+		if (!tp.isPresent())
+			tipoPedidoBean = new TipoPedidoBean();
 		
 		
-		if(cantidad.equals("menor")) {
-			Messagebox.show("La cantidad de productos en la multioferta "+codigoMulti+" no esta completa");
+		ventaPedidoForm.setAgente(agenteBean.getUsuario());
+		ventaPedidoForm.setForma_pago(formaPagoBean.getId());
+		ventaPedidoForm.setIdioma(idiomaBean.getId());
+		ventaPedidoForm.setDivisa(divisaBean.getId());
+		ventaPedidoForm.setTipo_pedido(tipoPedidoBean.getCodigo());	
+		ventaPedidoForm.setFecha_entrega(dt.format(fechaEntrega));
+		
+		if (ventaPedidoForm.getListaProductos().size() < 1) {
+			Messagebox.show("Debe ingresar articulos para generar cobros");
+			return;
+		}
+		
+		if (ventaPedidoForm.getNombre_cliente().equals("")) {
+			Messagebox.show("Debe seleccionar un Cliente");
+			return;
+		}
+		
+		if (agenteBean == null) {
+			Messagebox.show("Debe seleccionar un agente");
+			return;
+		}
+		
+		if (ventaPedidoForm.getFecha().equals("")) {
+			Messagebox.show("Debe ingresar una fecha");
+			return;
+		}
+		
+		
+		
+		if (!ventaPedidoForm.getFlujo().equals("formulario")) {	
+			
+			if (ventaPedidoForm.getFlujo().equals("modificar")) {
+			
+				try {
+					valtienda = ventaPedidoDispatchActions.validaTipoPedido(ventaPedidoForm, sess);
+					
+					if (valtienda) {					
+						
+		 				ventaPedidoForm.setAccion("ingresa_pedido");
+		 				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+		 				valGrabar=true;
+						
+					}else {
+						
+						ventaPedidoForm.setAccion("ingresa_pedido");
+		 				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+		 				valGrabar=true;
+					}		
+					
+					
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+				}			
+			}else {
+				
+				Messagebox.show("Encargo bloqueado, no es posible modificar la venta");
+				return;
+			}
+			
 		}else {
 			
-				if (ventaPedidoForm.getEstado().equals("cerrado")) {				
-					Messagebox.show("Venta finalizada, no es posible generar cobros");
-				}else {
+			if(tipoPedidoBean.getCodigo().equals("SEG")) {				
+				
+				try {
+					int val = ventaPedidoDispatchActions.validaVentaSeguro(ventaPedidoForm, sess);
 					
-					if(ventaPedidoForm.getNombre_cliente().equals("")) {
+					switch (val) {
+					case 1:		
 						
-						int canti_prod = ventaPedidoForm.getCantidadProductos();
+						Messagebox.show("El encargo a utilizar no esta asociado a garantia.");
+						break;
+					case 2:
 						
-						if(canti_prod == 0)
-		           		{
-		            		
-		            		Messagebox.show("Debe ingresar articulos para generar cobros");
-		            	}else
-		            	{
-		            		if (ventaPedidoForm.getPedido().equals("")) {
-	        					try {
-	        						
-	        						ventaPedidoForm.setAccion("valida_pedido");
-									ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
-									
-									if (ventaPedidoForm.getEstado().equals(Constantes.STRING_VALIDA_PEDIDO)) {
-										
-										//este metodo se llama igual venta_pedido.jsp
-										genera_venta();
-										
-									}else {
-										
-										//error en la valñidacion del pedido
-									}								
-									
-									
-								} catch (Exception e) {
-									
-									e.printStackTrace();
-								}	        					
-							}
-		            		else
-		            		{
-		            			
-		            			Messagebox.show("Debe guardar la venta, antes de cobrar");
-		            		}
-	        			}		
+						Messagebox.show("El encargo garantia ya fue utilizado, no es posible volver a ocuparlo.");
+						break;
+					case 3:						
+		 				
+		 				ventaPedidoForm.setAccion("ingresa_pedido");
+		 				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+		 				valGrabar=true;
+						break;
+					default:
 						
-					}else {						
-						Messagebox.show("Debe seleccionar un Cliente");
+						Messagebox.show("Problema al conectarse a la Base de Datos.");
+						break;
+					} 					
+					
+					
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+				}		
+				
+				
+			}else {
+				
+				
+				try {
+					valtienda = ventaPedidoDispatchActions.validaTipoPedido(ventaPedidoForm, sess);
+					
+					if (valtienda) {
+					
 						
-					}					
-				}				
-		}	
+					}else {
+						
+		 				ventaPedidoForm.setAccion("ingresa_pedido");
+		 				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+		 				valGrabar=true;
+					}
+					
+				} catch (Exception e) {					
+					e.printStackTrace();
+				}
+				
+			}		
+		}		
 		
-		//Messagebox.show("Grabacion exitosa");
+		
+		if (valGrabar)
+		   Messagebox.show("Pedido Grabado");
 		
 	}
 	
 	@NotifyChange("ventaPedidoForm")
 	@Command
-	public void genera_venta() {
+	public void genera_venta() {		
 		
-		SeleccionPagoForm seleccionPagoForm;
+		String cantidad="";
+		String codigoMulti="";
 		
+		BeanGlobal bg = ventaPedidoDispatchActions.validaCantidadProductosMultiofertas(ventaPedidoForm, sess);
+		
+		cantidad = (String)bg.getObj_1();
+		codigoMulti = (String)bg.getObj_2();
+		
+		if (!cantidad.equals("menor")) {
+			
+			valida_venta();
+		}else {
+			
+			Messagebox.show("La cantidad de productos en la multioferta "+codigoMulti+" no esta completa");			
+		}
+		
+		
+		/*
 		
 		if (!ventaPedidoForm.getEstado().equals("cerrado")) {
 			
@@ -260,8 +362,70 @@ public class ControllerEncargos implements Serializable {
 		}else {
 			
 			Messagebox.show("Venta finalizada, no es posible generar cobro");
-		}	
+		}	*/
+		
 	}
+	
+	
+	private void valida_venta() {
+		
+		SeleccionPagoForm seleccionPagoForm = new SeleccionPagoForm();
+		
+		if (ventaPedidoForm.getEstado().equals("cerrado")) {
+			Messagebox.show("Venta finalizada, no es posible generar cobros");
+			return;
+		}
+		
+		if (ventaPedidoForm.getNombre_cliente().equals("")) {
+			Messagebox.show("Debe seleccionar un Cliente");
+			return;
+		}
+		
+		if (ventaPedidoForm.getNombre_cliente().equals("")) {
+			Messagebox.show("Debe seleccionar un Cliente");
+			return;
+		}
+		
+		if (ventaPedidoForm.getListaProductos().size() < 1) {
+			Messagebox.show("Debe ingresar articulos para generar cobros");
+			return;
+		}
+		
+		if (ventaPedidoForm.getCodigo().equals("")) {
+			Messagebox.show("Debe guardar la venta, antes de cobrar");
+			return;
+		}		
+		
+		
+		try {
+			ventaPedidoForm.setAccion("valida_pedido");
+			ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+			
+			
+			if (ventaPedidoForm.getEstado().equals(Constantes.STRING_GENERA_COBRO)) {
+				
+				objetos = new HashMap<String,Object>();
+				objetos.put("cliente",cliente);
+				objetos.put("pagoForm",seleccionPagoForm);
+				objetos.put("ventaOrigenForm",ventaPedidoForm);
+				objetos.put("origen","PEDIDO");
+				
+				Window window = (Window)Executions.createComponents(
+		                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
+				
+		        window.doModal();				
+				
+			}else {
+				
+				Messagebox.show(ventaPedidoForm.getError());
+			}			
+			
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}
+		
+		
+	} 
 	
 	
 	//=========== Busqueda de presupuesto ===========
@@ -308,12 +472,32 @@ public class ControllerEncargos implements Serializable {
 	}
 	
 	
+	
+	
 	//===================== Acciones comunes de la ventana ======================
 	//===========================================================================
+	@NotifyChange({"ventaPedidoForm","beanControlBotones"})
+	@Command
+	public void buscarClienteGenerico() {		
+		ventaPedidoForm.setNif("66666666");		
+		beanControlBotones.setEnableGrid("false");
+		beanControlBotones.setEnableGrabar("false");
+		
+		buscarCliente();
+	}	
+	
+	
 	
 	@NotifyChange({"ventaPedidoForm","beanControlBotones"})
 	@Command
 	public void buscarCliente() {
+		
+		
+		if(ventaPedidoForm.getNif().equals("")) {
+			Messagebox.show("Debe ingresar un nif");
+			return;
+		}
+		
 		
 		try {			
 			
@@ -397,6 +581,18 @@ public class ControllerEncargos implements Serializable {
 			productos.add(arg);
 			ventaPedidoForm.setListaProductos(productos);
 		}	
+		
+		
+		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaPedidoForm.getListaProductos());
+		/*ventaPedidoForm.setAccion(Constantes.STRING_AGREGAR_PRODUCTOS);
+		
+		try {
+			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+			
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}*/
+		
 			
 		actTotal(ventaPedidoForm.getListaProductos());
 		System.out.println("estoy en otro controlador de venta pedido");				
@@ -473,7 +669,7 @@ public class ControllerEncargos implements Serializable {
 	}
 	
 	
-   @NotifyChange({"agenteBean","divisaBean","formaPagoBean","idiomaBean"}) 	
+   @NotifyChange({"agenteBean","divisaBean","formaPagoBean","idiomaBean","tipoPedidoBean"}) 	
    public void posicionCombo() {
 		
 		ventaPedidoForm.setDivisa("PESO");
@@ -489,10 +685,11 @@ public class ControllerEncargos implements Serializable {
 		
 		agenteBean=null;
 		formaPagoBean=null;
+		tipoPedidoBean=null;
 	}
 	
 	
-	@NotifyChange({"formaPagoBean","agenteBean"})
+	@NotifyChange({"formaPagoBean","agenteBean","tipoPedidoBean"})
 	@Command
 	public void comboSetNull(@BindingParam("objetoBean")Object arg) {
 		
@@ -545,7 +742,6 @@ public class ControllerEncargos implements Serializable {
 		this.fechaEntrega = fechaEntrega;
 	}
 
-
 	public ProductosBean getProductoBean() {
 		return productoBean;
 	}
@@ -554,56 +750,63 @@ public class ControllerEncargos implements Serializable {
 		this.productoBean = productoBean;
 	}
 
-
 	public AgenteBean getAgenteBean() {
 		return agenteBean;
 	}
-
 
 	public void setAgenteBean(AgenteBean agenteBean) {
 		this.agenteBean = agenteBean;
 	}
 
-
 	public FormaPagoBean getFormaPagoBean() {
 		return formaPagoBean;
 	}
-
 
 	public void setFormaPagoBean(FormaPagoBean formaPagoBean) {
 		this.formaPagoBean = formaPagoBean;
 	}
 
-
 	public DivisaBean getDivisaBean() {
 		return divisaBean;
 	}
-
 
 	public void setDivisaBean(DivisaBean divisaBean) {
 		this.divisaBean = divisaBean;
 	}
 
-
 	public IdiomaBean getIdiomaBean() {
 		return idiomaBean;
 	}
-
 
 	public void setIdiomaBean(IdiomaBean idiomaBean) {
 		this.idiomaBean = idiomaBean;
 	}
 
-
 	public BeanControlBotones getBeanControlBotones() {
 		return beanControlBotones;
 	}
 
-
 	public void setBeanControlBotones(BeanControlBotones beanControlBotones) {
 		this.beanControlBotones = beanControlBotones;
-	}	
-	
+	}
+
+	public TipoPedidoBean getTipoPedidoBean() {
+		return tipoPedidoBean;
+	}
+
+	public void setTipoPedidoBean(TipoPedidoBean tipoPedidoBean) {
+		this.tipoPedidoBean = tipoPedidoBean;
+	}
+
+
+	public BeanControlCombos getBeanControlCombos() {
+		return beanControlCombos;
+	}
+
+
+	public void setBeanControlCombos(BeanControlCombos beanControlCombos) {
+		this.beanControlCombos = beanControlCombos;
+	}
 	
 	
 	
