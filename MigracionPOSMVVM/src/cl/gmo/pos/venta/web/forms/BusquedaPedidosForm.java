@@ -1,5 +1,6 @@
 package cl.gmo.pos.venta.web.forms;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import cl.gmo.pos.venta.web.beans.AgenteBean;

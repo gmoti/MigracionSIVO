@@ -1067,12 +1067,13 @@ public class VentaPedidoDispatchActions {
 	
 	
 	
-	 public JSONObject validaTrioMultioferta(Session request){
+	 public String validaTrioMultioferta(Session request){
 		 
 			System.out.println("Paso 11 VP");
 	    	Session session = request;
 	    	String local = String.valueOf(session.getAttribute(Constantes.STRING_SUCURSAL));    		
 			Utils util = new Utils();
+			String retVal;
   
         	ArrayList<ProductosBean> listaProductosMultiofertaAux = new ArrayList<ProductosBean>();
         	ArrayList<ProductosBean> listaProductosMultiofertas = (ArrayList<ProductosBean>)session.getAttribute(Constantes.STRING_LISTA_PRODUCTOS_MULTIOFERTAS);
@@ -1141,15 +1142,17 @@ public class VentaPedidoDispatchActions {
         	        	
         	if(cantidadgrupos >=3){
         		hm.put("tieneTrio", "ok");
+        		retVal="ok";
         	}else{
         		hm.put("tieneTrio", "no");
+        		retVal="no";
         	}			 
-			JSONObject json = JSONObject.fromObject(hm);
+			//JSONObject json = JSONObject.fromObject(hm);
 			//response.setHeader("X-JSON", json.toString());
 			
 	    	log.info("ClienteDispatchActions:ingresoCliente fin");
 	    	//return mapping.findForward(Constantes.STRING_SUCCESS);
-	    	return json;
+	    	return retVal;
 	    }
 	 
 	  public BeanGlobal validaCantidadProductosMultiofertas(VentaPedidoForm form, Session request)

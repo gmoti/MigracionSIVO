@@ -6,6 +6,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Session;
 
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.utils.Utils;
@@ -27,7 +28,7 @@ public class BusquedaPedidosHelper extends Utils{
 		return lista;
 	}
 
-	public void traePedidos(BusquedaPedidosForm formulario, String local, HttpSession session) {
+	public void traePedidos(BusquedaPedidosForm formulario, String local, Session session) {
 		
 		String cliente = null;
 		String pedido = null;
