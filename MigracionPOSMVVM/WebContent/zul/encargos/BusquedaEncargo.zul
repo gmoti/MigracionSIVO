@@ -61,7 +61,8 @@
 							<textbox value="@load(each.fechaPedido)" readonly="true"/>
 							<textbox value="@load(each.horaP)" readonly="true"/>							
 							<textbox value="@load(each.fechasEntragas)" readonly="true"/>	
-							<textbox value="@load(each.anticipo)" readonly="true"/>											
+							<textbox value="@load(each.anticipo)" readonly="true"/>	
+																							
 										
 							<button label="Sel" 
 								onClick="@command('seleccionaProducto',win=winBusquedaEncargo) 

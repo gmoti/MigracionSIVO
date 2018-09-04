@@ -24,8 +24,8 @@
 						<button label="Eli" 						onClick="@command('eliminarPedido')"/>
 						
 						<button iconSclass="z-icon-eye" 			onClick="@command('mostrar_pagos_boletas')"  	disabled="@bind(vm.beanControlBotones.enableListar)"/>
-						<button label="B" 							onClick="@command('generaFichaTecnica')" 	    disabled="@bind(vm.beanControlBotones.enableTaller)"/>
-						<button iconSclass="z-icon-address" 		onClick="@command('generaFichaCliente')"        disabled="@bind(vm.beanControlBotones.enableCliente)"/>
+						<button label="Taller" 						onClick="@command('generaFichaTecnica')" 	    disabled="@bind(vm.beanControlBotones.enableTaller)"/>
+						<button label="Cliente"				 		onClick="@command('generaFichaCliente')"        disabled="@bind(vm.beanControlBotones.enableCliente)"/>
 						
 						<button iconSclass="z-icon-money" 			onClick="@command('validaCantidadProductosMulit')"    disabled="@bind(vm.beanControlBotones.enablePagar)"/>
 						<button iconSclass="z-icon-save"  			onClick="@command('ingresa_pedido')"  disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
@@ -232,7 +232,7 @@
 							<label value="Multi" />
 							<space width="20px"/>
 							
-							<button label="M" onClick="" width="5px"/>
+							<button label="M" onClick="@command('busca_multi')" width="5px"/>
 							<button label="P" onClick="@command('buscaProducto')" width="5px"/>							
 						</div>
 
