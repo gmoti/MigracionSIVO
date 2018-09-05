@@ -88,6 +88,7 @@ public class GraduacionesForm{
 	private String dvnifdoctor;
 	private String nombre_doctor;
 	private boolean diferenteAdd;
+	private int estaGrabado;
 	
 	public void  cleanForm(){
 		
@@ -134,6 +135,7 @@ public class GraduacionesForm{
 		this.nif_cliente_agregado=Constantes.STRING_BLANCO;
 		this.existe_graduacion=Constantes.STRING_BLANCO;
 		this.diferenteAdd = false;
+		this.estaGrabado = 0;
 		
 	}
 	
@@ -647,6 +649,14 @@ public class GraduacionesForm{
 
 	public void setNif_cliente_agregado(String nif_cliente_agregado) {
 		this.nif_cliente_agregado = nif_cliente_agregado;
+	}
+
+	public int getEstaGrabado() {
+		return estaGrabado;
+	}
+
+	public void setEstaGrabado(int estaGrabado) {
+		this.estaGrabado = estaGrabado;
 	}
 
 	

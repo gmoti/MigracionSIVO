@@ -54,14 +54,14 @@ public class ControllerMenuPrincipal implements Serializable{
 	        //mantenedores
 		case "M2_1":	
 			window = (Window)Executions.createComponents(
-	                "/zul/Cliente.zul", null, null);
+	                "/zul/mantenedores/Cliente.zul", null, null);
 			
 	        window.doModal();
 	        break;
 		
 		case "M2_2":	
 			window = (Window)Executions.createComponents(
-	                "/zul/GraduacionCliente.zul", null, null);
+	                "/zul/mantenedores/GraduacionCliente.zul", null, null);
 			
 	        window.doModal();
 	        break;    
