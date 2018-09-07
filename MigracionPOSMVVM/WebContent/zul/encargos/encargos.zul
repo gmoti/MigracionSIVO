@@ -252,6 +252,7 @@
 								<column width="65px" />
 								<column width="65px" />
 								<column width="45px" />
+								<column width="45px" />
 							</columns>
 							<template name="model">
 								<row>
@@ -271,6 +272,7 @@
 									<textbox value="" width="60px" disabled="true"/>
 									<textbox value="" width="60px" disabled="true"/>
 									
+									<button label="M" width="40px" onClick="" />
 									<button label="X" width="40px" onClick="@command('deleteItem',arg=each)" />
 								</row>
 							</template>

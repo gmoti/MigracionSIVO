@@ -247,7 +247,7 @@ public class BusquedaProductosDispatchActions {
     /*
      * LMARIN 20140506
      */
-    public BusquedaProductosForm  tiene_suple(BusquedaProductosForm form, Session request
+    public boolean  tiene_suple(BusquedaProductosForm form, Session request
             ) throws Exception
     {
 		 boolean valor = false;
@@ -260,7 +260,7 @@ public class BusquedaProductosDispatchActions {
 		 //FQuiroz comenta valor devuelto  
 		 //response.getWriter().print(valor);		
 		 //return null;
-		 return formulario;
+		 return valor;
     }
     
     /*

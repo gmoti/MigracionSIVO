@@ -922,16 +922,18 @@ public class ReportesHelper extends Utils{
 		return ruta+archivo;
 	}
 	
-	public void creaFichaTaller(HttpSession session,HttpServletResponse response, ArrayList<FichaTecnicaBean> lista, String ruta) throws Exception{
-		log.info("ReportesHelper:creaFichaTaller inicio");
-		InputStream io = ReportesHelper.class.getResourceAsStream("fichaTaller.jasper");
+	public byte[] creaFichaTaller(Session session, ArrayList<FichaTecnicaBean> lista, String ruta) throws Exception{
 		
+		log.info("ReportesHelper:creaFichaTaller inicio");
+		InputStream io = ReportesHelper.class.getResourceAsStream("fichaTaller.jasper");		
 
 		Map<String, String> parametros = new HashMap<String, String>();
 	    //parametros.put("fechaActual", util.traeFechaHoyFormateadaString());
 		ArrayList<FichaTecnicaBean> listaFicha = lista;
 		ArrayList<TiendaBean> tiendas = new ArrayList<TiendaBean>();
 		String letra = "";
+		CreaReportes creaReportes = new CreaReportes();
+		
 		tiendas = PosUtilesFacade.traeDatosTienda(session.getAttribute(Constantes.STRING_SUCURSAL).toString());
 	
 		if(tiendas.size() > 0 || tiendas != null){
@@ -940,10 +942,11 @@ public class ReportesHelper extends Utils{
 			}else{
 				letra = "R.png";
 			}
-		}
+		}	
+		
 		URI uri = new URI(this.getClass().getResource(letra).getPath());
 		
-		try {
+		try { 
 			for (FichaTecnicaBean fichaTecnicaBean : listaFicha) {
 				fichaTecnicaBean.setImagen(this.traeImagenCodBarra(fichaTecnicaBean.getNumero_encargo(), ruta));	
 				fichaTecnicaBean.setImagen_barra(this.traeImagenCodBarra(fichaTecnicaBean.getCod_armazon(), ruta));	
@@ -955,13 +958,16 @@ public class ReportesHelper extends Utils{
 			e1.printStackTrace();
 		}
 
-		byte[] bytes = new CreaReportes().obtenerJasper(parametros, io,listaFicha);
+		//byte[] bytes = new CreaReportes().obtenerJasper(parametros, io, listaFicha);
+		byte[] bytes = creaReportes.obtenerJasper(parametros, io, listaFicha);
+		
 		//byte[] bytes = new CreaReportes().obtenerJasperSinPar(parametros, io,new JREmptyDataSource());
 
-		response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
+		/*response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
 		response.setContentLength(bytes.length);
 		response.setHeader(Constantes.STRING_REPORTER_CONTENT_DISPOSITION, Constantes.STRING_REPORTER_BOLETA_PDF);
 		ServletOutputStream servletOutputStream;
+		
 		try {
 			servletOutputStream = response.getOutputStream();
 			servletOutputStream.write(bytes, 0, bytes.length);   
@@ -969,7 +975,7 @@ public class ReportesHelper extends Utils{
 			servletOutputStream.close();
 		} catch (IOException e) {
 			log.error("ReportesHelper:creaFichaTaller error catch",e);
-		}
+		}*/
 		
 		for (FichaTecnicaBean fichaTecnicaBean : listaFicha) {
 			File saveFile=new File(fichaTecnicaBean.getImagen(),fichaTecnicaBean.getImagen_barra());
@@ -981,15 +987,17 @@ public class ReportesHelper extends Utils{
 		}
 		
 		
-		
+		return bytes;
 		
 	}
-	public void creaFichaCliente(HttpSession session,HttpServletResponse response, String strcliente){
+	public byte[] creaFichaCliente(Session session, String strcliente){
+		
 		log.info("ReportesHelper:creaFichaCliente inicio");
 		InputStream io = ReportesHelper.class.getResourceAsStream("fichaCliente.jasper");
 		
 		ArrayList<ProductosBean> listaProduc = (ArrayList<ProductosBean>)session.getAttribute(Constantes.STRING_LISTA_PRODUCTOS);
 		ArrayList<ProductosBean> listaProductos = new ArrayList<ProductosBean>();
+		
 		if(null != listaProduc){			
 			for(ProductosBean pro : listaProduc){
 				if(null == pro.getTipo()){
@@ -1060,7 +1068,7 @@ public class ReportesHelper extends Utils{
 		byte[] bytes = new CreaReportes().obtenerJasper(parametros, io,listaProductos);
 		//byte[] bytes = new CreaReportes().obtenerJasperSinPar(parametros, io,new JREmptyDataSource());
 
-		response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
+		/*response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
 		response.setContentLength(bytes.length);
 		response.setHeader(Constantes.STRING_REPORTER_CONTENT_DISPOSITION, Constantes.STRING_REPORTER_BOLETA_PDF);
 		ServletOutputStream servletOutputStream;
@@ -1071,7 +1079,9 @@ public class ReportesHelper extends Utils{
 			servletOutputStream.close();
 		} catch (IOException e) {
 			log.error("ReportesHelper:creaFichaCliente error catch",e);
-		}
+		}*/
+		
+		return bytes;
 	}
 	
 	public void creaGuia(HttpSession session,HttpServletResponse response){

@@ -389,7 +389,7 @@ public class ControllerVentaDirecta implements Serializable{
 		arg.setImporte(arg.getPrecio());
 		arg.setCantidad(1);
 		
-		ArrayList<ProductosBean> productos = new ArrayList<ProductosBean>();
+		/*ArrayList<ProductosBean> productos = new ArrayList<ProductosBean>();
 		
 		if (ventaDirectaForm.getListaProductos() == null) {
 			productos.add(arg);
@@ -398,10 +398,23 @@ public class ControllerVentaDirecta implements Serializable{
 			productos = ventaDirectaForm.getListaProductos();
 			productos.add(arg);
 			ventaDirectaForm.setListaProductos(productos);
-		}		
+		}		*/
 		
-		actTotal(ventaDirectaForm.getListaProductos());
-		System.out.println("estoy en otro controlador "+arg.getDescripcion());
+		
+		ventaDirectaForm.setAccion(Constantes.STRING_AGREGAR_PRODUCTOS);
+		ventaDirectaForm.setAddProducto(arg.getCod_barra());
+		ventaDirectaForm.setCantidad(arg.getCantidad());
+		
+		
+		try {
+			ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);
+			actTotal(ventaDirectaForm.getListaProductos());
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+		//System.out.println("estoy en otro controlador "+arg.getDescripcion());
 				
 	}
 	
@@ -443,8 +456,28 @@ public class ControllerVentaDirecta implements Serializable{
 	@NotifyChange({"ventaDirectaForm"})	
 	@Command
 	public void deleteItem(@BindingParam("arg")ProductosBean b){
-		ventaDirectaForm.getListaProductos().remove(b);		
-		actTotal(ventaDirectaForm.getListaProductos());
+		
+		
+		if (ventaDirectaForm.getEstado().equals("fin")){			
+			Messagebox.show("Venta finalizada, no es posible eliminar productos");
+			return;
+		}
+ 		
+ 		ventaDirectaForm.setAccion(Constantes.STRING_ELIMINAR_PRODUCTO);
+		ventaDirectaForm.setAddProducto(b.getCodigo());	
+		
+		try {
+			ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);
+			actTotal(ventaDirectaForm.getListaProductos());
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+		
+		//ventaDirectaForm.getListaProductos().remove(b);		
+		//actTotal(ventaDirectaForm.getListaProductos());
 	}
 	
 	

@@ -38,7 +38,7 @@
 								placeholder="Seleccione"
 								onRightClick="@command('comboSetNull',objetoBean=vm.familiaBean)" width="300px">						
 						<template name='model'>
-							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
+							<comboitem label="@load(each.descripcion)"/>
 						</template>
 					</combobox>					
 					</hbox>	
@@ -52,7 +52,7 @@
 								placeholder="Seleccione"
 								onRightClick="@command('comboSetNull',objetoBean=vm.subFamiliaBean)" width="300px">													
 						<template name='model'>
-							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
+							<comboitem label="@load(each.descripcion)"/>
 						</template>
 					</combobox>					
 					</hbox>			
@@ -65,7 +65,7 @@
 								placeholder="Seleccione"
 								onRightClick="@command('comboSetNull',objetoBean=vm.grupoFamiliaBean)" width="300px">														
 						<template name='model'>
-							<comboitem description="@load(each.codigo)"  label="@load(each.descripcion)"/>
+							<comboitem label="@load(each.descripcion)"/>
 						</template>
 					</combobox>					
 					</hbox>

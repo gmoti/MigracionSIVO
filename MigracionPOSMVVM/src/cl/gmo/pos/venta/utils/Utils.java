@@ -3052,7 +3052,7 @@ public class Utils {
 			    NodeList errNode = doc.getElementsByTagName("ProcessResult");
 			    if (errNode.getLength() > 0) {
 			         Element err = (Element)errNode.item(0);
-			         out = err.getElementsByTagName("HasError").item(0).getTextContent();
+			         out = ((Object) err.getElementsByTagName("HasError").item(0)).getTextContent();
 			    }
 				
 				out = "false";

@@ -154,7 +154,7 @@ public class ControllerSearchProductPres implements Serializable {
 			//busquedaProductosForm.setSubFamilia(subFamiliaBean.getCodigo());
 			//busquedaProductosForm.setGrupo(grupoFamiliaBean.getCodigo());
 			
-			busquedaProductosDispatchActions.tiene_suple(busquedaProductosForm, sess);
+			boolean tieneSuple = busquedaProductosDispatchActions.tiene_suple(busquedaProductosForm, sess);
 			
 			winVisibleBusqueda="FALSE";	
 			

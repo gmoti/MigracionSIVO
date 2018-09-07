@@ -19,7 +19,7 @@ import cl.gmo.pos.venta.web.beans.TipoFamiliaBean;
  *
  * @author Advice70
  */
-public class BusquedaProductosForm{
+public class BusquedaProductosForm extends GenericForm{
     
     /**
 	 * 
@@ -71,6 +71,21 @@ public class BusquedaProductosForm{
 	private String cdg;
 	private String tienePagos;
 	private String codigo_barras;
+	
+	
+	/*public BusquedaProductosForm() {
+		
+		 ArrayList<FamiliaBean> listaFamilias =new ArrayList<FamiliaBean>();
+	     ArrayList<SubFamiliaBean> listaSubFamilias =new ArrayList<SubFamiliaBean>();
+	     ArrayList<GrupoFamiliaBean> listaGruposFamilias =new ArrayList<GrupoFamiliaBean>();
+	     ArrayList<ProveedorBean> listaProveedores =new ArrayList<ProveedorBean>();
+	     ArrayList<TipoFamiliaBean> listaTipoFamilia =new ArrayList<TipoFamiliaBean>();
+	     ArrayList<ProductosBean> listaProductos =new ArrayList<ProductosBean>();
+	     ArrayList<ProductosBean> listaMultioferta =new ArrayList<ProductosBean>();
+	     ArrayList<ProductosBean> listaProductosMultioferta =new ArrayList<ProductosBean>();
+	     ArrayList<GraduacionesBean> listaGraduaciones=new  ArrayList<GraduacionesBean>();
+		
+	}*/
 	
 	public String getTienePagos() {
 		return tienePagos;

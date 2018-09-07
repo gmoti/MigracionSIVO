@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -19,6 +17,7 @@ import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
@@ -31,6 +30,7 @@ import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.presupuesto.PresupuestoHelper;
 import cl.gmo.pos.venta.controlador.ventaDirecta.VentaPedidoDispatchActions;
+import cl.gmo.pos.venta.reporte.nuevo.ReportesHelper;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
@@ -43,10 +43,11 @@ import cl.gmo.pos.venta.web.beans.PedidosPendientesBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.TipoPedidoBean;
 import cl.gmo.pos.venta.web.forms.BusquedaPedidosForm;
+import cl.gmo.pos.venta.web.forms.BusquedaProductosForm;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
 import cl.gmo.pos.venta.web.helper.FichaTecnicaHelper;
-import cl.gmo.pos.venta.web.helper.ReportesHelper;
+
 
 public class ControllerEncargos implements Serializable {
 
@@ -67,6 +68,8 @@ public class ControllerEncargos implements Serializable {
 	SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss");		
 	private SeleccionPagoForm seleccionPagoForm;
 	private VentaPedidoForm ventaPedidoForm;
+	private BusquedaProductosForm busquedaProductosForm;
+	
 	private VentaPedidoDispatchActions ventaPedidoDispatchActions;
 	
 	private AgenteBean agenteBean;
@@ -88,6 +91,10 @@ public class ControllerEncargos implements Serializable {
 	private BeanControlBotones beanControlBotones;
 	private BeanControlCombos beanControlCombos;
 	
+	private byte[] bytes;
+	private ReportesHelper reportes;
+	private AMedia fileContent;
+	
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view, @ExecutionArgParam("origen")String arg) {	
@@ -100,7 +107,7 @@ public class ControllerEncargos implements Serializable {
 		beanControlBotones.setEnableNew("false");
 		beanControlBotones.setEnableListar("true");
 		
-		ventaPedidoForm            = new VentaPedidoForm();
+		ventaPedidoForm          = new VentaPedidoForm();		
 		ventaPedidoDispatchActions = new VentaPedidoDispatchActions();
 		cliente      = new ClienteBean();
 		productoBean = new ProductosBean();	
@@ -119,13 +126,15 @@ public class ControllerEncargos implements Serializable {
 		ventaPedidoForm.setFecha(dt.format(new Date(System.currentTimeMillis())));
 		ventaPedidoForm.setHora(tt.format(new Date(System.currentTimeMillis())));
 		
-		sucursal = sess.getAttribute(Constantes.STRING_SUCURSAL).toString();
+		sucursal = sess.getAttribute(Constantes.STRING_SUCURSAL).toString();	
 		
-		ventaPedidoForm = ventaPedidoDispatchActions.cargaInicial(ventaPedidoForm, sucursal, sess);
-		ventaPedidoForm.setFlujo(Constantes.STRING_FORMULARIO);
+		ventaPedidoDispatchActions.CargaFormulario(ventaPedidoForm, sess);	
+		ventaPedidoForm.setPromocion("0");
+		
 		
 		//Si el encargo es invocado desde presupuesto, debe pasar por aqui
 		if(arg.equals("presupuesto")) {			
+			ventaPedidoForm.setDesde_presupuesto(Constantes.STRING_TRUE);
 			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedidoDesdePresupuesto(ventaPedidoForm, sess);			
 		}		
 		
@@ -159,6 +168,7 @@ public class ControllerEncargos implements Serializable {
 		fechaEntrega= new Date(System.currentTimeMillis());		
 		ventaPedidoForm.setFecha(dt.format(new Date(System.currentTimeMillis())));
 		ventaPedidoForm.setHora(tt.format(new Date(System.currentTimeMillis())));
+		ventaPedidoForm.setPromocion("0");
 		
 		beanControlCombos.setComboAgenteEnable("false");
 		beanControlCombos.setComboDivisaEnable("false");
@@ -280,7 +290,7 @@ public class ControllerEncargos implements Serializable {
 	}
 	
 	
-	//=========Busqueda avanzada de pedidos =========
+	//==============Genera Ficha Tecnica ============
 	//===============================================	
 	@NotifyChange("ventaPedidoForm")
 	@Command
@@ -370,14 +380,15 @@ public class ControllerEncargos implements Serializable {
 	}
 	
 	
-	private void CreaFichaTallerServlet(VentaPedidoForm ventaPedidoForm) {
-		
+	private void CreaFichaTallerServlet(VentaPedidoForm ventaPedidoForm) {		
 		
 		String cdg 		= ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo();
 		String cliente  = ventaPedidoForm.getCliente().toString();
 		String saldo 	= String.valueOf(ventaPedidoForm.getTotal());		
 		int clienteint=0;
 		int saldoint= 0;
+		reportes = new ReportesHelper();		
+		
 		
 		if(null != cliente){
 			try{
@@ -399,10 +410,25 @@ public class ControllerEncargos implements Serializable {
 		ArrayList<FichaTecnicaBean> lista = new FichaTecnicaHelper().traeFichaTaller(cdg, clienteint, saldoint);		
 		log.info("CreaFichaTallerServlet:service  inicio");
 		
-		String file = request.getSession().getServletContext().getRealPath("");
+		//String file = request.getSession().getServletContext().getRealPath("");
+		//String file = Sessions.getCurrent().get
+		String file="";
 		
-		try {
-			new ReportesHelper().creaFichaTaller(session, response, lista, file);
+		try {			
+			bytes = reportes.creaFichaTaller(sess, lista, file);
+			final AMedia media = new AMedia("FichaTaller.pdf", "pdf", "application/pdf", bytes);			
+			
+			
+			objetos = new HashMap<String,Object>();
+			objetos.put("reporte",media);
+			objetos.put("titulo","Ficha Tecnica");			
+			
+			Window window = (Window)Executions.createComponents(
+	                "/zul/reportes/VisorReporte.zul", null, objetos);
+			
+	        window.doModal();	
+			
+			
 			
 		} catch (Exception e) {
 			
@@ -410,6 +436,44 @@ public class ControllerEncargos implements Serializable {
 		}
 		
 		log.info("CreaFichaTallerServlet:service  fin");	
+		
+	}
+	
+	
+	//============= Genera Ficha Cliente ============
+	//===============================================	
+	@NotifyChange("ventaPedidoForm")
+	@Command
+	public void generaFichaCliente() {
+		
+		
+		CreaFichaClienteServlet(ventaPedidoForm);
+		
+	}
+	
+	
+	private void CreaFichaClienteServlet(VentaPedidoForm ventaPedidoForm) {		
+		
+		reportes = new ReportesHelper();
+		String cdg 		= ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo();
+		String cliente  = ventaPedidoForm.getCliente();
+		
+		//new ReportesHelper().creaFichaCliente(sess, cliente);	
+		
+		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaPedidoForm.getListaProductos());
+		sess.setAttribute(Constantes.STRING_SESSION_FORMULARIO_VTA_PEDIDO, ventaPedidoForm);
+		
+		bytes = reportes.creaFichaCliente(sess, cliente);
+		final AMedia media = new AMedia("FichaCliente.pdf", "pdf", "application/pdf", bytes);
+		
+		objetos = new HashMap<String,Object>();
+		objetos.put("reporte",media);
+		objetos.put("titulo","Ficha Cliente");			
+		
+		Window window = (Window)Executions.createComponents(
+                "/zul/reportes/VisorReporte.zul", null, objetos);
+		
+        window.doModal();
 		
 	}
 	
@@ -482,75 +546,73 @@ public class ControllerEncargos implements Serializable {
 					
 					e.printStackTrace();
 				}			
+			
+			
 			}else {
-				
-				Messagebox.show("Encargo bloqueado, no es posible modificar la venta");
-				return;
-			}
 			
-		}else {
-			
-			if(tipoPedidoBean.getCodigo().equals("SEG")) {				
-				
-				try {
-					int val = ventaPedidoDispatchActions.validaVentaSeguro(ventaPedidoForm, sess);
+				if(tipoPedidoBean.getCodigo().equals("SEG")) {				
 					
-					switch (val) {
-					case 1:		
+					try {
+						int val = ventaPedidoDispatchActions.validaVentaSeguro(ventaPedidoForm, sess);
 						
-						Messagebox.show("El encargo a utilizar no esta asociado a garantia.");
-						break;
-					case 2:
+						switch (val) {
+						case 1:		
+							
+							Messagebox.show("El encargo a utilizar no esta asociado a garantia.");
+							break;
+						case 2:
+							
+							Messagebox.show("El encargo garantia ya fue utilizado, no es posible volver a ocuparlo.");
+							break;
+						case 3:						
+			 				
+			 				ventaPedidoForm.setAccion("ingresa_pedido");
+			 				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+			 				valGrabar=true;
+							break;
+						default:
+							
+							Messagebox.show("Problema al conectarse a la Base de Datos.");
+							break;
+						} 					
 						
-						Messagebox.show("El encargo garantia ya fue utilizado, no es posible volver a ocuparlo.");
-						break;
-					case 3:						
-		 				
-		 				ventaPedidoForm.setAccion("ingresa_pedido");
-		 				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
-		 				valGrabar=true;
-						break;
-					default:
 						
-						Messagebox.show("Problema al conectarse a la Base de Datos.");
-						break;
-					} 					
+					} catch (Exception e) {
+						
+						e.printStackTrace();
+					}		
 					
 					
-				} catch (Exception e) {
+				}else {
 					
-					e.printStackTrace();
+					
+						try {
+							valtienda = ventaPedidoDispatchActions.validaTipoPedido(ventaPedidoForm, sess);
+						
+						if (valtienda) {
+						
+							
+						}else {
+							
+			 				ventaPedidoForm.setAccion("ingresa_pedido");
+			 				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+			 				valGrabar=true;}
+						
+						} catch (Exception e) {					
+							e.printStackTrace();
+						}
+					
 				}		
-				
-				
-			}else {
-				
-				
-				try {
-					valtienda = ventaPedidoDispatchActions.validaTipoPedido(ventaPedidoForm, sess);
-					
-					if (valtienda) {
-					
-						
-					}else {
-						
-		 				ventaPedidoForm.setAccion("ingresa_pedido");
-		 				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
-		 				valGrabar=true;
-					}
-					
-				} catch (Exception e) {					
-					e.printStackTrace();
-				}
-				
-			}		
-		}		
+			}	
+			
+		}	
 		
 		
 		if (valGrabar)
 		   Messagebox.show("Pedido Grabado");
 		
 	}
+	
 	
 	@NotifyChange("ventaPedidoForm")
 	@Command
@@ -791,11 +853,11 @@ public class ControllerEncargos implements Serializable {
     @GlobalCommand
 	public void actProdGridVentaPedido(@BindingParam("producto")ProductosBean arg) {	
 		
-		
+		//no viene la graduaciion
 		arg.setImporte(arg.getPrecio());
 		arg.setCantidad(1);
 		
-		ArrayList<ProductosBean> productos = new ArrayList<ProductosBean>();
+		/*ArrayList<ProductosBean> productos = new ArrayList<ProductosBean>();
 		
 		if (ventaPedidoForm.getListaProductos() == null) {
 			productos.add(arg);
@@ -804,29 +866,113 @@ public class ControllerEncargos implements Serializable {
 			productos = ventaPedidoForm.getListaProductos();
 			productos.add(arg);
 			ventaPedidoForm.setListaProductos(productos);
-		}	
+		}	*/
 		
 		
 		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaPedidoForm.getListaProductos());
-		/*ventaPedidoForm.setAccion(Constantes.STRING_AGREGAR_PRODUCTOS);
+		ventaPedidoForm.setAccion(Constantes.STRING_AGREGAR_PRODUCTOS);
 		
 		try {
+			
+			ventaPedidoForm.setCantidad(arg.getCantidad());
+			ventaPedidoForm.setAddProducto(arg.getCod_barra());
+			//ventaPedidoForm.setGraduacion(arg.getg);
+			ventaPedidoForm.setOjo(arg.getOjo());
+			ventaPedidoForm.setDescripcion(arg.getDescripcion());
+			
+			
+			
 			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
 			
 		} catch (Exception e) {			
 			e.printStackTrace();
-		}*/
-		
+		}	
 			
 		actTotal(ventaPedidoForm.getListaProductos());
-		System.out.println("estoy en otro controlador de venta pedido");				
+		//System.out.println("estoy en otro controlador de venta pedido");		
+		
+		
+		//Si es multioferta se abre la ventana nultioferta
+		
+		//objetos = new HashMap<String,Object>();
+		//objetos.put("reporte",media);
+		//objetos.put("titulo","Ficha Cliente");
+		
+		if (arg.getFamilia().equals("MUL")) {
+			
+			busquedaProductosForm    = new BusquedaProductosForm();
+			busquedaProductosForm.setCliente(cliente.getCodigo());
+			busquedaProductosForm.setCodigoMultioferta(arg.getCodigo());
+			busquedaProductosForm.setIndex_multi(arg.getIndexMulti());			
+			busquedaProductosForm.setFecha_graduacion(arg.getFecha_graduacion());			
+			
+			objetos = new HashMap<String,Object>();
+			objetos.put("busquedaProductos",busquedaProductosForm);	
+			
+			Window window = (Window)Executions.createComponents(
+	                "/zul/encargos/BusquedaMultiofertas.zul", null, objetos);
+			
+	        window.doModal();			
+			
+		}
+		
 	}
 	
 	@NotifyChange({"ventaPedidoForm"})	
 	@Command
 	public void deleteItem(@BindingParam("arg")ProductosBean b){
 		
-		ventaPedidoForm.getListaProductos().remove(b);		
+		Integer index=0;
+		
+		if(ventaPedidoForm.getEstado().equals("fin")) {			
+			Messagebox.show("Venta finalizada, no es posible eliminar productos");
+			return;
+		}	
+		
+		for(ProductosBean pb : ventaPedidoForm.getListaProductos()) {			
+			
+			if (pb.getCod_barra().equals(b.getCod_barra())){
+				break;
+			}
+			index++;
+			
+		}
+		
+		
+		if (b.getFamilia().equals("MUL")) {
+			
+			//document.getElementById("index_multi_eliminar").value = indexMulti;
+     		//document.getElementById('productoSeleccionado').value = codigo;
+     		//document.getElementById('accion').value = "eliminarProductoMultiOferta";
+     		//document.ventaDirectaForm.submit();    		
+     		ventaPedidoForm.setAccion("eliminarProductoMultiOferta");
+     		ventaPedidoForm.setError("");
+     		ventaPedidoForm.setAddProducto(index.toString());
+			
+			
+		}else {
+			//document.getElementById('productoSeleccionado').value = codigo;
+     		//document.getElementById('accion').value = "eliminarProducto";
+     		//document.ventaDirectaForm.submit();         		
+     		ventaPedidoForm.setAccion("eliminarProducto");
+     		ventaPedidoForm.setError("");
+     		ventaPedidoForm.setAddProducto(index.toString()); 		
+     		
+		}	
+		
+ 		try {
+			ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+			
+			if (!ventaPedidoForm.getError().equals("")) {
+				Messagebox.show(ventaPedidoForm.getError());
+			    return;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();					
+		} 		
+		
+		//ventaPedidoForm.getListaProductos().remove(b);		
 		actTotal(ventaPedidoForm.getListaProductos());
 	}
 	
