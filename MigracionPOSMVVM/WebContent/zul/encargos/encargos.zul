@@ -29,7 +29,7 @@
 						
 						<button iconSclass="z-icon-money" 			onClick="@command('validaCantidadProductosMulit')"    disabled="@bind(vm.beanControlBotones.enablePagar)"/>
 						<button iconSclass="z-icon-save"  			onClick="@command('ingresa_pedido')"  disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
-						<button iconSclass="z-icon-close" 			onClick="@command('cerrar_venta', arg=winEncargos)"/>						
+						<button iconSclass="z-icon-close" 			onClick="@command('salir', win=winEncargos)"/>						
 						</div>					
 					</div>
 					
@@ -272,7 +272,7 @@
 									<textbox value="" width="60px" disabled="true"/>
 									<textbox value="" width="60px" disabled="true"/>
 									
-									<button label="M" width="40px" onClick="" />
+									<button label="M" width="40px" onClick="@command('multiofertaProducto',producto=each)" />
 									<button label="X" width="40px" onClick="@command('deleteItem',arg=each)" />
 								</row>
 							</template>

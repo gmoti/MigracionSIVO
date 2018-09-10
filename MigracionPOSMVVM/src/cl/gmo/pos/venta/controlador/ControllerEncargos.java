@@ -201,10 +201,10 @@ public class ControllerEncargos implements Serializable {
 		objetos = new HashMap<String,Object>();		
 		objetos.put("listaPedidos",sess.getAttribute(Constantes.STRING_ACTION_LISTA_PEDIDOS));
 		
-		Window window = (Window)Executions.createComponents(
+		Window windowBusquedaEncargo = (Window)Executions.createComponents(
                 "/zul/encargos/BusquedaEncargo.zul", null, objetos);
 		
-        window.doModal(); 		
+		windowBusquedaEncargo.doModal(); 		
 		
 	}
 	
@@ -215,10 +215,10 @@ public class ControllerEncargos implements Serializable {
 		
 		sess.setAttribute("flujo", ventaPedidoForm.getFlujo());
 		
-		Window window = (Window)Executions.createComponents(
+		Window windowBusquedaAvanzadaEncargo = (Window)Executions.createComponents(
                 "/zul/encargos/BusquedaAvanzadaEncargo.zul", null, null);
 		
-        window.doModal(); 
+		windowBusquedaAvanzadaEncargo.doModal(); 
 	}
 	
 	
@@ -282,10 +282,10 @@ public class ControllerEncargos implements Serializable {
 		objetos = new HashMap<String,Object>();		
 		objetos.put("seleccionPago",seleccionPagoForm);
 		
-		Window window = (Window)Executions.createComponents(
+		Window windowMostrarPagosBoleta = (Window)Executions.createComponents(
                 "/zul/encargos/MostrarPagosBoleta.zul", null, objetos);
 		
-        window.doModal();	
+		windowMostrarPagosBoleta.doModal();	
 		
 	}
 	
@@ -423,10 +423,10 @@ public class ControllerEncargos implements Serializable {
 			objetos.put("reporte",media);
 			objetos.put("titulo","Ficha Tecnica");			
 			
-			Window window = (Window)Executions.createComponents(
+			Window windowVisorReporte = (Window)Executions.createComponents(
 	                "/zul/reportes/VisorReporte.zul", null, objetos);
 			
-	        window.doModal();	
+			windowVisorReporte.doModal();	
 			
 			
 			
@@ -470,10 +470,10 @@ public class ControllerEncargos implements Serializable {
 		objetos.put("reporte",media);
 		objetos.put("titulo","Ficha Cliente");			
 		
-		Window window = (Window)Executions.createComponents(
+		Window windowVisorReporte = (Window)Executions.createComponents(
                 "/zul/reportes/VisorReporte.zul", null, objetos);
 		
-        window.doModal();
+		windowVisorReporte.doModal();
 		
 	}
 	
@@ -635,9 +635,9 @@ public class ControllerEncargos implements Serializable {
 		}
 		
 		
-		/*
 		
-		if (!ventaPedidoForm.getEstado().equals("cerrado")) {
+		
+		/*if (!ventaPedidoForm.getEstado().equals("cerrado")) {
 			
 			ventaPedidoDispatchActions.generaVentaPedido(ventaPedidoForm, sess);	
 			seleccionPagoForm = new SeleccionPagoForm();
@@ -660,10 +660,10 @@ public class ControllerEncargos implements Serializable {
 			objetos.put("ventaOrigenForm",ventaPedidoForm);
 			objetos.put("origen","PEDIDO");
 			
-			Window window = (Window)Executions.createComponents(
+			Window windowPagoVentaDirecta = (Window)Executions.createComponents(
 	                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
 			
-	        window.doModal();
+			windowPagoVentaDirecta.doModal();
 			
 			
 		}else {
@@ -711,16 +711,38 @@ public class ControllerEncargos implements Serializable {
 			
 			if (ventaPedidoForm.getEstado().equals(Constantes.STRING_GENERA_COBRO)) {
 				
+				seleccionPagoForm = new SeleccionPagoForm();
+				
+				seleccionPagoForm.setFech_pago(ventaPedidoForm.getFecha());
+				//seleccionPagoForm.setFecha(ventaPedidoForm.getFecha());
+				seleccionPagoForm.setTipo_doc('G');	
+				
+				Optional<TipoPedidoBean> pedido = Optional.ofNullable(tipoPedidoBean);
+				if (pedido.isPresent())			
+					sess.setAttribute("TIPO_PEDIDO", tipoPedidoBean.getCodigo());
+				else
+					sess.setAttribute("TIPO_PEDIDO", null);				
+				
+				sess.setAttribute(Constantes.STRING_LISTA_PAGOS, seleccionPagoForm.getListaPagos());
+				sess.setAttribute(Constantes.STRING_PORCENTAJE_ANTICIPO, ventaPedidoForm.getAnticipo());
+				sess.setAttribute(Constantes.STRING_FORMA_PAGO_ORIGEN, formaPagoBean.getId());
+				sess.setAttribute(Constantes.STRING_ORIGEN, Constantes.STRING_PEDIDO);
+				sess.setAttribute(Constantes.STRING_TOTAL, ventaPedidoForm.getTotal());
+				sess.setAttribute(Constantes.STRING_CLIENTE, cliente.getCodigo()  );
+				sess.setAttribute(Constantes.STRING_TICKET,  ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo() );
+				sess.setAttribute(Constantes.STRING_FECHA,   ventaPedidoForm.getFecha());		
+				sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaPedidoForm.getListaProductos());
+				
 				objetos = new HashMap<String,Object>();
 				objetos.put("cliente",cliente);
 				objetos.put("pagoForm",seleccionPagoForm);
 				objetos.put("ventaOrigenForm",ventaPedidoForm);
 				objetos.put("origen","PEDIDO");
 				
-				Window window = (Window)Executions.createComponents(
+				Window windowPagoVentaDirecta = (Window)Executions.createComponents(
 		                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
 				
-		        window.doModal();				
+				windowPagoVentaDirecta.doModal();				
 				
 			}else {
 				
@@ -738,7 +760,7 @@ public class ControllerEncargos implements Serializable {
 	//=========== Recupera Encargo seleccionado======
 	//===============================================	
 		
-	@NotifyChange({"ventaPedidoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean"})
+	@NotifyChange({"ventaPedidoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean","fecha","fechaEntrega"})
 	@GlobalCommand
 	public void encargoSeleccionado(@BindingParam("arg")ArrayList<PedidosPendientesBean> arg,
 									@BindingParam("arg2")PedidosPendientesBean arg2) {				
@@ -746,7 +768,15 @@ public class ControllerEncargos implements Serializable {
 		try {
 			sess.setAttribute(Constantes.STRING_ACTION_CDG, arg2.getCdg());
 			ventaPedidoForm.setAccion(Constantes.STRING_ACTION_CARGA_PEDIDO_SELECCION);
-			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+			ventaPedidoForm = ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);			
+			
+			java.util.Date lFecha =  dt.parse(ventaPedidoForm.getFecha()); 
+			java.util.Date lFechaEntrega=  dt.parse(ventaPedidoForm.getFecha_entrega());
+			//ventaPedidoForm.getHora()
+			
+			fecha = new Date(lFecha.getTime());
+			fechaEntrega = new Date(lFechaEntrega.getTime());
+			
 			
 			posicionComboNuevo();
 			
@@ -839,15 +869,6 @@ public class ControllerEncargos implements Serializable {
 		}       
 	}
 	
-	@Command
-	public void cerrar_venta(@BindingParam("arg")Window arg) {
-		
-		if (!bWin) {
-			wBusqueda.detach();
-		}
-		
-		arg.detach();
-	}
 	
 	@NotifyChange({"ventaPedidoForm"})
     @GlobalCommand
@@ -907,16 +928,46 @@ public class ControllerEncargos implements Serializable {
 			busquedaProductosForm.setFecha_graduacion(arg.getFecha_graduacion());			
 			
 			objetos = new HashMap<String,Object>();
-			objetos.put("busquedaProductos",busquedaProductosForm);	
+			objetos.put("busquedaProductos",busquedaProductosForm);
+			objetos.put("origen","consultaProducto");
+			objetos.put("beanProducto",arg);
+			objetos.put("ventaPedido",ventaPedidoForm);
 			
 			Window window = (Window)Executions.createComponents(
 	                "/zul/encargos/BusquedaMultiofertas.zul", null, objetos);
 			
 	        window.doModal();			
 			
-		}
-		
+		}		
 	}
+	
+	
+	@NotifyChange({"ventaPedidoForm"})
+    @Command
+	public void multiofertaProducto(@BindingParam("producto")ProductosBean arg) {
+		
+		
+		if (arg.getFamilia().equals("MUL")) {
+			busquedaProductosForm    = new BusquedaProductosForm();
+			busquedaProductosForm.setCliente(cliente.getCodigo());
+			busquedaProductosForm.setCodigoBusqueda(arg.getCod_barra());
+			busquedaProductosForm.setCodigoMultioferta(arg.getCodigo());
+			busquedaProductosForm.setIndex_multi(arg.getIndexMulti());			
+			busquedaProductosForm.setFecha_graduacion(arg.getFecha_graduacion());			
+			
+			objetos = new HashMap<String,Object>();
+			objetos.put("busquedaProductos",busquedaProductosForm);
+			objetos.put("origen","encargo");
+			objetos.put("beanProducto",arg);
+			objetos.put("ventaPedido",ventaPedidoForm);
+			
+			Window window = (Window)Executions.createComponents(
+	                "/zul/encargos/BusquedaMultiofertas.zul", null, objetos);
+			
+	        window.doModal();		
+		}
+	}
+	
 	
 	@NotifyChange({"ventaPedidoForm"})	
 	@Command
@@ -1020,9 +1071,9 @@ public class ControllerEncargos implements Serializable {
 	
 	public void posicionComboNuevo() {
 		
-		ventaPedidoForm.setDivisa("PESO");
+		/*ventaPedidoForm.setDivisa("PESO");
 		ventaPedidoForm.setIdioma("CAST");
-		ventaPedidoForm.setForma_pago("1");
+		ventaPedidoForm.setForma_pago("1");*/
 		
 		Optional<AgenteBean> a = ventaPedidoForm.getListaAgentes().stream().filter(s -> ventaPedidoForm.getAgente().equals(s.getUsuario())).findFirst();		
 		agenteBean = a.get();	
@@ -1067,6 +1118,26 @@ public class ControllerEncargos implements Serializable {
 		    formaPagoBean=null;
 		if (arg instanceof AgenteBean)		
 		    agenteBean=null;		
+	}
+	
+	@Command
+	public void salir(@BindingParam("win")Window win) {
+		
+		Messagebox.show("Salir de Venta Pedido","Notificacion",
+				Messagebox.YES|
+				Messagebox.NO,
+				Messagebox.QUESTION ,new EventListener<Event>() {
+
+			@Override
+			public void onEvent(Event e) throws Exception {				
+				if(  ((Integer) e.getData()).intValue() == Messagebox.YES) {
+					
+					if (!bWin) wBusqueda.detach();
+					
+					win.detach();
+				}					
+			}			
+		});		
 	}
 	
 	

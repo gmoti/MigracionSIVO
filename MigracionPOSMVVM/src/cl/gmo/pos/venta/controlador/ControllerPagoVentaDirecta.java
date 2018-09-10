@@ -1,6 +1,7 @@
 package cl.gmo.pos.venta.controlador;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.zkoss.bind.BindUtils;
@@ -19,7 +20,6 @@ import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.Selectors;
-import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
@@ -28,34 +28,37 @@ import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.PagoBean;
+import cl.gmo.pos.venta.web.beans.PedidosPendientesBean;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
+import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
+import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
 
 
 
 public class ControllerPagoVentaDirecta implements Serializable{
 	
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -3283893161345500968L;
 
-	Session sess = Sessions.getCurrent();
-	
-	@Wire("#winPagoVentaDirecta")
-	private Window win;
-	
+	Session sess = Sessions.getCurrent();	
 	HashMap<String,Object> objetos;
 	
 	private SeleccionPagoForm seleccionPagoForm;
+	private VentaPedidoForm  ventaPedidoForm;
+	private VentaDirectaForm ventaDirectaForm;
+	
 	private ClienteBean cliente;	
 	private SeleccionPagoDispatchActions seleccionPagoDispatchActions;
-	private Integer diferencia_total;
+	private Integer diferencia_total=0;
 	
 	private FormaPagoBean formaPagoBean;
 	private String disableDescuento;
 	private PagoBean pagoBeanAux;
 	private String origen;
+	private String fecha=null;
 	private BeanControlBotones controlBotones;
+	
+	private Window ventanaActual= new Window();
 	
 	@Init
 	public void inicio(@ContextParam(ContextType.VIEW) Component view, 
@@ -67,26 +70,43 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		
 		Selectors.wireComponents(view, this, false);
 		
-		cliente           = null;		
-		seleccionPagoForm = null;
-		controlBotones = new BeanControlBotones();
+		cliente             = null;		
+		seleccionPagoForm 	= null;
+		ventaPedidoForm		= null;
+		ventaDirectaForm	= null;
+		
+		controlBotones 		= new BeanControlBotones();
 		controlBotones.setEnableGenerico1("false");
 		
 		formaPagoBean = new FormaPagoBean();
-		pagoBeanAux   = new PagoBean();					
-		
+		pagoBeanAux   = new PagoBean();	
 		seleccionPagoDispatchActions = new SeleccionPagoDispatchActions();		
 		
 		cliente           = (ClienteBean)arg;		
 		seleccionPagoForm = (SeleccionPagoForm)arg2;
 		origen            = (String)arg4;
 		
-		seleccionPagoDispatchActions.carga_formulario(seleccionPagoForm, sess, seleccionPagoForm.getFecha());
-		seleccionPagoForm.setOrigen(origen);
+		if (arg3 instanceof VentaPedidoForm) { 
+			ventaPedidoForm = (VentaPedidoForm)arg3;
+			fecha = ventaPedidoForm.getFecha();
+			controlBotones.setEnableGenerico1("true");
+			controlBotones.setEnableGenerico2("false");
+		}
+		
+		if (arg3 instanceof VentaDirectaForm) { 
+			ventaDirectaForm= (VentaDirectaForm)arg3;
+			fecha = ventaDirectaForm.getFecha();
+			controlBotones.setEnableGenerico1("false");
+			controlBotones.setEnableGenerico2("true");
+		}
+		
+		
+		seleccionPagoDispatchActions.carga_formulario(seleccionPagoForm, sess, fecha);
+		
 		this.setDiferencia_total(seleccionPagoForm.getV_total());
 		
-		if (origen.equals("G"))
-		   controlBotones.setEnableGenerico1("true");
+		//if (origen.equals("G"))
+		//   controlBotones.setEnableGenerico1("true");
 		
 		System.out.println("en init");
 	}
@@ -94,7 +114,30 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	
 	@NotifyChange({"seleccionPagoForm","formaPagoBean"})
 	@Command
-	public void pagarVenta() {
+	public void pagarVenta(@BindingParam("ventana")Window ventana) {
+		
+		
+		ventanaActual = ventana;
+		
+		if(!seleccionPagoForm.getOrigen().equals("ALBARAN_DEVOLUCION")) {
+			
+			guardarPago();
+		}
+		
+        if(seleccionPagoForm.getOrigen().equals("ALBARAN_DEVOLUCION")) {
+			
+        	//guarda_PagoAlbaran()
+        	
+        	//si es impresion 
+        	//generaBoleta()
+		}
+		
+		
+		
+	}
+	
+	
+	public void guardarPago() {
 		
 		int correcto = 1;	
 		
@@ -152,8 +195,14 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		
 		//en caso de ser completamente pagado				    
 		    
-	    if (seleccionPagoForm.getV_a_pagar() == 0) {		    	
-	    	Messagebox.show("Boleta ?","Seleccion Documento", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
+	    if (seleccionPagoForm.getV_a_pagar() == 0) {	    	
+	    	
+	    	Window winSelecciona = (Window)Executions.createComponents(
+	                "/zul/venta_directa/SeleccionImpresion.zul", null, null);
+			
+	    	winSelecciona.doModal();   	
+	    	
+	    	/*Messagebox.show("Boleta ?","Seleccion Documento", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
 				
 				@Override
 				public void onEvent(Event e) throws Exception {
@@ -165,17 +214,42 @@ public class ControllerPagoVentaDirecta implements Serializable{
 						seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);	
 						BindUtils.postGlobalCommand(null, null, "creaPagoExitoso", null);						
 						
-						win.detach();
+						ventana.detach();
 						
 						
 					}						
 				}
-			});		    	
+			});	*/	
+	    	
 	    } 			
 	}
 	
 	
+	@GlobalCommand
+	public void seleccionImpresion(@BindingParam("seleccion")String arg) {
 		
+		//arg =1 boleta
+		//arg =2 guia despacho
+		
+		if(arg.equals("1")) {
+			
+			seleccionPagoForm.setAccion("valida_boleta");
+			seleccionPagoForm.setTipo_doc('B');
+			try {
+				seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
+				
+				//BindUtils.postGlobalCommand(null, null, "creaPagoExitoso", null);
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+			}			
+									
+			
+			ventanaActual.detach();		
+			
+		}	
+		
+	}		
 	
 	
 	//validaciones sobre el pago
@@ -267,10 +341,10 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		pagoBeanAux = new PagoBean();
 		pagoBeanAux = b;
 		
-		Window win = (Window)Executions.createComponents(
+		Window winAutoriza = (Window)Executions.createComponents(
                 "/zul/venta_directa/AutorizaBorrarPago.zul", null, objetos);
 		
-		win.doModal();			
+		winAutoriza.doModal();			
 	}
 	
 	
