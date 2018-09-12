@@ -17,6 +17,7 @@ import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -29,9 +30,11 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.presupuesto.PresupuestoHelper;
+import cl.gmo.pos.venta.controlador.ventaDirecta.DevolucionDispatchActions;
 import cl.gmo.pos.venta.controlador.ventaDirecta.VentaPedidoDispatchActions;
 import cl.gmo.pos.venta.reporte.nuevo.ReportesHelper;
 import cl.gmo.pos.venta.utils.Constantes;
+
 import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.DivisaBean;
@@ -42,18 +45,19 @@ import cl.gmo.pos.venta.web.beans.IdiomaBean;
 import cl.gmo.pos.venta.web.beans.PedidosPendientesBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.TipoPedidoBean;
+
 import cl.gmo.pos.venta.web.forms.BusquedaPedidosForm;
 import cl.gmo.pos.venta.web.forms.BusquedaProductosForm;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
+import cl.gmo.pos.venta.web.forms.DevolucionForm;
+
 import cl.gmo.pos.venta.web.helper.FichaTecnicaHelper;
 
 
 public class ControllerEncargos implements Serializable {
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = -3904397835765271540L;
 	Logger log = Logger.getLogger( this.getClass() );
 	
@@ -65,31 +69,34 @@ public class ControllerEncargos implements Serializable {
 	private boolean bWin=true;
 	
 	SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy");
-	SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss");		
-	private SeleccionPagoForm seleccionPagoForm;
-	private VentaPedidoForm ventaPedidoForm;
-	private BusquedaProductosForm busquedaProductosForm;
+	SimpleDateFormat tt = new SimpleDateFormat("hh:mm:ss");	
 	
-	private VentaPedidoDispatchActions ventaPedidoDispatchActions;
+	private SeleccionPagoForm 		seleccionPagoForm;
+	private VentaPedidoForm 		ventaPedidoForm;
+	private BusquedaProductosForm 	busquedaProductosForm;
+	private DevolucionForm 			devolucionForm;
 	
-	private AgenteBean agenteBean;
-	private FormaPagoBean formaPagoBean;
-	private DivisaBean divisaBean;
-	private IdiomaBean idiomaBean;
-	private TipoPedidoBean tipoPedidoBean;
+	private VentaPedidoDispatchActions 	ventaPedidoDispatchActions;
+	private DevolucionDispatchActions 	devolucionDispatchActions;
 	
-	private ClienteBean cliente;
-	private ProductosBean productoBean;
+	private AgenteBean 		agenteBean;
+	private FormaPagoBean 	formaPagoBean;
+	private DivisaBean 		divisaBean;
+	private IdiomaBean 		idiomaBean;
+	private TipoPedidoBean 	tipoPedidoBean;
+	
+	private ClienteBean 	cliente;
+	private ProductosBean 	productoBean;
 	
 	private String fpagoDisable;
 	private String agenteDisable;	
 	
-	private Date fecha;
-	private Date fechaEntrega;
-	private String sucursal;
+	private Date 	fecha;
+	private Date 	fechaEntrega;
+	private String 	sucursal;
 	
-	private BeanControlBotones beanControlBotones;
-	private BeanControlCombos beanControlCombos;
+	private BeanControlBotones 	beanControlBotones;
+	private BeanControlCombos 	beanControlCombos;
 	
 	private byte[] bytes;
 	private ReportesHelper reportes;
@@ -109,14 +116,16 @@ public class ControllerEncargos implements Serializable {
 		
 		ventaPedidoForm          = new VentaPedidoForm();		
 		ventaPedidoDispatchActions = new VentaPedidoDispatchActions();
+		devolucionDispatchActions  = new DevolucionDispatchActions();
+		
 		cliente      = new ClienteBean();
 		productoBean = new ProductosBean();	
 		
-		agenteBean = new AgenteBean(); 
-		formaPagoBean = new FormaPagoBean();
-		divisaBean = new DivisaBean();
-		idiomaBean = new IdiomaBean();
-		tipoPedidoBean = new TipoPedidoBean();
+		agenteBean 		= new AgenteBean(); 
+		formaPagoBean 	= new FormaPagoBean();
+		divisaBean 		= new DivisaBean();
+		idiomaBean 		= new IdiomaBean();
+		tipoPedidoBean 	= new TipoPedidoBean();
 		
 		fpagoDisable ="True";
 		agenteDisable="True";	
@@ -296,15 +305,17 @@ public class ControllerEncargos implements Serializable {
 	@Command
 	public void generaFichaTecnica() {
 		
-		String codigo_pedido = ventaPedidoForm.getCodigo();
-		String codigo_suc = ventaPedidoForm.getCodigo_suc();
-		String cliente = ventaPedidoForm.getCliente();
-		Long saldo = ventaPedidoForm.getTotalPendiante();
-		String parametro = "";
+		String codigo_pedido ="";
+		String codigo_suc = "";
+		String cliente = "";
+		
 		String result="";
-		boolean haymulti=false;
-		String cdg="";
-		String respuesta;
+		boolean haymulti=false;		
+		
+		codigo_pedido = ventaPedidoForm.getCodigo();
+		codigo_suc = ventaPedidoForm.getCodigo_suc();
+		cliente = ventaPedidoForm.getCliente();
+			
 		
 		
 		if(ventaPedidoForm.getCodigo().equals("") || ventaPedidoForm.getCliente().equals("")) {
@@ -312,47 +323,49 @@ public class ControllerEncargos implements Serializable {
 			return;
 		}			
 		
-		result = ventaPedidoDispatchActions.validaTrioMultioferta(sess);		
+		result = ventaPedidoDispatchActions.validaTrioMultioferta(sess);	
 		
-		if(!result.equals("")) {
+		if(result.equals("")) 
+			return;
+		
+		
+		if(result.equals("ok")) {
+			haymulti=true;				
+			//cdg	= ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo();
 			
-			if(result.equals("ok")) {
-				haymulti=true;				
-				cdg	= ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo();
-				
-				if(existeTrio()) {
-					 //var url = "/CreaFichaTallerServlet?cdg="+cdg+"&cliente="+cliente+"&saldo="+saldo;				 
-					//	window.open("<%=request.getContextPath()%>"+url);				
-				}else {
-					if(haymulti){
-       			 		//var url = "/CreaFichaTallerServlet?cdg="+cdg+"&cliente="+cliente+"&saldo="+saldo;				 
-						//window.open("<%=request.getContextPath()%>"+url);
-       			 	}else{       			 		
-       			 		Messagebox.show("Debe existir al menos un trio guardado o lente contacto graduable");
-       			 		return;
-       			 	}					
-				}
-				
-			}else { //mo ok
-				
-				haymulti=false;				
-				cdg	= ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo();
-				
-				if(existeTrio()){				 
-					 //var url = "/CreaFichaTallerServlet?cdg="+cdg+"&cliente="+cliente+"&saldo="+saldo;				 
-						//window.open("<%=request.getContextPath()%>"+url);
-      			 }else{
-      			 	if(haymulti){
-      			 		//var url = "/CreaFichaTallerServlet?cdg="+cdg+"&cliente="+cliente+"&saldo="+saldo;				 
-						//window.open("<%=request.getContextPath()%>"+url);
-      			 	}else{      			 		
-      			 		Messagebox.show("Debe existir al menos un trio guardado o lente contacto graduable");
-      			 		return;
-      			 	}
-      			 }
-				
-			}			
+			if(existeTrio()) {
+				 
+				CreaFichaTallerServlet(ventaPedidoForm);
+			}else {
+				if(haymulti){
+   			 		
+					CreaFichaTallerServlet(ventaPedidoForm);
+   			 	}else{       			 		
+   			 		Messagebox.show("Debe existir al menos un trio guardado o lente contacto graduable");
+   			 		return;
+   			 	}					
+			}
+			
+		}else { //mo ok
+			
+			haymulti=false;				
+			//cdg	= ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo();
+			
+			if(existeTrio()){				 
+				 
+				CreaFichaTallerServlet(ventaPedidoForm);
+  			 }else{
+  			 	if(haymulti){
+  			 		
+  			 		CreaFichaTallerServlet(ventaPedidoForm);
+  			 	}else{      			 		
+  			 		Messagebox.show("Debe existir al menos un trio guardado o lente contacto graduable");
+  			 		return;
+  			 	}
+  			 }
+			
 		}			
+					
 	}	
 	
 	
@@ -387,6 +400,8 @@ public class ControllerEncargos implements Serializable {
 		String saldo 	= String.valueOf(ventaPedidoForm.getTotal());		
 		int clienteint=0;
 		int saldoint= 0;
+		
+		
 		reportes = new ReportesHelper();		
 		
 		
@@ -446,8 +461,62 @@ public class ControllerEncargos implements Serializable {
 	@Command
 	public void generaFichaCliente() {
 		
+		String tieneTrioMulti="";
+		boolean haymulti=false;
+		boolean respuesta=false;
 		
-		CreaFichaClienteServlet(ventaPedidoForm);
+		String codigo_pedido	=ventaPedidoForm.getCodigo();
+		String codigo_suc		=ventaPedidoForm.getCodigo_suc();
+		String cliente			=ventaPedidoForm.getCliente();
+		String cdg="";
+		
+		tieneTrioMulti = ventaPedidoDispatchActions.validaTrioMultioferta(sess);
+		
+		if (codigo_pedido.equals("") && cliente.equals("")) { 
+			Messagebox.show("Debe guardar la venta");
+			return;
+		}
+		
+		if (tieneTrioMulti.equals(""))
+			return;
+		
+		if (tieneTrioMulti.equals("ok")) {
+			
+			haymulti=true;			
+				
+			cdg = codigo_suc +"/"+codigo_pedido;
+			respuesta = existeTrio();
+			
+			if (respuesta) {
+				//llama servlet
+				CreaFichaClienteServlet(ventaPedidoForm);
+			}else {
+				if(haymulti) {
+					//llama servlet
+					CreaFichaClienteServlet(ventaPedidoForm);
+				}else {
+					Messagebox.show("Debe existir al menos un trio guardado o lente contacto graduable");
+				}					
+			}				
+				
+		}else {
+			haymulti = false;
+			
+			cdg = codigo_suc +"/"+codigo_pedido;
+			respuesta = existeTrio();
+			
+			if(respuesta){				 
+				//llama servlet 
+      			CreaFichaClienteServlet(ventaPedidoForm);
+  			 }else{
+  			 	if(haymulti){
+  			 	    //llama servlet
+      			 	CreaFichaClienteServlet(ventaPedidoForm);
+  			 	}else{  			 		
+  			 		Messagebox.show("Debe existir al menos un trio guardado o lente contacto graduable");
+  			 	}
+  			 }			
+		}	
 		
 	}
 	
@@ -455,8 +524,11 @@ public class ControllerEncargos implements Serializable {
 	private void CreaFichaClienteServlet(VentaPedidoForm ventaPedidoForm) {		
 		
 		reportes = new ReportesHelper();
-		String cdg 		= ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo();
-		String cliente  = ventaPedidoForm.getCliente();
+		String cdg 		= "";
+		String cliente  = "";
+		
+		cdg      = ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.getCodigo();
+		cliente  = ventaPedidoForm.getCliente();		
 		
 		//new ReportesHelper().creaFichaCliente(sess, cliente);	
 		
@@ -626,54 +698,21 @@ public class ControllerEncargos implements Serializable {
 		cantidad = (String)bg.getObj_1();
 		codigoMulti = (String)bg.getObj_2();
 		
-		if (!cantidad.equals("menor")) {
-			
+		Optional<String> cant   = Optional.ofNullable(cantidad);
+		Optional<String> codMul = Optional.ofNullable(codigoMulti);
+		
+		if (!cant.isPresent()) cantidad=""; 
+		if (!codMul.isPresent()) codigoMulti="";		
+		
+		if (!cantidad.equals("menor")) {			
 			valida_venta();
-		}else {
-			
+		}else {			
 			Messagebox.show("La cantidad de productos en la multioferta "+codigoMulti+" no esta completa");			
 		}
 		
-		
-		
-		
-		/*if (!ventaPedidoForm.getEstado().equals("cerrado")) {
-			
-			ventaPedidoDispatchActions.generaVentaPedido(ventaPedidoForm, sess);	
-			seleccionPagoForm = new SeleccionPagoForm();
-			
-			seleccionPagoForm.setFech_pago(ventaPedidoForm.getFecha());
-			seleccionPagoForm.setFecha(ventaPedidoForm.getFecha());
-			seleccionPagoForm.setTipo_doc('G');
-			seleccionPagoForm.setOrigen("PEDIDO");
-			
-			sess.setAttribute(Constantes.STRING_TOTAL, ventaPedidoForm.getTotal());
-			sess.setAttribute(Constantes.STRING_CLIENTE, cliente.getCodigo()  );
-			//sess.setAttribute(Constantes.STRING_TICKET,  ventaPedidoForm.get  .getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket() );
-			sess.setAttribute(Constantes.STRING_FECHA,   ventaPedidoForm.getFecha());		
-			sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, ventaPedidoForm.getListaProductos());		
-			
-			
-			objetos = new HashMap<String,Object>();
-			objetos.put("cliente",cliente);
-			objetos.put("pagoForm",seleccionPagoForm);
-			objetos.put("ventaOrigenForm",ventaPedidoForm);
-			objetos.put("origen","PEDIDO");
-			
-			Window windowPagoVentaDirecta = (Window)Executions.createComponents(
-	                "/zul/venta_directa/pagoVentaDirecta.zul", null, objetos);
-			
-			windowPagoVentaDirecta.doModal();
-			
-			
-		}else {
-			
-			Messagebox.show("Venta finalizada, no es posible generar cobro");
-		}	*/
-		
 	}
 	
-	
+	@NotifyChange("ventaPedidoForm")
 	private void valida_venta() {
 		
 		SeleccionPagoForm seleccionPagoForm = new SeleccionPagoForm();
@@ -785,6 +824,47 @@ public class ControllerEncargos implements Serializable {
 			e.printStackTrace();
 		}	
 		
+	}
+	
+	//======= pago exitoso en venta pedido =======
+	
+	@NotifyChange({"ventaPedidoForm"})
+	@GlobalCommand	
+    public void creaPagoExitosoEncargo(@BindingParam("seleccionPago")SeleccionPagoForm seleccionPago) {
+		
+		ventaPedidoForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
+		//sess.setAttribute(Constantes.STRING_TICKET, ventaPedidoForm.getCodigo_suc() + "/" + ventaPedidoForm.);
+		sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPago.getTipo_doc());
+		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, new ArrayList<ProductosBean>());
+		sess.setAttribute(Constantes.STRING_DOCUMENTO, 0);
+		sess.setAttribute("SeleccionPagoForm", seleccionPago);
+		//sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaPedidoForm.getTipoAlbaran());				
+		
+		try {
+			ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);	
+			postCobro();
+			
+			if (ventaPedidoForm.getEstado_boleta().contains("TRUE") || ventaPedidoForm.getEstado_boleta().contains("true")) {
+				
+				Messagebox.show("Error: No se pudo generar la boleta, Intentelo nuevamente.");
+			}
+			
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}			
+		
+	}
+	
+	//=========== Post Grabacion pago =============
+	//=============================================		
+	@NotifyChange({"ventaPedidoForm"})
+	public void postCobro() {
+		
+		//controlBotones.setEnablePagar("true");
+		//controlBotones.setEnableGenerico3("true");		
+		Messagebox.show("Venta almacenada con exito");
 	}
 	
 	
@@ -1139,6 +1219,59 @@ public class ControllerEncargos implements Serializable {
 			}			
 		});		
 	}
+	
+	
+	@NotifyChange({"ventaPedidoForm"})
+	@Command
+	public void pedidoEntrega() {	
+		
+		if(ventaPedidoForm.getCerrado().equals("S")) {
+			Messagebox.show("El encargo esta cerrado");
+			return;
+		}
+		
+		if(ventaPedidoForm.getEntregado().equals("true")) {
+			Messagebox.show("El encargo fue entregado");
+			return;
+		}	
+		
+		try {
+			
+			devolucionForm = new DevolucionForm();
+			
+			ventaPedidoForm.setAccion("pedidoEntrega");
+			ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);			
+			devolucionForm = devolucionDispatchActions.IngresaEntregaDesdePedido(devolucionForm, sess);
+			
+			//ejecuta devolucion.jsp			
+			objetos = new HashMap<String,Object>();		
+			objetos.put("devolucionForm",devolucionForm);
+			
+			Window windowBusquedaEncargo = (Window)Executions.createComponents(
+	                "/zul/encargos/MuestraAlbaran.zul", null, objetos);
+			
+			windowBusquedaEncargo.doModal(); 			
+			
+		} catch (Exception e) {
+			Messagebox.show("Error en pedido entrega","Error",Messagebox.OK,Messagebox.ERROR);
+			e.printStackTrace();
+		}	
+		
+	}
+	
+	@NotifyChange({"ventaPedidoForm"})
+	@Command
+	private void validaCupon() {
+		
+		
+		try {
+			ventaPedidoDispatchActions.abre_valida_cupon();
+		} catch (Exception e) {
+			Messagebox.show("Error en validacion de cupon","Error",Messagebox.OK,Messagebox.ERROR);
+			e.printStackTrace();
+		}				
+		
+	}	
 	
 	
 	//Getter and Setter

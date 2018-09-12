@@ -18,7 +18,7 @@ import cl.gmo.pos.venta.web.beans.TipoMotivoDevolucionBean;
 
 
 
-public class DevolucionForm{
+public class DevolucionForm extends GenericForm{
 
 	/**
 	 * 

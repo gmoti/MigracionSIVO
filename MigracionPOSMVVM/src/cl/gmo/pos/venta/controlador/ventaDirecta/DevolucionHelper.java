@@ -1,11 +1,10 @@
-package cl.gmo.pos.venta.web.helper;
+package cl.gmo.pos.venta.controlador.ventaDirecta;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-
-
+import org.zkoss.zk.ui.Session;
 
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.utils.Utils;
@@ -31,7 +30,7 @@ import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
 
 
-
+import cl.gmo.pos.venta.utils.Utils;
 
 public class DevolucionHelper extends Utils {
 	Logger log = Logger.getLogger( this.getClass() );
@@ -335,7 +334,7 @@ public class DevolucionHelper extends Utils {
 	    	return res;
 		}
 	 
-	 public boolean ingresaPagoAlbaran(ArrayList<PagoBean> listaPago, HttpSession session, DevolucionForm formulario, String local)
+	 public boolean ingresaPagoAlbaran(ArrayList<PagoBean> listaPago, Session session, DevolucionForm formulario, String local)
 	 {
 			log.info("VentaDirectaHelper:ingresaPago inicio");
 	    	boolean estado = false;
@@ -454,7 +453,7 @@ public class DevolucionHelper extends Utils {
 	
 	//LMARIN NOTA DE CREDITO 20150604
 	
-	public String genera_nota_credito(String tipodoc,ArrayList<PagoBean> listaPagos,DevolucionForm devform,String foliocl,HttpSession session,DevolucionForm formulario2){
+	public String genera_nota_credito(String tipodoc,ArrayList<PagoBean> listaPagos,DevolucionForm devform,String foliocl,Session session,DevolucionForm formulario2){
 				
 		Utils util = new Utils();
 		String res = null;

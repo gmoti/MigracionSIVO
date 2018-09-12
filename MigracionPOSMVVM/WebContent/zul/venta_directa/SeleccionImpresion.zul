@@ -10,7 +10,7 @@
 				<button iconSclass="z-icon-close" onClick="self.detach()"/>
 			</div>
 			
-			<radiogroup selectedItem="@bind(vm.seleccion)">
+			<radiogroup selectedItem="@bind(vm.seleccion)" orient="vertical">
 				<radio label="Boleta" value="1"/>
 				<radio label="Guia despacho" value="2"/>
 			</radiogroup>

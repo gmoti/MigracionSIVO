@@ -93,7 +93,7 @@
      									onBlur="@command('validaPago')" 
      									style="text-align:right"/>
      									
-     								<label value="Anticipo minimo"/>     										
+     								<label value="Anticipo minimo" visible="@bind(vm.controlBotones.enableGenerico1)"/>     										
      								<intbox value="@bind(vm.seleccionPagoForm.anticipo_pedido)" 
      									visible="@bind(vm.controlBotones.enableGenerico1)"/>
      									
@@ -115,7 +115,7 @@
 	     							<label value="Forma pago" />
 	     							<cell colspan="2" align="left">	
 	     								<combobox model="@bind(vm.seleccionPagoForm.listaFormasPago)" 
-	     										width="250px" selectedItem="@bind(vm.formaPagoBean)" placeholder="Selecciona forma pago">     								
+	     										width="230px" selectedItem="@bind(vm.formaPagoBean)" placeholder="Selecciona forma pago">     								
 		     								<template name='model'>
 		     									<comboitem label="@load(each.descripcion)"/>  
 		     								</template>	   									

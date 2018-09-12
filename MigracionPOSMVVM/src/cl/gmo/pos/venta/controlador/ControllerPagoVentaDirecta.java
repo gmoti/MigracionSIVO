@@ -104,6 +104,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		seleccionPagoDispatchActions.carga_formulario(seleccionPagoForm, sess, fecha);
 		
 		this.setDiferencia_total(seleccionPagoForm.getV_total());
+		seleccionPagoForm.setV_a_pagar(0);
 		
 		//if (origen.equals("G"))
 		//   controlBotones.setEnableGenerico1("true");
@@ -132,9 +133,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
         	//generaBoleta()
 		}
 		
-		
-		
-	}
+	}	
 	
 	
 	public void guardarPago() {
@@ -162,14 +161,14 @@ public class ControllerPagoVentaDirecta implements Serializable{
 					Messagebox.show("Debe ingresar una forma de pago");
 					correcto = 0;
 				}
-				else
+				/*else
 				{
-					if(getDiferencia_total() == 0)
+					if(seleccionPagoForm.getDiferencia() == 0)
 					{						
 						Messagebox.show("No hay saldos pendientes por pagar");
 						correcto = 0;
 					}
-				}			
+				}	*/		
 			}		
 		}
 		
@@ -183,7 +182,19 @@ public class ControllerPagoVentaDirecta implements Serializable{
 				//seleccionPagoForm.setOrigen(origen);
 				
 				seleccionPagoForm.setAccion("pagar");
-				seleccionPagoForm= seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);				
+				seleccionPagoForm= seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);	
+				
+				//formaPagoBean = null;		
+				//en caso de ser completamente pagado				    
+				    
+			    if (seleccionPagoForm.getV_a_pagar() == 0) {	    	
+			    	
+			    	Window winSelecciona = (Window)Executions.createComponents(
+			                "/zul/venta_directa/SeleccionImpresion.zul", null, null);
+					
+			    	winSelecciona.doModal();  	
+			    	
+			    }
 				
 			} catch (Exception e) {				
 				e.printStackTrace();
@@ -191,37 +202,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		}
 		
 		
-		//formaPagoBean = null;	
-		
-		//en caso de ser completamente pagado				    
-		    
-	    if (seleccionPagoForm.getV_a_pagar() == 0) {	    	
-	    	
-	    	Window winSelecciona = (Window)Executions.createComponents(
-	                "/zul/venta_directa/SeleccionImpresion.zul", null, null);
-			
-	    	winSelecciona.doModal();   	
-	    	
-	    	/*Messagebox.show("Boleta ?","Seleccion Documento", Messagebox.YES | Messagebox.NO, Messagebox.QUESTION, new EventListener<Event>() {
 				
-				@Override
-				public void onEvent(Event e) throws Exception {
-					
-					if( ((Integer) e.getData()).intValue() == Messagebox.YES ) {
-						
-						seleccionPagoForm.setAccion("valida_boleta");
-						seleccionPagoForm.setTipo_doc('B');
-						seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);	
-						BindUtils.postGlobalCommand(null, null, "creaPagoExitoso", null);						
-						
-						ventana.detach();
-						
-						
-					}						
-				}
-			});	*/	
-	    	
-	    } 			
 	}
 	
 	
@@ -231,19 +212,27 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		//arg =1 boleta
 		//arg =2 guia despacho
 		
-		if(arg.equals("1")) {
+		if(arg.equals("1")) {		
 			
-			seleccionPagoForm.setAccion("valida_boleta");
-			seleccionPagoForm.setTipo_doc('B');
 			try {
-				seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
+				seleccionPagoForm.setAccion("valida_boleta");
+				seleccionPagoForm.setTipo_doc('B');
 				
-				//BindUtils.postGlobalCommand(null, null, "creaPagoExitoso", null);
+				seleccionPagoForm = seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);				
+				
+				objetos = new HashMap<String,Object>();		
+				objetos.put("seleccionPago",seleccionPagoForm);
+				
+				if(origen.equals("DIRECTA"))
+					BindUtils.postGlobalCommand(null, null, "creaPagoExitoso", objetos);
+				
+				if(origen.equals("PEDIDO"))
+					BindUtils.postGlobalCommand(null, null, "creaPagoExitosoEncargo", objetos);				
+				
 			} catch (Exception e) {
 				
 				e.printStackTrace();
-			}			
-									
+			}									
 			
 			ventanaActual.detach();		
 			
@@ -266,8 +255,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		if (seleccionPagoForm.getDiferencia() < 0) {			
 			seleccionPagoForm.setV_a_pagar(0);
 			seleccionPagoForm.setDiferencia(this.diferencia_total);
-			Messagebox.show("La diferencia no puede ser menor a 0");		
-			
+			Messagebox.show("La diferencia no puede ser menor a 0");			
 		}
 		
 		this.setDiferencia_total(seleccionPagoForm.getDiferencia());

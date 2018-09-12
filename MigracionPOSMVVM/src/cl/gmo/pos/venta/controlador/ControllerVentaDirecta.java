@@ -256,19 +256,24 @@ public class ControllerVentaDirecta implements Serializable{
 	
 	@NotifyChange({"ventaDirectaForm","controlBotones"})
 	@GlobalCommand	
-    public void creaPagoExitoso() {		
+    public void creaPagoExitoso(@BindingParam("seleccionPago")SeleccionPagoForm seleccionPago) {		
 		
 		ventaDirectaForm.setAccion(Constantes.STRING_PAGO_EXITOSO);			
 		sess.setAttribute(Constantes.STRING_TICKET, ventaDirectaForm.getEncabezado_ticket() + "/" + ventaDirectaForm.getNumero_ticket());
-		sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPagoForm.getTipo_doc());
+		sess.setAttribute(Constantes.STRING_TIPO_DOCUMENTO, seleccionPago.getTipo_doc());
 		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS_ADICIONALES, new ArrayList<ProductosBean>());
 		sess.setAttribute(Constantes.STRING_DOCUMENTO, 0);
-		sess.setAttribute("SeleccionPagoForm", seleccionPagoForm);
+		sess.setAttribute("SeleccionPagoForm", seleccionPago);
 		sess.setAttribute(Constantes.STRING_TIPO_ALBARAN, ventaDirectaForm.getTipoAlbaran());				
 		
 		try {
 			ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);		
 			postCobro();
+			
+            if (ventaDirectaForm.getEstado_boleta().contains("TRUE") || ventaDirectaForm.getEstado_boleta().contains("true")) {
+				
+				Messagebox.show("Error: No se pudo generar la boleta, Intentelo nuevamente.");
+			}
 			
 		} catch (Exception e) {
 			

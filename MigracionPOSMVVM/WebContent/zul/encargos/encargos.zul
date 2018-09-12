@@ -173,7 +173,7 @@
 							</div>
 						
 							<div width="300px">
-								<button label="Entrega de encargos"/>
+								<button label="Entrega de encargos" onClick="@command('pedidoEntrega')"/>
 							</div>
 							
 							<div width="350px">	
@@ -188,7 +188,7 @@
 							</div>
 							
 							<div width="300px">
-								<button label="Cupon"/>
+								<button label="Cupon" onClick="@command('validaCupon')"/>
 							</div>
 							
 						</hbox>					
@@ -272,7 +272,7 @@
 									<textbox value="" width="60px" disabled="true"/>
 									<textbox value="" width="60px" disabled="true"/>
 									
-									<button label="M" width="40px" onClick="@command('multiofertaProducto',producto=each)" />
+									<button label="M" width="40px" onClick="@command('multiofertaProducto',producto=each)" visible="@bind(each.familia eq 'MUL'?'true':'false')"/>
 									<button label="X" width="40px" onClick="@command('deleteItem',arg=each)" />
 								</row>
 							</template>

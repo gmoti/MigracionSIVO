@@ -40,8 +40,10 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.tempuri.CoreSoapProxy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.zkoss.zk.ui.Session;
@@ -78,7 +80,7 @@ import cl.gmo.pos.venta.web.forms.EntregaPedidoForm;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
-import cl.gmo.pos.venta.web.wscl.CoreSoapProxy;
+
 
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
@@ -2951,7 +2953,7 @@ public class Utils {
 		 * @param tipoimp
 		 * @return String
 	    */
-		public String genera_notacredito(String tipodoc,String folio ,ArrayList<PagoBean> listaPagos,DevolucionForm devform,HttpSession session,DevolucionForm formulario2){
+		public String genera_notacredito(String tipodoc,String folio ,ArrayList<PagoBean> listaPagos,DevolucionForm devform, Session session,DevolucionForm formulario2){
 			
 			Utils util = new Utils();
 			
@@ -3052,7 +3054,7 @@ public class Utils {
 			    NodeList errNode = doc.getElementsByTagName("ProcessResult");
 			    if (errNode.getLength() > 0) {
 			         Element err = (Element)errNode.item(0);
-			         out = ((Object) err.getElementsByTagName("HasError").item(0)).getTextContent();
+			         out = ((Node) err.getElementsByTagName("HasError").item(0)).getTextContent();
 			    }
 				
 				out = "false";

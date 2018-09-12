@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
@@ -742,6 +743,17 @@ public class SeleccionPagoHelper extends Utils{
 		ArrayList<ProductosBean> listProductosAdicionales = (ArrayList<ProductosBean>)session.getAttribute(Constantes.STRING_REPORTER_LISTA_PRODUC_ADICIONALES);
 		ArrayList<ProductosBean> listCabeceraMulrioferta = (ArrayList<ProductosBean>)session.getAttribute(Constantes.STRING_LISTA_MULTIOFERTAS);
 		ArrayList<ProductosBean> listDetalleMulrioferta = (ArrayList<ProductosBean>)session.getAttribute(Constantes.STRING_LISTA_PRODUCTOS_MULTIOFERTAS);
+		
+		Optional<ArrayList<ProductosBean>> lp  =  Optional.ofNullable(listProductos);
+		Optional<ArrayList<ProductosBean>> lpa =  Optional.ofNullable(listProductosAdicionales);
+		Optional<ArrayList<ProductosBean>> lcm =  Optional.ofNullable(listCabeceraMulrioferta);
+		Optional<ArrayList<ProductosBean>> ldm =  Optional.ofNullable(listDetalleMulrioferta);
+		
+		if (!lp.isPresent()) listProductos = new ArrayList<ProductosBean>();
+		if (!lpa.isPresent()) listProductosAdicionales = new ArrayList<ProductosBean>();
+		if (!lcm.isPresent()) listCabeceraMulrioferta = new ArrayList<ProductosBean>();
+		if (!ldm.isPresent()) listDetalleMulrioferta = new ArrayList<ProductosBean>();		
+		
 		try {
 			formulario.setCliente_venta(session.getAttribute(Constantes.STRING_CLIENTE_VENTA).toString());
 		} catch (Exception e) {
