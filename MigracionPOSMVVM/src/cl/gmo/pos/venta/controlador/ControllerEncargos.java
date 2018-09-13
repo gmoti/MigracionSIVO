@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.Cookie;
+
 import org.apache.log4j.Logger;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
@@ -17,7 +19,7 @@ import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.GlobalCommand;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
-
+import org.zkoss.bind.impl.BinderUtil.UtilContext;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -30,11 +32,12 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.controlador.presupuesto.PresupuestoHelper;
+import cl.gmo.pos.venta.controlador.ventaDirecta.BusquedaProductosDispatchActions;
 import cl.gmo.pos.venta.controlador.ventaDirecta.DevolucionDispatchActions;
 import cl.gmo.pos.venta.controlador.ventaDirecta.VentaPedidoDispatchActions;
 import cl.gmo.pos.venta.reporte.nuevo.ReportesHelper;
 import cl.gmo.pos.venta.utils.Constantes;
-
+import cl.gmo.pos.venta.utils.Utils;
 import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.DivisaBean;
@@ -44,6 +47,7 @@ import cl.gmo.pos.venta.web.beans.GraduacionesBean;
 import cl.gmo.pos.venta.web.beans.IdiomaBean;
 import cl.gmo.pos.venta.web.beans.PedidosPendientesBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
+import cl.gmo.pos.venta.web.beans.PromocionBean;
 import cl.gmo.pos.venta.web.beans.TipoPedidoBean;
 
 import cl.gmo.pos.venta.web.forms.BusquedaPedidosForm;
@@ -78,12 +82,14 @@ public class ControllerEncargos implements Serializable {
 	
 	private VentaPedidoDispatchActions 	ventaPedidoDispatchActions;
 	private DevolucionDispatchActions 	devolucionDispatchActions;
+	private BusquedaProductosDispatchActions busquedaProductosDispatchActions;
 	
 	private AgenteBean 		agenteBean;
 	private FormaPagoBean 	formaPagoBean;
 	private DivisaBean 		divisaBean;
 	private IdiomaBean 		idiomaBean;
 	private TipoPedidoBean 	tipoPedidoBean;
+	private PromocionBean   promocionBean;
 	
 	private ClienteBean 	cliente;
 	private ProductosBean 	productoBean;
@@ -126,6 +132,7 @@ public class ControllerEncargos implements Serializable {
 		divisaBean 		= new DivisaBean();
 		idiomaBean 		= new IdiomaBean();
 		tipoPedidoBean 	= new TipoPedidoBean();
+		promocionBean   = new PromocionBean();
 		
 		fpagoDisable ="True";
 		agenteDisable="True";	
@@ -152,8 +159,7 @@ public class ControllerEncargos implements Serializable {
 		beanControlCombos.setComboFpagoEnable("true");
 		beanControlCombos.setComboIdiomaEnable("true");
 		beanControlCombos.setComboPromoEnable("true");
-		beanControlCombos.setComboTiposEnable("true");
-		
+		beanControlCombos.setComboTiposEnable("true");		
 				
 		posicionCombo();
 		
@@ -165,12 +171,13 @@ public class ControllerEncargos implements Serializable {
 	
 	//============ Nuevo Pedido ====================
 	//==============================================
-	@NotifyChange({"ventaPedidoForm","beanControlBotones","beanControlCombos"})
+	@NotifyChange({"ventaPedidoForm","beanControlBotones","beanControlCombos","agenteBean","divisaBean","formaPagoBean","idiomaBean","tipoPedidoBean"})	
 	@Command
-	public void nuevo_Pedido() {
+	public void nuevo_Pedido() {	
+		
 		
 		ventaPedidoForm = ventaPedidoDispatchActions.nuevoFormulario(ventaPedidoForm, sess);
-		ventaPedidoForm.setFlujo("nuevo");
+		//ventaPedidoForm.setFlujo("nuevo");
 		beanControlBotones.setEnableListar("true");
 		
 		fecha= new Date(System.currentTimeMillis());
@@ -867,6 +874,34 @@ public class ControllerEncargos implements Serializable {
 		Messagebox.show("Venta almacenada con exito");
 	}
 	
+	//=========== Consulta productos multi ==========
+	//===============================================				
+
+	@Command
+	public void busca_multi() {
+		
+		busquedaProductosForm 		= new BusquedaProductosForm();
+		busquedaProductosDispatchActions = new BusquedaProductosDispatchActions();
+		
+		try {
+			busquedaProductosForm.setAccion("carga");
+			busquedaProductosForm = busquedaProductosDispatchActions.busquedaMultiofertaAsoc(busquedaProductosForm, sess);			
+			
+			objetos = new HashMap<String,Object>();
+			objetos.put("busquedaProductos",busquedaProductosForm);			
+			
+			Window window = (Window)Executions.createComponents(
+	                "/zul/encargos/BusquedaProductosMultioferta.zul", null, objetos);
+			
+	        window.doModal();
+			
+			
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}
+		
+	}
+
 	
 	
 	
@@ -1149,11 +1184,7 @@ public class ControllerEncargos implements Serializable {
 	}
 	
 	
-	public void posicionComboNuevo() {
-		
-		/*ventaPedidoForm.setDivisa("PESO");
-		ventaPedidoForm.setIdioma("CAST");
-		ventaPedidoForm.setForma_pago("1");*/
+	public void posicionComboNuevo() {		
 		
 		Optional<AgenteBean> a = ventaPedidoForm.getListaAgentes().stream().filter(s -> ventaPedidoForm.getAgente().equals(s.getUsuario())).findFirst();		
 		agenteBean = a.get();	
@@ -1170,34 +1201,46 @@ public class ControllerEncargos implements Serializable {
 	}
 	
 	
-   @NotifyChange({"agenteBean","divisaBean","formaPagoBean","idiomaBean","tipoPedidoBean"}) 	
+   	
    public void posicionCombo() {
 		
-		ventaPedidoForm.setDivisa("PESO");
-		ventaPedidoForm.setIdioma("CAST");
-		ventaPedidoForm.setForma_pago("1");
+		String divisa="PESO";
+		String idioma="CAST";
+		String formaPago="1";
 		
-		
-		Optional<DivisaBean> b = ventaPedidoForm.getListaDivisas().stream().filter(s -> ventaPedidoForm.getDivisa().equals(s.getId())).findFirst();
+		Optional<DivisaBean> b = ventaPedidoForm.getListaDivisas().stream().filter(s -> divisa.equals(s.getId())).findFirst();
 		divisaBean = b.get();		
 		
-		Optional<IdiomaBean> d = ventaPedidoForm.getListaIdiomas().stream().filter(s -> ventaPedidoForm.getIdioma().equals(s.getId())).findFirst();
+		Optional<IdiomaBean> d = ventaPedidoForm.getListaIdiomas().stream().filter(s -> idioma.equals(s.getId())).findFirst();
 		idiomaBean = d.get();
 		
-		agenteBean=null;
-		formaPagoBean=null;
+		Optional<FormaPagoBean> e = ventaPedidoForm.getListaFormasPago().stream().filter(s -> formaPago.equals(s.getId())).findFirst();
+		formaPagoBean = e.get();	
+		
+		agenteBean=new AgenteBean();		
 		tipoPedidoBean=null;
+		promocionBean=null;
 	}
 	
 	
-	@NotifyChange({"formaPagoBean","agenteBean","tipoPedidoBean"})
+	@NotifyChange({"formaPagoBean","agenteBean","tipoPedidoBean","divisaBean","idiomaBean","promocionBean"})
 	@Command
-	public void comboSetNull(@BindingParam("objetoBean")Object arg) {
+	public void comboSetNull(@BindingParam("objetoBean")Object arg) {		
 		
 		if (arg instanceof FormaPagoBean)		
 		    formaPagoBean=null;
 		if (arg instanceof AgenteBean)		
 		    agenteBean=null;		
+		if (arg instanceof TipoPedidoBean)		
+			tipoPedidoBean=null;
+		
+		if (arg instanceof DivisaBean)		
+			divisaBean=null;
+		if (arg instanceof AgenteBean)		
+			agenteBean=null;
+		if (arg instanceof PromocionBean)		
+			promocionBean=null;
+		
 	}
 	
 	@Command
@@ -1381,7 +1424,13 @@ public class ControllerEncargos implements Serializable {
 	public void setBeanControlCombos(BeanControlCombos beanControlCombos) {
 		this.beanControlCombos = beanControlCombos;
 	}
-	
-	
+
+	public PromocionBean getPromocionBean() {
+		return promocionBean;
+	}
+
+	public void setPromocionBean(PromocionBean promocionBean) {
+		this.promocionBean = promocionBean;
+	}
 	
 }

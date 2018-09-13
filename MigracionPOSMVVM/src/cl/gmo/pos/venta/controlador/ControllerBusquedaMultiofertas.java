@@ -9,9 +9,12 @@ import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.ExecutionArgParam;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Window;
+
 import cl.gmo.pos.venta.controlador.ventaDirecta.BusquedaProductosMultiOfertasDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.FamiliaBean;
@@ -216,6 +219,28 @@ public class ControllerBusquedaMultiofertas implements Serializable{
 		
 	}
 	
+	
+	@Command
+	public void AgregarSuplementos(@BindingParam("producto")ProductosBean producto) {		
+		
+		// verificar si tiene suplementos
+		busquedaProductosForm.setAccion("ver_Suplementos");		
+		busquedaProductosMultiOfertasDispatchActions.buscarMultioferta(busquedaProductosForm, sess);
+		
+		//producto con suplemento obligatorio
+		
+		if (busquedaProductosForm.getEstado().equals("producto_con_suplemento_obligatorio")) {
+			
+			Window windowAgregaSuplemento = (Window)Executions.createComponents(
+	                "/zul/encargos/AgregaSuplemento.zul", null, null);
+			
+			windowAgregaSuplemento.doModal(); 
+			
+		}
+		
+			
+		
+	}	
 	
 
 	//======= metodos getter and setter =================

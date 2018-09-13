@@ -21,14 +21,14 @@
 						<button iconSclass="z-icon-align-justify" 	onClick="@command('cargaPedidoCliente')"  disabled="@bind(vm.beanControlBotones.enableListar)"/>
 						<button iconSclass="z-icon-search" 			onClick="@command('busquedaAvanzada')"    disabled="@bind(vm.beanControlBotones.enableBuscar)"/>
 						
-						<button label="Eli" 						onClick="@command('eliminarPedido')"/>
+						<button label="Eli" 						onClick="@command('eliminarPedido')"	  disabled="@bind(vm.beanControlBotones.enableEliminar)"/>
 						
 						<button iconSclass="z-icon-eye" 			onClick="@command('mostrar_pagos_boletas')"  	disabled="@bind(vm.beanControlBotones.enableListar)"/>
 						<button label="Taller" 						onClick="@command('generaFichaTecnica')" 	    disabled="@bind(vm.beanControlBotones.enableTaller)"/>
 						<button label="Cliente"				 		onClick="@command('generaFichaCliente')"        disabled="@bind(vm.beanControlBotones.enableCliente)"/>
 						
 						<button iconSclass="z-icon-money" 			onClick="@command('validaCantidadProductosMulit')"    disabled="@bind(vm.beanControlBotones.enablePagar)"/>
-						<button iconSclass="z-icon-save"  			onClick="@command('ingresa_pedido')"  disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
+						<button iconSclass="z-icon-save"  			onClick="@command('ingresa_pedido')"  				  disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
 						<button iconSclass="z-icon-close" 			onClick="@command('salir', win=winEncargos)"/>						
 						</div>					
 					</div>
@@ -128,7 +128,7 @@
 										  disabled="@bind(vm.beanControlCombos.comboTiposEnable)">
 										  
 								  <template name="model">
-									<comboitem label="@load(each.codigo)" description="@load(each.descripcion)"/>
+									<comboitem label="@load(each.descripcion)"/>
 								  </template>	
 								</combobox>
 							</div>						
@@ -180,6 +180,8 @@
 								<label value="Promocion" />
 								<combobox model="@load(vm.ventaPedidoForm.listaPromociones)" 
 										  width="180px" placeholder="Seleccione"
+										  selectedItem="@bind(vm.promocionBean)"
+										  onRightClick="@command('comboSetNull',objetoBean=vm.promocionBean)"
 										  disabled="@bind(vm.beanControlCombos.comboPromoEnable)">
 								  <template name="model">
 									<comboitem label="@load(each.descripcion)" />
