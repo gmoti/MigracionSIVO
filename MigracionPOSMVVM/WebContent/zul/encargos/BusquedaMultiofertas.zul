@@ -216,7 +216,7 @@
 									<intbox value="@load(each.precio)" readonly="true" style="text-align:right" format="#,###,##0" locale="it" width="90px"/>
 									<intbox value="@load(each.cantidad)"  style="text-align:right" format="#,###,##0" locale="it" width="90px" readonly="true"/>
 									<textbox value="@load(each.grupo)"  width="58px"/>
-									<button label="Ver" onClick="@command('AgregarSuplementos',producto=each)" />
+									<button label="Ver" onClick="@command('AgregarSuplementos',producto=each,index=forEachStatus.index)" />
 								</row>
 							</template>
 						</grid>

@@ -150,10 +150,10 @@
 							
 							<!-- <checkbox label="Cerrado" value="@load(vm.ventaPedidoForm.cerrado)" disabled="true"/>		 -->													
 							
-							<div width="400px">
+							<div width="450px">
 								<label value="Convenio" />	
-								<textbox value="@bind(vm.ventaPedidoForm.convenio)" width="30px" />
-								<textbox value="@bind(vm.ventaPedidoForm.convenio_det)" width="150px"/>
+								<textbox value="@bind(vm.ventaPedidoForm.convenio)" width="80px" />
+								<textbox value="@bind(vm.ventaPedidoForm.convenio_det)" width="150px" disabled="true"/>
 								<button label="B" onClick="" />
 								<button label="B" onClick="" />
 							</div>
@@ -229,10 +229,10 @@
 							<space width="15px"/>
 							<label value="Tipo" />
 							<space width="15px"/>
-							<label value="Ver Tratami" />
-							<space width="20px"/>
+							<label value="Tratami" />
+							<space width="15px"/>
 							<label value="Multi" />
-							<space width="20px"/>
+							<space width="50px"/>
 							
 							<button label="M" onClick="@command('busca_multi')" width="5px"/>
 							<button label="P" onClick="@command('buscaProducto')" width="5px"/>							
@@ -252,7 +252,7 @@
 								<column width="65px" />
 								<column width="65px" />
 								<column width="65px" />
-								<column width="65px" />
+								
 								<column width="45px" />
 								<column width="45px" />
 							</columns>
@@ -271,8 +271,7 @@
 									<textbox value="@load(each.grupo)" width="60px" disabled="true"/>
 									<textbox value="@load(each.estado)" width="60px" disabled="true"/>
 									<textbox value="@load(each.tipo)" width="60px" disabled="true"/>
-									<textbox value="" width="60px" disabled="true"/>
-									<textbox value="" width="60px" disabled="true"/>
+									<textbox value="" width="60px" disabled="true"/>									
 									
 									<button label="M" width="40px" onClick="@command('multiofertaProducto',producto=each)" visible="@bind(each.familia eq 'MUL'?'true':'false')"/>
 									<button label="X" width="40px" onClick="@command('deleteItem',arg=each)" />

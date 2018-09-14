@@ -1,11 +1,8 @@
 package cl.gmo.pos.venta.controlador.ventaDirecta;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Session;
-
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.forms.SuplementosForm;
@@ -25,8 +22,7 @@ public class SuplementoDispatchActions {
 		log.info("SuplementoDispatchActions:cargaformulario  fin");
 	}
 	
-	public SuplementosForm carga(SuplementosForm form,
-			Session request)
+	public SuplementosForm carga(SuplementosForm form,	Session request)
 	{
 		log.info("SuplementoDispatchActions:carga inicio");
 		//String producto = request.getParameter(Constantes.STRING_PRODUCTO).toString();
@@ -50,11 +46,10 @@ public class SuplementoDispatchActions {
 		return formulario;
 	}
 	
-	public SuplementosForm agregar(SuplementosForm form,
-			HttpServletRequest request)
+	public SuplementosForm agregar(SuplementosForm form, Session request)
 	{
 		log.info("SuplementoDispatchActions:agregar  inicio");
-		HttpSession session = request.getSession();
+		Session session = request;
 		SuplementosForm formulario = (SuplementosForm)form;
 		
 		String accion = formulario.getAccion();
@@ -97,7 +92,8 @@ public class SuplementoDispatchActions {
 			helper.cargaValores(formulario, session, prod);
 		}
 		log.info("SuplementoDispatchActions:agregar  fin");
-		return mapping.findForward(Constantes.FORWARD_SUPLEMENTOS);
+		//return mapping.findForward(Constantes.FORWARD_SUPLEMENTOS);
+		return formulario;
 	}
 
 }

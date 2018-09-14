@@ -1,10 +1,10 @@
 package cl.gmo.pos.venta.controlador.ventaDirecta;
+
+
+
 import java.util.ArrayList;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
-
+import org.zkoss.zk.ui.Session;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.utils.Utils;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
@@ -15,7 +15,7 @@ import cl.gmo.pos.venta.web.forms.SuplementosForm;
 
 public class SuplementosHelper extends Utils{
 	Logger log = Logger.getLogger( this.getClass() );
-	public void cargaFormulario(SuplementosForm formulario, HttpSession session) 
+	public void cargaFormulario(SuplementosForm formulario, Session session) 
 	{
 		log.info("SuplementosHelper:cargaFormulario inicio");
 		formulario.setListaSuplementos((ArrayList<SuplementopedidoBean>)session.getAttribute(Constantes.STRING_LISTA_SUPLEMENTOS));
@@ -53,7 +53,7 @@ public class SuplementosHelper extends Utils{
 		//valida y se elimina los repetidos en suplementos opcionales
 	}
 
-	public void agregaSuplemento(SuplementosForm formulario, HttpSession session) {
+	public void agregaSuplemento(SuplementosForm formulario, Session session) {
 		log.info("SuplementosHelper:agregaSuplemento inicio");
 
 		boolean con_DE_75 = false;
@@ -112,7 +112,7 @@ public class SuplementosHelper extends Utils{
 		formulario.setSuplemento(Constantes.STRING_CERO);
 	}
 
-	public void validaCierre(SuplementosForm formulario, HttpSession session) {
+	public void validaCierre(SuplementosForm formulario, Session session) {
 		log.info("SuplementosHelper:validaCierre inicio");
 		formulario.setError(Constantes.STRING_SIN_ERROR);
 		
@@ -168,7 +168,7 @@ public class SuplementosHelper extends Utils{
 		}
 	}
 
-	public void cargaValores(SuplementosForm formulario, HttpSession session, ProductosBean producto) {
+	public void cargaValores(SuplementosForm formulario, Session session, ProductosBean producto) {
 		log.info("SuplementosHelper:cargaValores inicio");
 
 		formulario.setSuplemento(formulario.getSuplemento());

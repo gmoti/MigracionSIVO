@@ -2,6 +2,7 @@ package cl.gmo.pos.venta.controlador;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.zkoss.bind.annotation.BindingParam;
@@ -44,6 +45,8 @@ public class ControllerBusquedaMultiofertas implements Serializable{
 	private boolean ojoIzquierdo;
 	private boolean cerca;
 	private String verGraduacion;
+	
+	HashMap<String,Object> objetos;
 	
 	
 	@Init
@@ -220,25 +223,31 @@ public class ControllerBusquedaMultiofertas implements Serializable{
 	}
 	
 	
+	@NotifyChange({"busquedaProductosForm"})
 	@Command
-	public void AgregarSuplementos(@BindingParam("producto")ProductosBean producto) {		
+	public void AgregarSuplementos(@BindingParam("producto")ProductosBean producto,
+								   @BindingParam("index")int index) {		
 		
 		// verificar si tiene suplementos
 		busquedaProductosForm.setAccion("ver_Suplementos");		
+		busquedaProductosForm.setAddProducto(String.valueOf(index));
+		busquedaProductosForm.setIndex_multi(producto.getIndexMulti());
+		
 		busquedaProductosMultiOfertasDispatchActions.buscarMultioferta(busquedaProductosForm, sess);
 		
 		//producto con suplemento obligatorio
 		
 		if (busquedaProductosForm.getEstado().equals("producto_con_suplemento_obligatorio")) {
 			
+			objetos = new HashMap<String,Object>();		
+			objetos.put("producto",producto);
+			objetos.put("busquedaProductos",busquedaProductosForm);
+			
 			Window windowAgregaSuplemento = (Window)Executions.createComponents(
-	                "/zul/encargos/AgregaSuplemento.zul", null, null);
+	                "/zul/encargos/AgregaSuplemento.zul", null, objetos);
 			
-			windowAgregaSuplemento.doModal(); 
-			
-		}
-		
-			
+			windowAgregaSuplemento.doModal(); 			
+		}	
 		
 	}	
 	

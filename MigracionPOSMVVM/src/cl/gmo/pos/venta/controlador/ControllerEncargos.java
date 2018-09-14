@@ -31,6 +31,8 @@ import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
+import cl.gmo.pos.venta.controlador.presupuesto.BusquedaConveniosDispatchActions;
+import cl.gmo.pos.venta.controlador.presupuesto.PresupuestoDispatchActions;
 import cl.gmo.pos.venta.controlador.presupuesto.PresupuestoHelper;
 import cl.gmo.pos.venta.controlador.ventaDirecta.BusquedaProductosDispatchActions;
 import cl.gmo.pos.venta.controlador.ventaDirecta.DevolucionDispatchActions;
@@ -49,7 +51,7 @@ import cl.gmo.pos.venta.web.beans.PedidosPendientesBean;
 import cl.gmo.pos.venta.web.beans.ProductosBean;
 import cl.gmo.pos.venta.web.beans.PromocionBean;
 import cl.gmo.pos.venta.web.beans.TipoPedidoBean;
-
+import cl.gmo.pos.venta.web.forms.BusquedaConveniosForm;
 import cl.gmo.pos.venta.web.forms.BusquedaPedidosForm;
 import cl.gmo.pos.venta.web.forms.BusquedaProductosForm;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
@@ -79,10 +81,13 @@ public class ControllerEncargos implements Serializable {
 	private VentaPedidoForm 		ventaPedidoForm;
 	private BusquedaProductosForm 	busquedaProductosForm;
 	private DevolucionForm 			devolucionForm;
+	private BusquedaConveniosForm busquedaConveniosForm;
 	
 	private VentaPedidoDispatchActions 	ventaPedidoDispatchActions;
 	private DevolucionDispatchActions 	devolucionDispatchActions;
-	private BusquedaProductosDispatchActions busquedaProductosDispatchActions;
+	private BusquedaProductosDispatchActions busquedaProductosDispatchActions;	
+	private BusquedaConveniosDispatchActions busquedaConveniosDispatchActions;
+	
 	
 	private AgenteBean 		agenteBean;
 	private FormaPagoBean 	formaPagoBean;
@@ -1314,6 +1319,110 @@ public class ControllerEncargos implements Serializable {
 			e.printStackTrace();
 		}				
 		
+	}	
+	
+	
+	//============== Convenios ================
+	@NotifyChange({"ventaPedidoForm"})
+	@Command
+	public void buscarConvenioAjax() {		
+		
+		busquedaConveniosForm = new BusquedaConveniosForm();		
+		busquedaConveniosDispatchActions = new BusquedaConveniosDispatchActions();	
+		
+		sess.setAttribute("convenio", ventaPedidoForm.getConvenio());
+		
+		if(ventaPedidoForm.getConvenio().equals("50464") && ventaPedidoForm.getCliente_dto().equals("")) {
+			
+			if(ventaPedidoForm.getCliente_dto().equals("")) {
+				
+				//showPopWin('<%=request.getContextPath()%>/SeleccionPago.do?method=exige_valida_dto&accion=valida', 230, 110,null,false);	
+			}			
+			
+		}else {
+			
+			if (ventaPedidoForm.getEstado().equals("cerrado")) {				
+				Messagebox.show("La venta esta cerrada, no es posible modificar convenios");
+				return;
+			}
+			
+			if(ventaPedidoForm.getFlujo().equals("formulario")) {				
+				Messagebox.show("No hay ventas en curso, no es posible ingresar convenios");
+				return;
+			}
+			
+			if (ventaPedidoForm.getConvenio().equals("")) {
+				Messagebox.show("debe ingresar un código de convenio");
+				return;
+			}			
+			
+			if(ventaPedidoForm.getFlujo().equals("modificar")) {
+				
+				if (ventaPedidoForm.getBloquea().equals("bloquea")) {					
+					Messagebox.show("Encargo bloqueado, no es posible modificar convenios");
+					return;
+				}								
+				
+				BeanGlobal bg = busquedaConveniosDispatchActions.buscarConvenioAjax(busquedaConveniosForm, sess);
+				//param1 : descripcion
+				//param2 : cdg
+				//param3 : isapre				
+				ventaPedidoForm.setConvenio_det((String)bg.getObj_1());		
+				
+				if(ventaPedidoForm.getConvenio_det().equals("undefined"))
+				{
+					ventaPedidoForm.setConvenio_det("");
+					ventaPedidoForm.setConvenio("");
+				}	
+				
+				busquedaConveniosDispatchActions.selecciona_convenio_cdg(busquedaConveniosForm, sess);
+				
+				objetos = new HashMap<String,Object>();		
+				objetos.put("busquedaConvenios",busquedaConveniosForm);
+				objetos.put("origen","pedido");
+				
+				//se llama ventana convenio
+				Window window = (Window)Executions.createComponents(
+		                "/zul/presupuestos/SeleccionaConvenio.zul", null, objetos);		
+		        window.doModal();			
+				
+				
+				
+			}else {		
+				
+				if(ventaPedidoForm.getCliente().equals("") || ventaPedidoForm.getCliente().equals("0")) {					
+					Messagebox.show("Debe seleccionar un cliente, para agregar convenios");
+					return;
+				}
+				
+				
+				BeanGlobal bg = busquedaConveniosDispatchActions.buscarConvenioAjax(busquedaConveniosForm, sess);
+				//param1 : descripcion
+				//param2 : cdg
+				//param3 : isapre				
+				ventaPedidoForm.setConvenio_det((String)bg.getObj_1());
+				
+				if(ventaPedidoForm.getConvenio_det().equals("undefined"))
+				{
+					ventaPedidoForm.setConvenio_det("");
+					ventaPedidoForm.setConvenio("");
+				}				
+				
+				busquedaConveniosDispatchActions.selecciona_convenio_cdg(busquedaConveniosForm, sess);
+				
+				objetos = new HashMap<String,Object>();		
+				objetos.put("busquedaConvenios",busquedaConveniosForm);
+				objetos.put("origen","pedido");
+				
+				//se llama ventana convenio
+				Window window = (Window)Executions.createComponents(
+		                "/zul/presupuestos/SeleccionaConvenio.zul", null, objetos);		
+		        window.doModal();
+				
+				
+			} //flujo modificar
+			
+		}		
 	}	
 	
 	

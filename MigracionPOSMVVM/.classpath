@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry excluding="cl/gmo/pos/venta/controlador/ventaDirecta/_SeleccionPagoDispatchActions.java" kind="src" path="src"/>
+	<classpathentry excluding="cl/gmo/pos/venta/controlador/ventaDirecta/_SeleccionPagoDispatchActions.java|cl/gmo/pos/venta/web/helper/DevolucionHelper.java" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="C:/Software/Librerias/javax.jar"/>

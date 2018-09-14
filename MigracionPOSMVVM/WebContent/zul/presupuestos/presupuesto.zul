@@ -120,7 +120,7 @@
 							<div width="450px">
 								<label value="Convenio" />	
 								<textbox value="@bind(vm.presupuestoForm.convenio)" width="80px" />
-								<textbox value="@bind(vm.presupuestoForm.convenio_det)" width="150px"/>
+								<textbox value="@bind(vm.presupuestoForm.convenio_det)" width="150px" disabled="true"/>
 								<button label="B" onClick="@command('busquedaRapidaConvenio')" />
 								<button label="B" onClick="@command('busquedaConvenio')" />
 							</div>

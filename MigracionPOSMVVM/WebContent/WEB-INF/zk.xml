@@ -18,4 +18,15 @@
 		<addon-uri>/WEB-INF/lang-addon.xml
 		</addon-uri>
 	</language-config>
+	
+	<!-- ====================================================== -->
+	<!--   Displays the wait indicator on every user action     -->
+	<!-- ====================================================== -->
+	<library-property>
+		<name>org.zkoss.zul.progressbox.position</name>
+		<value>center</value>
+	</library-property>
+	<client-config>
+		<processing-prompt-delay>1</processing-prompt-delay>
+	</client-config>	
 </zk>
