@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 
@@ -48,6 +49,7 @@ import cl.gmo.pos.venta.web.beans.TiendaBean;
 
 import cl.gmo.pos.venta.web.facade.PosUtilesFacade;
 import cl.gmo.pos.venta.web.forms.InformeOpticoForm;
+import cl.gmo.pos.venta.web.forms.ListadoTrabajosPendientesForm;
 import cl.gmo.pos.venta.web.forms.PresupuestoForm;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
@@ -717,18 +719,38 @@ public class ReportesHelper extends Utils{
 		
 	}
 	
-	public void creaListadoTranajosPendientes(HttpSession session,HttpServletResponse response, HttpServletRequest request){
+	public byte[] creaListadoTranajosPendientes(ListadoTrabajosPendientesForm listado,Session request){
+		
 		log.info("ReportesHelper:creaListadoTranajosPendientes inicio");
 		InputStream io = ReportesHelper.class.getResourceAsStream("listaPedido.jasper");
 		
-		String cdg = request.getParameter("cdg").toString();
-		String cliente = request.getParameter("cliente").toString();
-		String divisa = request.getParameter("divisa").toString();
-		String fecha_ini = request.getParameter("fecha_ini").toString();
-		String fecha_fin = request.getParameter("fecha_fin").toString();
-		String cerrado = request.getParameter("cerrado").toString();
-		String anulado = request.getParameter("anulado").toString();
-		String local = request.getParameter("local").toString();
+		String cdg = listado.getCodigo();
+		String cliente = listado.getCliente();
+		String divisa = listado.getDivisa();
+		String fecha_ini = listado.getFechaPedidoIni();
+		String fecha_fin = listado.getFechaPedidoTer();
+		String cerrado = listado.getCerrado();
+		String anulado = listado.getAnulado();
+		String local = listado.getLocal();
+		
+		Optional<String> cod = Optional.ofNullable(cdg);
+		Optional<String> cli = Optional.ofNullable(cliente);
+		Optional<String> div = Optional.ofNullable(divisa);		
+		Optional<String> fini = Optional.ofNullable(fecha_ini);
+		Optional<String> ffin = Optional.ofNullable(fecha_fin);
+		Optional<String> cer  = Optional.ofNullable(cerrado);		
+		Optional<String> anu = Optional.ofNullable(anulado);
+		Optional<String> loc  = Optional.ofNullable(local);	
+		
+		if(!cod.isPresent()) cdg="";
+		if(!cli.isPresent()) cliente="";
+		if(!div.isPresent()) divisa="";
+		if(!fini.isPresent()) fecha_ini="";
+		if(!ffin.isPresent()) fecha_fin="";		
+		if(!cer.isPresent()) cerrado="";
+		if(!anu.isPresent()) anulado="";
+		if(!loc.isPresent()) local="";
+		
 		
 		if (cdg.equals(Constantes.STRING_BLANCO)) {
 			cdg = null;
@@ -752,53 +774,8 @@ public class ReportesHelper extends Utils{
 			local = null;
 		}
 		
-		String sucursal = (String)session.getAttribute(Constantes.STRING_REPORTER_NOMBRE_SUCURSAL);
-		String fechaBusqueda = (String)session.getAttribute(Constantes.STRING_ACTION_LISTA_FECHA_BUSQUEDA);
-/*		ArrayList<TrabajosPendientesBean> listaPendientes =(ArrayList<TrabajosPendientesBean>)session.getAttribute(Constantes.STRING_ACTION_LISTA_PENDIENTES);
-		ArrayList<TrabajosPendientesBean> reportePendientes = new ArrayList<TrabajosPendientesBean>();
-		
-		for(TrabajosPendientesBean pendientesTmp: listaPendientes){
-			log.info("ReportesHelper:creaListadoTranajosPendientes entrando ciclo for");
-			TrabajosPendientesBean tmpCab= new TrabajosPendientesBean();
-			tmpCab.setSerie(pendientesTmp.getSerie());
-			tmpCab.setFecha(pendientesTmp.getFecha());
-			tmpCab.setNumeroCaja(pendientesTmp.getNumeroCaja());
-			tmpCab.setCliente(pendientesTmp.getCliente());
-			tmpCab.setNombre(pendientesTmp.getNombre());
-			tmpCab.setApellidos(pendientesTmp.getApellidos());
-			tmpCab.setDescuento1(pendientesTmp.getDescuento1());
-			tmpCab.setfPago(pendientesTmp.getfPago());
-			tmpCab.setAlbaran(pendientesTmp.getAlbaran());
-			tmpCab.setTotal(Constantes.STRING_BLANCO);
-			reportePendientes.add(tmpCab);
-			for(ListadosTrabajosPendientesLineaBean linea : pendientesTmp.getLineas()){
-				log.info("ReportesHelper:creaListadoTranajosPendientes entrando ciclo for");
-					if(tmpCab.getSerie().equals(linea.getCodigo())){
-						TrabajosPendientesBean tmpLin= new TrabajosPendientesBean();
-						tmpLin.setArticulo(linea.getArticulo());
-						tmpLin.setDescripcion(linea.getDescripcion());
-						tmpLin.setCantidad(linea.getCantidad());
-						tmpLin.setPrecio("$"+linea.getPrecio());
-						tmpLin.setDescuento2(linea.getDescuento());
-						tmpLin.setTotal(Constantes.STRING_BLANCO);
-						reportePendientes.add(tmpLin);
-					}
-				}
-			TrabajosPendientesBean tmpTotal= new TrabajosPendientesBean();
-			if(Constantes.STRING_CERO.equals(pendientesTmp.getTotal())){
-				tmpTotal.setTotal(Constantes.STRING_BLANCO);
-			}else{
-				tmpTotal.setTotal("$"+pendientesTmp.getTotal());
-			}
-			
-			tmpTotal.setNumeroBoleta(pendientesTmp.getNumeroBoleta());
-				tmpTotal.setTxtNumeroBoleta(Constantes.STRING_BLANCO);
-				tmpTotal.setTxtTotal(Constantes.STRING_BLANCO);
-				tmpTotal.setTxtNumeroBoleta(Constantes.STRING_TEXTO_BOLETA);
-				tmpTotal.setTxtTotal(Constantes.STRING_TEXTO_TOTAL_PEDIDO);
-				reportePendientes.add(tmpTotal);	
-		}
-		*/
+		String sucursal = (String)request.getAttribute(Constantes.STRING_REPORTER_NOMBRE_SUCURSAL);
+		String fechaBusqueda = (String)request.getAttribute(Constantes.STRING_ACTION_LISTA_FECHA_BUSQUEDA);
 		
 		Map parametros = new HashMap();  
 		parametros.put(Constantes.STRING_ACTION_LISTA_FECHA_BUSQUEDA, fechaBusqueda);
@@ -821,7 +798,7 @@ public class ReportesHelper extends Utils{
 		
 		byte[] bytes = new CreaReportes().obtenerJasperNuevo(parametros, io);
 		
-		response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
+		/*response.setContentType(Constantes.STRING_REPORTER_APPLICATION_PDF);
 		response.setContentLength(bytes.length);
 		response.setHeader(Constantes.STRING_REPORTER_CONTENT_DISPOSITION, Constantes.STRING_REPORTER_BOLETA_PDF);
 		ServletOutputStream servletOutputStream;
@@ -832,9 +809,13 @@ public class ReportesHelper extends Utils{
 			servletOutputStream.close();
 		} catch (IOException e) {
 			log.error("ReportesHelper:creaListadoTranajosPendientes error catch",e);
-		}
+		}*/
 		
+		return bytes;
 	}
+	
+	
+	
 	public byte[] creaListadoOptico(Session session){
 		
 		log.info("ReportesHelper:creaListadoOptico inicio");

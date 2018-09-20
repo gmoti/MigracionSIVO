@@ -96,6 +96,30 @@ public class ControllerMenuPrincipal implements Serializable{
 	                "/zul/reportes/ListadoPresupuestos.zul", null, null);
 			
 	        window.doModal();			
+			break;
+			
+		case "M3_5":
+			
+			window = (Window)Executions.createComponents(
+	                "/zul/reportes/ListadoTrabajosPendientes.zul", null, null);
+			
+	        window.doModal();			
+			break;
+			
+		case "M3_6":
+			
+			window = (Window)Executions.createComponents(
+	                "/zul/reportes/BusquedaGeneralArticulos.zul", null, null);
+			
+	        window.doModal();			
+			break;	
+			
+		case "M3_7":
+			
+			window = (Window)Executions.createComponents(
+	                "/zul/reportes/CopiaGuiaBoleta.zul", null, null);
+			
+	        window.doModal();			
 			break;	
 
 		default:

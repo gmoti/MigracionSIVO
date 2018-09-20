@@ -85,7 +85,7 @@
 				</div>
 			</north>
 			<center>
-				<div height="100%" width="100%">
+				<div height="800px" width="800px">
 					<iframe id="reporte" height="100%" width="100%" 
 						autohide="true" content="@bind(vm.fileContent)">
 					</iframe>

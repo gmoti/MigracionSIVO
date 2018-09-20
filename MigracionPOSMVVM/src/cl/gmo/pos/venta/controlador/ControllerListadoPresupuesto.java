@@ -49,8 +49,7 @@ public class ControllerListadoPresupuesto implements Serializable {
 	@Wire("#reporte4")
 	private Window win;
 	
-	private AMedia fileContent;	
-
+	private AMedia fileContent;
 	private byte[] bytes;
 	private Date fechaInicio;
 	private Date fechaFin;
@@ -129,7 +128,7 @@ public class ControllerListadoPresupuesto implements Serializable {
 			listadoPresupuestosDispatchActions.buscar(listadoPresupuestosForm, sess);
 			bytes =  reportesHelper.creaListadoPresupuestos(sess);
 			
-			final AMedia media = new AMedia("prueba.pdf", "pdf", "application/pdf", bytes);		
+			final AMedia media = new AMedia("ListadoPresupuesto.pdf", "pdf", "application/pdf", bytes);		
 			fileContent = media;
 		}catch(Exception e) {
 			
