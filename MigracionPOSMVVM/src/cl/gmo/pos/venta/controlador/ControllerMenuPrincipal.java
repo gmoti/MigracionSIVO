@@ -5,8 +5,13 @@ import java.util.HashMap;
 
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.ContextParam;
+import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.select.Selectors;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Window;
 
 public class ControllerMenuPrincipal implements Serializable{
@@ -16,12 +21,17 @@ public class ControllerMenuPrincipal implements Serializable{
 	 */
 	private static final long serialVersionUID = 7591341824630787025L;
 	private Window window;
+	private Div winDiv;
 	HashMap<String,Object> objetos;
 	
 	
 	@Init
-	public void inicial() {
+	public void inicial(@ContextParam(ContextType.VIEW) Component view) {
+		
+		Selectors.wireComponents(view, this, false);
+		
 		window=null;
+		winDiv = new Div();
 	}
 	
 	

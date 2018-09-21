@@ -5,8 +5,8 @@
 <?link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"?>
 <!-- Latest compiled and minified JavaScript -->
 <?script src="js/bootstrap.min.js" ?>
-<zk>
-<window title="Menu Principal" border="normal" width="100%" height="100%"		
+
+<window border="none" width="100%" height="100%"		
 		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerMenuPrincipal')">
 	<menubar>
 		<menu label="Venta">
@@ -22,7 +22,7 @@
 		</menu>
 
 		<menu label="Mantenedores">
-			<menupopup>
+			<menupopup>			
 				<menuitem label="Clientes" onClick="@command('seleccionMenu',arg='M2_1')"/>
 				<menuseparator />
 				<menuitem label="Graduacion cliente" onClick="@command('seleccionMenu',arg='M2_2')"/>
@@ -47,7 +47,12 @@
 				
 			</menupopup>
 		</menu>
-
 	</menubar>
+	
+	<div id="winDiv" width="100%" height="100%">
+	
+	
+	
+	
+	</div>	
 </window>
-</zk>

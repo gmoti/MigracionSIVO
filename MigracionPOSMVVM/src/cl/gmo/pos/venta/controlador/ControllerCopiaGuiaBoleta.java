@@ -2,13 +2,18 @@ package cl.gmo.pos.venta.controlador;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
 
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.util.media.AMedia;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Session;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Window;
+
 import cl.gmo.pos.venta.reporte.dispatch.CopiaGuiaBoletaDispatchActions;
 import cl.gmo.pos.venta.reporte.nuevo.CreaCopiaGuiaBoletaHelper;
 import cl.gmo.pos.venta.utils.Constantes;
@@ -27,6 +32,8 @@ public class ControllerCopiaGuiaBoleta implements Serializable {
 	private String numeroBoleta;
 	private CopiaGuiaBoletaForm copiaGuiaBoletaForm;
 	private CopiaGuiaBoletaDispatchActions copiaGuiaBoletaDispatchActions;
+	
+	HashMap<String,Object> objetos;
 	
 	
 	@Init
@@ -67,7 +74,18 @@ public class ControllerCopiaGuiaBoleta implements Serializable {
 			//String tipo =(String) request.getParameter(Constantes.STRING_TIPO);
 			//String numero =(String) request.getParameter(Constantes.STRING_NUMERO);
 
-			byte[] bytes = reporte.traeCopiaGuiaBoleta(numeroBoleta,documento);
+			byte[] bytes = reporte.traeCopiaGuiaBoleta(numeroBoleta, documento);
+			
+			final AMedia media = new AMedia("CopiaBoleta.pdf", "pdf", "application/pdf", bytes);			
+			
+			objetos = new HashMap<String,Object>();
+			objetos.put("reporte",media);
+			objetos.put("titulo","Copia Boleta - Guia");			
+			
+			Window windowVisorReporte = (Window)Executions.createComponents(
+	                "/zul/reportes/VisorReporte.zul", null, objetos);
+			
+			windowVisorReporte.doModal();
 			
 			
 			

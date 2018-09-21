@@ -48,7 +48,8 @@
 						<button label="B"/>
 						
 						<label value="Divisa"/>						
-						<combobox model="@bind(vm.listadoTrabajosPendientesForm.listaDivisas)" width="175px">
+						<combobox model="@bind(vm.listadoTrabajosPendientesForm.listaDivisas)" 
+									width="175px" selectedItem="@bind(vm.divisaBean)">
 							<template name="model">
 								<comboitem label="@load(each.descripcion)"/>
 							</template>						
@@ -74,10 +75,10 @@
 					
 					<row>
 						<label value="Anulado"/>
-						<combobox value="@bind(vm.listadoTrabajosPendientesForm.anulado)"   width="175px">
+						<combobox width="175px" selectedItem="@bind(vm.anulado)">
 							<comboitem value="0"  label="Seleccione"/>
 							<comboitem value="N"  label="No"/>	
-							<comboitem value="N"  label="Si"/>					
+							<comboitem value="S"  label="Si"/>					
 						</combobox>
 						<space/>
 						<space/>

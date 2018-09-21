@@ -1,30 +1,20 @@
-package cl.gmo.pos.venta.web.actions;
+package cl.gmo.pos.venta.reporte.dispatch;
 
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
-
-import cl.gmo.pos.venta.utils.Constantes;
+import org.zkoss.zk.ui.Session;
 import cl.gmo.pos.venta.utils.Utils;
 import cl.gmo.pos.venta.web.forms.InformeBusquedaProductoForm;
 import cl.gmo.pos.venta.web.helper.InformeBusquedaProductoHelper;
 
-public class InformeBusquedaProductoDispatchActions extends DispatchAction{
+public class InformeBusquedaProductoDispatchActions{
 	Logger log = Logger.getLogger( this.getClass() );
+	
 	public InformeBusquedaProductoDispatchActions() {
 	}
 
-	public ActionForward cargaFormulario(ActionMapping mapping,
-			ActionForm form,
-			HttpServletRequest request,
-			HttpServletResponse response)
+	public InformeBusquedaProductoForm cargaFormulario(InformeBusquedaProductoForm form,
+			Session request)
 	{		
 		log.info("InformeBusquedaProductoDispatchActions:cargaFormulario  inicio");
 		InformeBusquedaProductoForm formulario = (InformeBusquedaProductoForm) form;
@@ -34,12 +24,11 @@ public class InformeBusquedaProductoDispatchActions extends DispatchAction{
 		formulario.setEstadoPagina("");
 		log.info("InformeBusquedaProductoDispatchActions:cargaFormulario  fin");
 		
-		return mapping.findForward(Constantes.FORWARD_BUSQUEDA_GENERAL_ARTICULOS);
+		//return mapping.findForward(Constantes.FORWARD_BUSQUEDA_GENERAL_ARTICULOS);
+		return formulario;
 	}
-	public ActionForward buscarArticulo(ActionMapping mapping,
-			ActionForm form,
-			HttpServletRequest request,
-			HttpServletResponse response)
+	
+	public InformeBusquedaProductoForm buscarArticulo(InformeBusquedaProductoForm form,	Session request)
 	{		
 		log.info("InformeBusquedaProductoDispatchActions:buscarArticulo  inicio");
 		
@@ -61,7 +50,8 @@ public class InformeBusquedaProductoDispatchActions extends DispatchAction{
 		}*/
 		
 		log.info("InformeBusquedaProductoDispatchActions:buscarArticulo  fin");
-		return mapping.findForward(Constantes.FORWARD_BUSQUEDA_GENERAL_ARTICULOS);
+		//return mapping.findForward(Constantes.FORWARD_BUSQUEDA_GENERAL_ARTICULOS);
+		return formulario;
 	}
 	
 }

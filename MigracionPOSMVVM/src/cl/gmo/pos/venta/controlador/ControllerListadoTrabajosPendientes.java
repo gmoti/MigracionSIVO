@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zul.Window;
 
 import cl.gmo.pos.venta.reporte.dispatch.ListadoTrabajosPendientesDispatchActions;
+import cl.gmo.pos.venta.web.beans.DivisaBean;
 import cl.gmo.pos.venta.web.forms.ListadoTrabajosPendientesForm;
 import cl.gmo.pos.venta.reporte.nuevo.ReportesHelper;
 import cl.gmo.pos.venta.utils.Constantes;
@@ -41,6 +42,9 @@ public class ControllerListadoTrabajosPendientes implements Serializable {
 	private byte[] bytes;
 	private ReportesHelper reportes;
 	
+	private DivisaBean divisaBean;
+	private String anulado;
+	
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view)	{
@@ -48,9 +52,11 @@ public class ControllerListadoTrabajosPendientes implements Serializable {
 		
 		listadoTrabajosPendientesForm = new ListadoTrabajosPendientesForm();
 		listadoTrabajosPendientesDispatchActions = new ListadoTrabajosPendientesDispatchActions();
-		reportes = new ReportesHelper();		
+		reportes = new ReportesHelper();	
+		divisaBean = new DivisaBean();
+		anulado = "";
 		
-		listadoTrabajosPendientesDispatchActions.cargaInicial(listadoTrabajosPendientesForm, sess);		
+		listadoTrabajosPendientesDispatchActions.cargaFormulario(listadoTrabajosPendientesForm, sess);		
 		
 		listadoTrabajosPendientesForm.setLocal(sess.getAttribute(Constantes.STRING_SUCURSAL).toString());
 		listadoTrabajosPendientesForm.setCerrado("N");
@@ -68,8 +74,9 @@ public class ControllerListadoTrabajosPendientes implements Serializable {
 		
 		listadoTrabajosPendientesForm.setFechaPedidoIni(fechaI);
 		listadoTrabajosPendientesForm.setFechaPedidoTer(fechaF);
+		listadoTrabajosPendientesForm.setDivisa(divisaBean.getId());
+		listadoTrabajosPendientesForm.setAnulado(anulado);
 		
-		//listadoTrabajosPendientesForm = listadoTrabajosPendientesDispatchActions.buscar(listadoTrabajosPendientesForm, sess);
 		bytes = reportes.creaListadoTranajosPendientes(listadoTrabajosPendientesForm,sess);
 		
 		final AMedia media = new AMedia("ListadoTrabajoPendiente.pdf", "pdf", "application/pdf", bytes);		
@@ -112,6 +119,24 @@ public class ControllerListadoTrabajosPendientes implements Serializable {
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
 	}
+
+	public DivisaBean getDivisaBean() {
+		return divisaBean;
+	}
+
+	public void setDivisaBean(DivisaBean divisaBean) {
+		this.divisaBean = divisaBean;
+	}
+
+	public String getAnulado() {
+		return anulado;
+	}
+
+	public void setAnulado(String anulado) {
+		this.anulado = anulado;
+	}
+	
+	
 	
 
 }
