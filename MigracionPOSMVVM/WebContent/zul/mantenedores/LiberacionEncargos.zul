@@ -1,0 +1,156 @@
+<?page title="new page title" contentType="text/html;charset=UTF-8"?>
+
+<window id="winLiberacionEncargo" border="normal" closable="false" width="100%" height="100%"
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerLiberacionEncargos')">		
+		
+		<style>   
+		    .MyGridRowHeight
+		        tr.z-row td.z-row-inner div.z-row-content{
+		            border:1px solid white;
+		            border-right:1px solid transparent;
+		            padding:0px;
+		            margin:0px;
+		     }
+		</style>		
+		
+		<div width="100%" height="100%">
+			<div width="100%" style="background-color:black;color: white;">
+				<label value="LIBERACION DE ENCARGOS" />
+			</div>	
+					
+			<div width="100%" style="background-color:black;color: white;" align="right">						
+			    <toolbarbutton image="/image/buscar.png" onClick="" />
+			    <toolbarbutton image="/image/Check_32x32.png" onClick="" />
+			    <toolbarbutton image="/image/Remove_32x32.png" onClick="@command('salir')" />				
+			</div>
+			
+			<div width="100%" style="background-color:gray; color: white;">
+				<label value="Fecha desde:"/><datebox value="@bind(vm.busquedaLiberacionesForm.fecha)"/>
+				<space width="30px"/>
+				<label value="Fecha hasta:"/><datebox value="@bind(vm.busquedaLiberacionesForm.fechaHasta)"/>
+			</div>			
+		
+			<div width="100%" height="100%" >
+			<borderlayout>
+				<north>
+					<div width="100%" height="300px" >
+					
+						<div width="100%" style="background-color:black;color: white;">
+							<label value="Codigo" />
+							<label value="Fecha Encargo" />
+							<label value="Fecha Entrega" />
+							<label value="Cliente" />
+							<label value="Agente" />
+							<label value="Grupo" />
+							<combobox>
+								<comboitem value="-1" label="Estado encargo"/>
+								<comboitem value="0"  label="No Liberado"/>
+								<comboitem value="1"  label="Liberado"/>
+								<comboitem value="2"  label="Entregado"/>
+							</combobox>
+							<label value="Seleccionar" />							
+						</div>			
+					
+						<grid model="@bind(vm.busquedaLiberacionesForm.listaPedidos)"  sclass="MyGridRowHeight">
+							<columns>
+								<column width="120px" />
+								<column width="120px" />
+								<column width="120px" />
+								<column width="120px" />
+								<column width="120px" />
+								<column width="120px" />
+								<column width="120px" />
+								<column width="120px" />
+							</columns>
+							<template name="model">							
+								<row>
+									<textbox value=""  width="110px"/>
+									<textbox value=""  width="110px"/>
+									<textbox value=""  width="110px"/>
+									<textbox value=""  width="110px"/>
+									<textbox value=""  width="110px"/>
+									<textbox value=""  width="110px"/>
+									<textbox value=""  width="110px"/>
+									<textbox value=""  width="110px"/>								
+								</row>							
+							</template>
+						</grid>
+					</div>
+				</north>
+
+				<center>
+					<div width="100%" height="300px">
+						<borderlayout>
+						
+							<west width="70%">
+								<div>								
+									<div width="100%" style="background-color:black;color: white;">
+										<label value="No Articulo" />
+										<label value="Descripcion" />
+										<label value="1 Hora" />
+										<label value="Ojo" />
+										<label value="Esfera" />
+										<label value="Cilindro" />
+										<label value="Cantidad" />
+										<label value="Detalle" />
+									</div>								
+								
+									<grid>
+										<columns>
+											<column width="120px" />
+											<column width="120px" />
+											<column width="120px" />
+											<column width="60px" />
+											<column width="60px" />
+											<column width="60px" />
+											<column width="60px" />
+											<column width="120px" />
+										</columns>
+										<rows>
+											<row>
+												<textbox value=""  width="110px"/>
+												<textbox value=""  width="110px"/>
+												<textbox value=""  width="110px"/>
+												<textbox value=""  width="50px"/>
+												<textbox value=""  width="50px"/>
+												<textbox value=""  width="50px"/>
+												<textbox value=""  width="50px"/>
+												<textbox value=""  width="110px"/>
+											</row>
+										</rows>
+									</grid>
+								</div>
+							</west>
+							
+							<east width="30%">
+								<div>
+									<div width="100%" style="background-color:black;color: white;">
+										<label value="No Articulo" />
+										<label value="Descripcion" />
+										<label value="1 Hora" />
+									</div>
+								
+									<grid>
+										<columns>
+											<column width="50px" />
+											<column width="10px" />
+											<column width="50px" />
+										</columns>
+										<rows>
+											<row>
+												<textbox value=""  width="50px"/>
+												<textbox value=""  width="110px"/>
+												<textbox value=""  width="50px"/>											
+											</row>
+										</rows>
+									</grid>
+								</div>
+							</east>
+							
+						</borderlayout>
+					</div>
+				</center>
+			</borderlayout>
+			</div>
+		</div>
+</window>

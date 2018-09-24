@@ -59,6 +59,12 @@ public class ControllerMenuPrincipal implements Serializable{
 			window = (Window)Executions.createComponents(
 	                "/zul/encargos/encargos.zul", null, objetos);			
 	        window.doModal();
+	        break; 
+	        
+		case "M1_4":			
+			window = (Window)Executions.createComponents(
+	                "/zul/mantenedores/LiberacionEncargos.zul", null, null);			
+	        window.doModal();
 	        break;    
 			
 	        //mantenedores

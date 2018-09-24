@@ -17,7 +17,7 @@
 				<menuseparator />
 				<menuitem label="Encargos" onClick="@command('seleccionMenu',arg='M1_3')"/>
 				<menuseparator />
-				<menuitem label="Liberacion de encargos" />
+				<menuitem label="Liberacion de encargos" onClick="@command('seleccionMenu',arg='M1_4')"/>
 			</menupopup>
 		</menu>
 

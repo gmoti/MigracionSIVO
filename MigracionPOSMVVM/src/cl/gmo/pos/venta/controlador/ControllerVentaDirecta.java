@@ -156,13 +156,12 @@ public class ControllerVentaDirecta implements Serializable{
 		if (ventaDirectaForm.getSumaTotal() < 1) {
 			Messagebox.show("La venta esta sin lineas", "Advertencia", Messagebox.OK, Messagebox.EXCLAMATION);			
 			return;
-		}			
+		}		
+					
 		
-		ventaDirectaForm.setAccion(Constantes.STRING_AGREGAR_VENTA_DIRECTA);			
-		
-		try {
-			
-			ventaDirectaForm = ventaDirectaAccion.generaVentaDirecta(ventaDirectaForm, sess);			
+		try {			
+			ventaDirectaForm.setAccion(Constantes.STRING_AGREGAR_VENTA_DIRECTA);
+			//ventaDirectaForm = ventaDirectaAccion.generaVentaDirecta(ventaDirectaForm, sess);			
 			ventaDirectaForm = ventaDirectaAccion.IngresaVentaDirecta(ventaDirectaForm, sess);			
 			Messagebox.show("Venta almacenada");
 			
@@ -170,6 +169,7 @@ public class ControllerVentaDirecta implements Serializable{
 				controlBotones.setEnablePagar("true");
 			else
 				controlBotones.setEnablePagar("false");
+			
 		} catch (Exception e) {
 			
 			e.printStackTrace();
