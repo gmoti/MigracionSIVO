@@ -273,6 +273,11 @@ public class ControllerVentaDirecta implements Serializable{
             if (ventaDirectaForm.getEstado_boleta().contains("TRUE") || ventaDirectaForm.getEstado_boleta().contains("true")) {
 				
 				Messagebox.show("Error: No se pudo generar la boleta, Intentelo nuevamente.");
+			}else {
+				
+				//http://10.216.4.24/39%2066666666-6%201.pdf
+				
+				
 			}
 			
 		} catch (Exception e) {

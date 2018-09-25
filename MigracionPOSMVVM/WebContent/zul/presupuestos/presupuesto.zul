@@ -22,7 +22,7 @@
 						<button label="Search" onClick="@command('busquedaPresupuesto')" />
 						<button label="Encargo" onClick="@command('crearEncargo')" />
 						<button label="Save" onClick="@command('grabarPresupuesto')" />
-						<button label="Exit" onClick="@command('cerrarVentana', arg=winPresupuesto)" />						
+						<button label="Exit" onClick="@command('salir', arg=winPresupuesto)" />						
 						</div>						
 					</div>
 					

@@ -140,7 +140,7 @@ public class ControllerPresupuesto implements Serializable{
 		
 		presupuestoForm.setDivisa("PESO");
 		presupuestoForm.setIdioma("CAST");		
-		presupuestoForm.setAgente(sess.getAttribute("agente").toString());
+		//presupuestoForm.setAgente(sess.getAttribute("agente").toString());
 		presupuestoForm.setForma_pago("1");
 		
 		posicionaCombos();
@@ -380,22 +380,55 @@ public class ControllerPresupuesto implements Serializable{
 	
 	
 	@Command
-	public void cerrarVentana(@BindingParam("arg")Window arg) {
+	public void salir(@BindingParam("arg")Window arg) {
 		
-		if (!bWin) {
-			wBusqueda.detach();
-		}
+		Messagebox.show("Salir de Presupuesto","Notificacion",
+				Messagebox.YES|
+				Messagebox.NO,
+				Messagebox.QUESTION ,new EventListener<Event>() {
+
+			@Override
+			public void onEvent(Event e) throws Exception {				
+				if(  ((Integer) e.getData()).intValue() == Messagebox.YES) {
+					
+					if (!bWin) wBusqueda.detach();
+					
+					arg.detach();
+				}					
+			}			
+		});		
+	}
 		
-		arg.detach();
-	}	
 	
 	
 	@NotifyChange({"presupuestoForm"})
     @GlobalCommand
-	public void actProdGridPresupuesto(@BindingParam("producto")ProductosBean arg) {	
+	public void actProdGridPresupuesto(@BindingParam("producto")ProductosBean arg) {
 		
-		
+		//no viene la graduaciion
 		arg.setImporte(arg.getPrecio());
+		arg.setCantidad(1);
+		
+		sess.setAttribute(Constantes.STRING_LISTA_PRODUCTOS, presupuestoForm.getListaProductos());
+		presupuestoForm.setAccion(Constantes.STRING_AGREGAR_PRODUCTOS);
+		
+		try {
+			
+			presupuestoForm.setCantidad(arg.getCantidad());
+			presupuestoForm.setAddProducto(arg.getCod_barra());
+			//ventaPedidoForm.setGraduacion(arg.getg);
+			presupuestoForm.setOjo(arg.getOjo());
+			presupuestoForm.setDescripcion(arg.getDescripcion());		
+			
+			presupuestoForm = presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);
+			
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}	
+		
+		
+		
+		/*arg.setImporte(arg.getPrecio());
 		arg.setCantidad(1);
 		
 		ArrayList<ProductosBean> productos = new ArrayList<ProductosBean>();
@@ -407,7 +440,7 @@ public class ControllerPresupuesto implements Serializable{
 			productos = presupuestoForm.getListaProductos();
 			productos.add(arg);
 			presupuestoForm.setListaProductos(productos);
-		}	
+		}	*/
 			
 		actTotal(presupuestoForm.getListaProductos());
 		System.out.println("estoy en otro controlador "+arg.getDescripcion());				
@@ -459,8 +492,8 @@ public class ControllerPresupuesto implements Serializable{
 	
 	public void posicionaCombos() {
 			
-		Optional<AgenteBean> a = presupuestoForm.getListaAgentes().stream().filter(s -> presupuestoForm.getAgente().equals(s.getUsuario())).findFirst();		
-		agenteBean = a.get();		
+		//Optional<AgenteBean> a = presupuestoForm.getListaAgentes().stream().filter(s -> presupuestoForm.getAgente().equals(s.getUsuario())).findFirst();		
+		//agenteBean = a.get();		
 		
 		Optional<DivisaBean> b = presupuestoForm.getListaDivisas().stream().filter(s -> presupuestoForm.getDivisa().equals(s.getId())).findFirst();
 		divisaBean = b.get();

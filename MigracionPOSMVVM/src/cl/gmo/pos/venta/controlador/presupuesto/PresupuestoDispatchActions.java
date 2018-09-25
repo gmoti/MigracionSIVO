@@ -67,7 +67,7 @@ public class PresupuestoDispatchActions {
 	{
 		log.info("PresupuestoDispatchActions:traspasoPedido  inicio");
 		
-		BeanGlobal bg = null;
+		BeanGlobal bg = new BeanGlobal();
 		
 		PresupuestoForm formulario = (PresupuestoForm)form;
 		//HttpSession session = request.getSession(true);
