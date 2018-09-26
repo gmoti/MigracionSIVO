@@ -10,9 +10,13 @@ import org.zkoss.bind.annotation.ContextType;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Session;
+import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Window;
+
+import cl.gmo.pos.venta.utils.Constantes;
 
 public class ControllerMenuPrincipal implements Serializable{
 	
@@ -20,10 +24,14 @@ public class ControllerMenuPrincipal implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 7591341824630787025L;
-	private Window window;
-	private Div winDiv;
+	Session sess = Sessions.getCurrent();
+	
+	private Window window;	
 	HashMap<String,Object> objetos;
 	
+	private String usuario;
+	private String sucursal;
+	private String sucursalDes;
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view) {
@@ -31,7 +39,12 @@ public class ControllerMenuPrincipal implements Serializable{
 		Selectors.wireComponents(view, this, false);
 		
 		window=null;
-		winDiv = new Div();
+		
+		usuario = (String)sess.getAttribute(Constantes.STRING_USUARIO);
+		sucursal = (String)sess.getAttribute(Constantes.STRING_SUCURSAL);
+		sucursalDes = (String)sess.getAttribute(Constantes.STRING_NOMBRE_SUCURSAL);
+		
+		
 	}
 	
 	
@@ -81,6 +94,14 @@ public class ControllerMenuPrincipal implements Serializable{
 			
 	        window.doModal();
 	        break;    
+	        
+		case "M2_3":	
+			window = (Window)Executions.createComponents(
+	                "/zul/mantenedores/Medico.zul", null, null);
+			
+	        window.doModal();
+	        break;    
+	        
 	        
 	        //reportes
 		case "M3_1":			
@@ -140,9 +161,41 @@ public class ControllerMenuPrincipal implements Serializable{
 
 		default:
 			break;
-		}
-		
-		
+		}		
 	}
+
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+
+	public String getSucursal() {
+		return sucursal;
+	}
+
+
+	public void setSucursal(String sucursal) {
+		this.sucursal = sucursal;
+	}
+
+
+	public String getSucursalDes() {
+		return sucursalDes;
+	}
+
+
+	public void setSucursalDes(String sucursalDes) {
+		this.sucursalDes = sucursalDes;
+	}
+	
+	
+	
+	
 
 }

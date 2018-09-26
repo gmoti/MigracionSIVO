@@ -115,7 +115,7 @@
 								</combobox>
 							</div>
 							
-							<checkbox label="Cerrado" value="@load(vm.presupuestoForm.cerrado)" disabled="true"/>															
+							<checkbox label="Cerrado" checked="@load(vm.presupuestoForm.cerrado)" disabled="true"/>															
 							
 							<div width="450px">
 								<label value="Convenio" />	

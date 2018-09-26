@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.web.beans.ProvinciaBean;
 
-public class MedicoForm{
+public class MedicoForm extends GenericForm{
 	
 	/**
 	 * 

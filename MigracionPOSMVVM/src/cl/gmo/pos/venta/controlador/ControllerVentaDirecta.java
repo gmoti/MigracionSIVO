@@ -277,6 +277,14 @@ public class ControllerVentaDirecta implements Serializable{
 				
 				//http://10.216.4.24/39%2066666666-6%201.pdf
 				
+				objetos = new HashMap<String,Object>();
+				objetos.put("documento","http://10.216.4.24/39%2066666666-6%201.pdf");
+				objetos.put("titulo","Venta Directa");
+				
+				Window window = (Window)Executions.createComponents(
+		                "/zul/reportes/VisorDocumento.zul", null, objetos);
+				
+		        window.doModal();			
 				
 			}
 			

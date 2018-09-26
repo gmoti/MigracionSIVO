@@ -2,7 +2,6 @@ package cl.gmo.pos.venta.controlador;
 
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -140,7 +139,7 @@ public class ControllerPresupuesto implements Serializable{
 		
 		presupuestoForm.setDivisa("PESO");
 		presupuestoForm.setIdioma("CAST");		
-		//presupuestoForm.setAgente(sess.getAttribute("agente").toString());
+		presupuestoForm.setAgente(sess.getAttribute(Constantes.STRING_USUARIO).toString());
 		presupuestoForm.setForma_pago("1");
 		
 		posicionaCombos();
@@ -492,8 +491,8 @@ public class ControllerPresupuesto implements Serializable{
 	
 	public void posicionaCombos() {
 			
-		//Optional<AgenteBean> a = presupuestoForm.getListaAgentes().stream().filter(s -> presupuestoForm.getAgente().equals(s.getUsuario())).findFirst();		
-		//agenteBean = a.get();		
+		Optional<AgenteBean> a = presupuestoForm.getListaAgentes().stream().filter(s -> presupuestoForm.getAgente().equals(s.getUsuario())).findFirst();		
+		agenteBean = a.get();		
 		
 		Optional<DivisaBean> b = presupuestoForm.getListaDivisas().stream().filter(s -> presupuestoForm.getDivisa().equals(s.getId())).findFirst();
 		divisaBean = b.get();
@@ -521,6 +520,45 @@ public class ControllerPresupuesto implements Serializable{
 		}
 	*/
 	
+	//================= Validaciones Varias =====================
+	//===========================================================
+	@NotifyChange({"presupuestoForm"})
+	@Command
+	public void actualiza_descuento_total_monto() {
+		
+		boolean compara=true;
+		
+		
+		if (presupuestoForm.getEstado().equals("cerrado")) {			
+			Messagebox.show("El presupuesto esta cerrado, no es posible modificar productos");
+			return;
+		}
+		
+		//si el porcentaje de descuento es mayor que el maximo dispuesto
+		//entonces se carga el autorizador
+		
+		if(compara) {
+			
+			//document.getElementById('accion').value = "descuento_total_monto";
+		    //document.getElementById('cantidad_linea').value = campo;
+		    //document.getElementById('subTotal').focus();
+		    //document.presupuestoForm.submit();
+		    
+		    presupuestoForm.setAccion("descuento_total_monto");
+		    presupuestoForm.setCantidad_linea(Integer.parseInt(String.valueOf(presupuestoForm.getDescuento())));			
+		    presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);
+			
+		}else {
+			//solicito autorizacion
+			
+			Window wAutoriza = (Window)Executions.createComponents(
+	                "/zul/presupuestos/AutorizadorDescuento.zul", null, null);
+			
+			wAutoriza.doModal();
+			
+		}	
+		
+	}
 	
 	
 	//=================getter and setter=========================

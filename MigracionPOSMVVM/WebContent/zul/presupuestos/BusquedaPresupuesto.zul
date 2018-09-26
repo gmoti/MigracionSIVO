@@ -49,7 +49,7 @@
 							<textbox value="@load(each.id_agente)" readonly="true"/>
 							<textbox value="@load(each.fecha)" readonly="true"/>
 							<textbox value="@load(each.codigo)" readonly="true"/>
-							<textbox value="@load(each.cerrado)" readonly="true"/>					
+							<textbox value="@load(each.cerrado eq 'S' ? 'Cerrado' : 'Abierto')" readonly="true"/>					
 							<button label="Sel" 
 								onClick="@command('seleccionaProducto',win=winBusquedaPresupuesto) 
 										@global-command('presupuestoSeleccionado', arg=vm.presupuesto, arg2=each)" />

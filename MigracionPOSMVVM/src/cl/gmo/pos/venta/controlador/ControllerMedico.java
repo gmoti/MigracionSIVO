@@ -1,0 +1,61 @@
+package cl.gmo.pos.venta.controlador;
+
+import java.io.Serializable;
+
+import org.zkoss.bind.annotation.Command;
+import org.zkoss.bind.annotation.Init;
+import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.zk.ui.Session;
+import org.zkoss.zk.ui.Sessions;
+
+import cl.gmo.pos.venta.controlador.general.MedicoDispatchActions;
+import cl.gmo.pos.venta.web.forms.MedicoForm;
+
+public class ControllerMedico implements Serializable {
+	
+	private static final long serialVersionUID = 8901647515270644102L;
+	Session sess = Sessions.getCurrent();
+	
+	private MedicoForm medicoForm;
+	private MedicoDispatchActions medicoDispatchActions;
+	
+	
+	@Init
+	public void inicial() {
+		
+		medicoForm = new MedicoForm();
+		medicoDispatchActions = new MedicoDispatchActions();
+		
+	}
+
+	
+	@NotifyChange({"medicoForm"})
+	@Command
+	public void ingresaMedico() {   	
+	   	
+	   	medicoForm.setAccion("ingresaMedico");
+	   	//medicoDispatchActions.ingresaMedico(medicoForm, sess);
+		
+		
+		
+	}
+
+
+	
+	//================ getter and setter ===================
+	
+	public MedicoForm getMedicoForm() {
+		return medicoForm;
+	}
+
+
+	public void setMedicoForm(MedicoForm medicoForm) {
+		this.medicoForm = medicoForm;
+	}
+
+	
+	
+	
+	
+	
+}

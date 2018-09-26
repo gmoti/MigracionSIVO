@@ -245,10 +245,19 @@ public class ControllerSearchProductPres implements Serializable {
 	
 	
 	
-	@NotifyChange({"subFamiliaBeans","busquedaProductosForm","busquedaAvanzada","busquedaAvanzadaLentilla"})
+	@NotifyChange({"busquedaProductosForm","busquedaAvanzada","busquedaAvanzadaLentilla","subFamiliaBeans","subFamiliaBean","grupoFamiliaBean"})
 	@Command
 	public void cargaSubFamilias() {	
 		try {
+			
+			//al cambiar el padre se limpia la busqueda previamente ejecutada			
+			busquedaProductosForm.setListaProductos(new ArrayList<ProductosBean>());
+			
+			//Inicializo los combos inferiores
+			subFamiliaBean  = null;
+			grupoFamiliaBean= null;
+			// --->
+			
 			subFamiliaBeans = utilesDaoImpl.traeSubfamilias(familiaBean.getCodigo());
 			busquedaProductosForm.setListaSubFamilias(subFamiliaBeans);	
 			
@@ -273,9 +282,17 @@ public class ControllerSearchProductPres implements Serializable {
 		}
 	}	
 	
-	@NotifyChange({"grupoFamiliaBeans","busquedaProductosForm"})
+	@NotifyChange({"grupoFamiliaBeans","busquedaProductosForm","grupoFamiliaBean"})
 	@Command
 	public void cargaGrupoFamilias() {	
+		
+		//al cambiar el padre se limpia la busqueda previamente ejecutada			
+		busquedaProductosForm.setListaProductos(new ArrayList<ProductosBean>());
+		
+		//Inicializo los combos inferiores		
+		grupoFamiliaBean= null;
+		// --->
+		
 		try {
 			grupoFamiliaBeans = utilesDaoImpl.traeGruposFamilias(familiaBean.getCodigo(), subFamiliaBean.getCodigo());
 			busquedaProductosForm.setListaGruposFamilias(grupoFamiliaBeans);					
@@ -285,6 +302,13 @@ public class ControllerSearchProductPres implements Serializable {
 		}
 	}	
 	
+	
+	@NotifyChange({"busquedaProductosForm"})
+	@Command
+	public void cambiaGrupoFamilias() {
+		//al cambiar el padre se limpia la busqueda previamente ejecutada			
+		busquedaProductosForm.setListaProductos(new ArrayList<ProductosBean>());		
+	}	
 		
 	
 	@NotifyChange({"familiaBean","subFamiliaBean","grupoFamiliaBean"})

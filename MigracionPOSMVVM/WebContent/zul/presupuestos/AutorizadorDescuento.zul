@@ -1,6 +1,6 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
-<window  id="winAutorizaBorrarPago" border="none" height="25%" width="40%" 		
-		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerAutorizaBorrarPago')">
+<window  id="winAutorizadorDescuento" border="none" height="25%" width="40%" 		
+		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerAutorizadorDescuento')">
 		
 		<style>
 			.MyGridRowHeight tr.z-row td.z-row-inner div.z-row-content{
@@ -11,7 +11,7 @@
 		<div width="100%" height="100%">
 			<div width="100%" style="background-color:black;color: white;">
 					<label value="Autorizador" />
-					<toolbarbutton image="/image/Remove_32x32.png" onClick="winAutorizaBorrarPago.detach()"/>
+					<toolbarbutton image="/image/Remove_32x32.png" onClick="winAutorizadorDescuento.detach()"/>
 			</div>
 			<grid sclass="MyGridRowHeight">
 				<columns>
@@ -27,23 +27,13 @@
 					<row>
 						<label value="Contraseña" />
 						<textbox value = "@bind(vm.pass)" type = "password"/>
-					</row>
-
-					<row>
-						<label value="Procedimientos" />
-						<combobox value="@bind(vm.procedimiento)">
-							<comboitem label="Selecciona" value="0"/>
-							<comboitem label="Anula cambio" value="1"/>
-							<comboitem label="Modificar forma pago" value="2"/>
-						</combobox>
-					</row>
+					</row>					
 				</rows>
 			</grid>
 			
 			<div  width="100%" align="center">
-				<button label="Aceptar" onClick="@command('autoriza')" />							
+				<button label="Aceptar" onClick="@command('autorizadesc')" />							
 			</div>
 
 		</div>
-
 </window>

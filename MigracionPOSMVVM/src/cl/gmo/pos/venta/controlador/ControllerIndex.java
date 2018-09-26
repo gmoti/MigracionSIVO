@@ -24,18 +24,9 @@ public class ControllerIndex implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5375817743395813578L;
+	private static final long serialVersionUID = -5375817743395813578L;	
 	
-	
-	Session sess;
-	/*String sucursal="T002";
-	String nombre_sucural="GMO Tienda Prueba";	
-	
-	int caja = 1201;
-	String glprofile = "HARRINGTON";
-	String gldescripcion = "CHRISTOPHER HARRINGTON";
-	String agente="HARRINGTON";*/
-	
+	Session sess;	
 	private UsuarioForm usuarioForm;
 	private LoginActions loginActions;
 	private MenuForm menuForm;
@@ -48,13 +39,6 @@ public class ControllerIndex implements Serializable{
 	@Init
 	public void inicio() {
 		sess = Sessions.getCurrent();
-		/*sess.setAttribute(Constantes.STRING_SUCURSAL, sucursal);
-		sess.setAttribute(Constantes.STRING_NOMBRE_SUCURSAL, nombre_sucural);
-		sess.setAttribute("caja", 1201);		
-		sess.setAttribute("glprofile", "HARRINGTON");
-		sess.setAttribute("gldescripcion", "CHRISTOPHER HARRINGTON");
-		sess.setAttribute("agente", "HARRINGTON");
-		sess.setAttribute("usuario", "HARRINGTON");*/
 		
 		sucursalesBean = new SucursalesBean();
 		usuarioForm = new UsuarioForm();
@@ -79,6 +63,9 @@ public class ControllerIndex implements Serializable{
 						
 			divVisibleLogin="false";
 			divVisibleIndex="true";			
+			
+			sess.setAttribute(Constantes.STRING_USUARIO, usuarioForm.getNombreUsuario());
+			sess.setAttribute(Constantes.STRING_DESC_USUARIO, usuarioForm.getDescNombreUsuario());
 			
 		}else {
 			

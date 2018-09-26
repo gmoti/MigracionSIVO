@@ -40,7 +40,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.tempuri.CoreSoapProxy;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -80,7 +79,7 @@ import cl.gmo.pos.venta.web.forms.EntregaPedidoForm;
 import cl.gmo.pos.venta.web.forms.SeleccionPagoForm;
 import cl.gmo.pos.venta.web.forms.VentaDirectaForm;
 import cl.gmo.pos.venta.web.forms.VentaPedidoForm;
-
+import cl.gmo.pos.venta.web.wscl.CoreSoapProxy;
 
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;

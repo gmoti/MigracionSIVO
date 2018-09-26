@@ -1,8 +1,8 @@
-package org.tempuri;
+package cl.gmo.pos.venta.web.wscl;
 
-public class CoreSoapProxy implements org.tempuri.CoreSoap {
+public class CoreSoapProxy implements cl.gmo.pos.venta.web.wscl.CoreSoap {
   private String _endpoint = null;
-  private org.tempuri.CoreSoap coreSoap = null;
+  private cl.gmo.pos.venta.web.wscl.CoreSoap coreSoap = null;
   
   public CoreSoapProxy() {
     _initCoreSoapProxy();
@@ -15,7 +15,7 @@ public class CoreSoapProxy implements org.tempuri.CoreSoap {
   
   private void _initCoreSoapProxy() {
     try {
-      coreSoap = (new org.tempuri.CoreLocator()).getCoreSoap();
+      coreSoap = (new cl.gmo.pos.venta.web.wscl.CoreLocator()).getCoreSoap();
       if (coreSoap != null) {
         if (_endpoint != null)
           ((javax.xml.rpc.Stub)coreSoap)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
@@ -38,7 +38,7 @@ public class CoreSoapProxy implements org.tempuri.CoreSoap {
     
   }
   
-  public org.tempuri.CoreSoap getCoreSoap() {
+  public cl.gmo.pos.venta.web.wscl.CoreSoap getCoreSoap() {
     if (coreSoap == null)
       _initCoreSoapProxy();
     return coreSoap;

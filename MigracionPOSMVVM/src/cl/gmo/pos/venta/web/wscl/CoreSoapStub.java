@@ -5,9 +5,9 @@
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
 
-package org.tempuri;
+package cl.gmo.pos.venta.web.wscl;
 
-public class CoreSoapStub extends org.apache.axis.client.Stub implements org.tempuri.CoreSoap {
+public class CoreSoapStub extends org.apache.axis.client.Stub implements cl.gmo.pos.venta.web.wscl.CoreSoap {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
     private java.util.Vector cachedSerQNames = new java.util.Vector();
     private java.util.Vector cachedSerFactories = new java.util.Vector();

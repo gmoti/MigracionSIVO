@@ -5,9 +5,9 @@
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
 
-package org.tempuri;
+package cl.gmo.pos.venta.web.wscl;
 
-public class CoreLocator extends org.apache.axis.client.Service implements org.tempuri.Core {
+public class CoreLocator extends org.apache.axis.client.Service implements cl.gmo.pos.venta.web.wscl.Core {
 
     public CoreLocator() {
     }
@@ -39,7 +39,7 @@ public class CoreLocator extends org.apache.axis.client.Service implements org.t
         CoreSoapWSDDServiceName = name;
     }
 
-    public org.tempuri.CoreSoap getCoreSoap() throws javax.xml.rpc.ServiceException {
+    public cl.gmo.pos.venta.web.wscl.CoreSoap getCoreSoap() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
             endpoint = new java.net.URL(CoreSoap_address);
@@ -50,9 +50,9 @@ public class CoreLocator extends org.apache.axis.client.Service implements org.t
         return getCoreSoap(endpoint);
     }
 
-    public org.tempuri.CoreSoap getCoreSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+    public cl.gmo.pos.venta.web.wscl.CoreSoap getCoreSoap(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
-            org.tempuri.CoreSoapStub _stub = new org.tempuri.CoreSoapStub(portAddress, this);
+            cl.gmo.pos.venta.web.wscl.CoreSoapStub _stub = new cl.gmo.pos.venta.web.wscl.CoreSoapStub(portAddress, this);
             _stub.setPortName(getCoreSoapWSDDServiceName());
             return _stub;
         }
@@ -72,8 +72,8 @@ public class CoreLocator extends org.apache.axis.client.Service implements org.t
      */
     public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
-            if (org.tempuri.CoreSoap.class.isAssignableFrom(serviceEndpointInterface)) {
-                org.tempuri.CoreSoapStub _stub = new org.tempuri.CoreSoapStub(new java.net.URL(CoreSoap_address), this);
+            if (cl.gmo.pos.venta.web.wscl.CoreSoap.class.isAssignableFrom(serviceEndpointInterface)) {
+                cl.gmo.pos.venta.web.wscl.CoreSoapStub _stub = new cl.gmo.pos.venta.web.wscl.CoreSoapStub(new java.net.URL(CoreSoap_address), this);
                 _stub.setPortName(getCoreSoapWSDDServiceName());
                 return _stub;
             }

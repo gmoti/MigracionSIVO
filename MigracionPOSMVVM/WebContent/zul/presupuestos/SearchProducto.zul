@@ -65,7 +65,8 @@
 					<label value="Grupo de Productos" />
 					<space width="85px"/>
 					<combobox model="@load(vm.busquedaProductosForm.listaGruposFamilias)" 
-								selectedItem="@bind(vm.grupoFamiliaBean)" 								
+								selectedItem="@bind(vm.grupoFamiliaBean)" 	
+								onSelect="@command('cambiaGrupoFamilias')"							
 								placeholder="Seleccione"
 								onRightClick="@command('comboSetNull',objetoBean=vm.grupoFamiliaBean)" width="300px">
 																						
@@ -93,13 +94,14 @@
 			</north>
 
 			<center>
-				<div height="70%">			
+				<div width="100%" height="70%">
+							
 					<radiogroup id="ojos"/>
 					<radiogroup id="ojosLentillas"/>
 						
 					<!-- Aqui se incluyen las busquedas especificas de cristales y lentillas  -->	
-					
-					<div height="45%" visible="@bind(vm.busquedaAvanzadaLentilla)">
+					<!-- <div height="45%" visible="@bind(vm.busquedaAvanzadaLentilla)"> -->
+					<div width="100%" visible="@bind(vm.busquedaAvanzadaLentilla)">
 					
 						<div width="100%" style="background-color:black;color: white">
 							<label value="Seleccion por:" />													
@@ -156,11 +158,11 @@
 								
 							</rows>
 						</grid>
-
-					</div>					
-								
-					<div height="45%" visible="@bind(vm.busquedaAvanzada)">		
+					</div>	
 					
+					<!-- Busqueda Avanzada -->				
+					<!-- <div height="45%" visible="@bind(vm.busquedaAvanzada)"> -->			
+					<div width="100%" visible="@bind(vm.busquedaAvanzada)">					
 						<div width="100%" style="background-color:black;color: white">
 							<label value="Seleccion por:" />													
 						</div>
@@ -211,9 +213,10 @@
 							</rows>
 						</grid>
 					</div>
-
-					<div height="70%">	
 					
+					<!-- Resultado de la busqueda -->
+					<!-- <div height="70%"> -->
+					<div width="100%">					
 						<div width="100%" style="background-color:black;color: white">
 						<space width="50px"/>
 						<label value="Articulo" />	
@@ -227,7 +230,7 @@
 						<label value="Accion" />												
 						</div>	
 						<grid model= "@load(vm.busquedaProductosForm.listaProductos)" 
-								sclass="MyGridRowHeight" height="300px"  emptyMessage="Sin registros">						
+								sclass="MyGridRowHeight" emptyMessage="Sin registros" height="300px">						
 						<columns>
 							<column width="180px"/>
 							<column width="400px"/>
@@ -242,13 +245,11 @@
 								<doublebox value="@load(each.precio)" width="80px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>
 								<textbox value="@load(each.grupo)" width="60px" readonly="true"/> 
 								<button label="Sel" onClick="@command('seleccionaProducto',producto=each)" width="60px"/>
-									<!-- onClick="@command('seleccionaProducto',producto=each) @global-command('actProdGridPresupuesto',arg=each)" width="60px"/> -->
-									
 							</row>							
 						</template>
-						</grid>	
-						
-					</div>															
+						</grid>							
+					</div>		
+																		
 				</div>
 			</center>
 		</borderlayout>
