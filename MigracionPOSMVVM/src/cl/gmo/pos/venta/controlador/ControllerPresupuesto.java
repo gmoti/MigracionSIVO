@@ -75,6 +75,11 @@ public class ControllerPresupuesto implements Serializable{
 	@Wire
 	private Window winPresupuesto;
 	
+	//Variables auxiliares para validaciones
+	//Situacion Pre y Post cambio de valor
+	
+	private double dto_total_monto =0;
+    private double dto_total=0;	
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view) {
@@ -189,7 +194,8 @@ public class ControllerPresupuesto implements Serializable{
 		sess.setAttribute(Constantes.STRING_PRESUPUESTO, index);
 		presupuestoForm.setAccion(Constantes.STRING_SELECCIONA_PRESUPUESTO);
 		presupuestoForm = presupuestoDispatchActions.cargaPresupuestos(presupuestoForm, sess);	
-		
+		//salvo el descuento original
+		asignaDescAux();
 		posicionaCombos();		
 	}
 	
@@ -522,12 +528,26 @@ public class ControllerPresupuesto implements Serializable{
 	
 	//================= Validaciones Varias =====================
 	//===========================================================
+	
+	@Command
+	public void asignaDescAux() {
+		
+		dto_total_monto = presupuestoForm.getDescuento();
+		System.out.println("valor original descuento" + dto_total_monto);
+	}	
+	
 	@NotifyChange({"presupuestoForm"})
 	@Command
 	public void actualiza_descuento_total_monto() {
 		
 		boolean compara=true;
+		//dto_total_monto es la variable de respaldo del descuento
 		
+		Double dto;
+		Double total;
+		
+		total = presupuestoForm.getSubTotal();
+		dto   = (presupuestoForm.getDescuento() * 100) / total;		
 		
 		if (presupuestoForm.getEstado().equals("cerrado")) {			
 			Messagebox.show("El presupuesto esta cerrado, no es posible modificar productos");
@@ -537,24 +557,56 @@ public class ControllerPresupuesto implements Serializable{
 		//si el porcentaje de descuento es mayor que el maximo dispuesto
 		//entonces se carga el autorizador
 		
-		if(compara) {
+		if(dto_total_monto > 0) {
 			
-			//document.getElementById('accion').value = "descuento_total_monto";
-		    //document.getElementById('cantidad_linea').value = campo;
-		    //document.getElementById('subTotal').focus();
-		    //document.presupuestoForm.submit();
+			
+			if (presupuestoForm.getDescuento() > presupuestoForm.getTotal()) {
+				Messagebox.show("Valor no puede ser mayor al monto total");
+				presupuestoForm.setDescuento(dto_total_monto);
+				return;
+			}
+			
+			if (dto < presupuestoForm.getPorcentaje_descuento_max()) {
+				
+				presupuestoForm.setAccion("descuento_total_monto");
+			    presupuestoForm.setCantidad_linea(Integer.parseInt(String.valueOf(presupuestoForm.getDescuento())));			
+			    presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);				
+				
+			}else {
+				
+				//solicito autorizacion				
+				Window wAutoriza = (Window)Executions.createComponents(
+		                "/zul/presupuestos/AutorizadorDescuento.zul", null, null);
+				
+				wAutoriza.doModal();				
+			}   
 		    
-		    presupuestoForm.setAccion("descuento_total_monto");
-		    presupuestoForm.setCantidad_linea(Integer.parseInt(String.valueOf(presupuestoForm.getDescuento())));			
-		    presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);
 			
 		}else {
-			//solicito autorizacion
 			
-			Window wAutoriza = (Window)Executions.createComponents(
-	                "/zul/presupuestos/AutorizadorDescuento.zul", null, null);
-			
-			wAutoriza.doModal();
+			if(presupuestoForm.getDescuento() > 0) {				
+				
+				if (presupuestoForm.getDescuento() > presupuestoForm.getTotal()) {
+					Messagebox.show("Valor no puede ser mayor al monto total");
+					presupuestoForm.setDescuento(dto_total_monto);
+					return;
+				}				
+				
+				
+				if(dto < presupuestoForm.getPorcentaje_descuento_max()) {
+					
+					presupuestoForm.setAccion("descuento_total_monto");
+				    presupuestoForm.setCantidad_linea(Integer.parseInt(String.valueOf(presupuestoForm.getDescuento())));			
+				    presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);
+					
+				}else {
+					
+					Window wAutoriza = (Window)Executions.createComponents(
+			                "/zul/presupuestos/AutorizadorDescuento.zul", null, null);
+					
+					wAutoriza.doModal();					
+				}						
+			}		
 			
 		}	
 		

@@ -154,8 +154,8 @@
 								<label value="Convenio" />	
 								<textbox value="@bind(vm.ventaPedidoForm.convenio)" width="80px" />
 								<textbox value="@bind(vm.ventaPedidoForm.convenio_det)" width="150px" disabled="true"/>
-								<button label="B" onClick="" />
-								<button label="B" onClick="" />
+								<button label="B" onClick="@command('buscarConvenioAjax')" />
+								<button label="A" onClick="@command('busqueda_convenio_avanzada')" />
 							</div>
 							
 							<label value="Cambio" />

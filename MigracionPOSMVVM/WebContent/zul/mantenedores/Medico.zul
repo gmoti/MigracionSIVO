@@ -1,7 +1,7 @@
 <?page title="new page title" contentType="text/html;charset=UTF-8"?>
 
 <window id="winCliente" border="none" width="100%" height="100%" 
-			viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerCliente')  ">
+			viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerMedico')  ">
 			
 	<style>   
 	    .MyGridRowHeight
@@ -32,39 +32,39 @@
 					<row>				
 						<label value="Codigo"/>
 						<cell style="padding: 0px 0px 0px 0px">
-							<textbox value="@bind()" width="150px"/>	
+							<textbox value="@bind(vm.medicoForm.codigo)" width="150px" disabled="true"/>	
 							<space width="20px"/>					
 							<label value="Rut" />
 							<space width="20px"/>
-							<textbox value="@bind(vm.rut)" width="150px" />
-							<textbox value="@bind(vm.dv)" width="50px" />
-							<button width="50px" />
+							<textbox value="@bind(vm.medicoForm.rut)" width="150px" onBlur="@command('retornaDv')"/>
+							<textbox value="@bind(vm.medicoForm.dv)" width="50px" disabled="true"/>
+							<button width="50px" onClick="@command('buscarMedico')"/>
 						</cell>
 					</row>
 					
 					<row>				
 						<label value="Apellidos"/>
-						<textbox value="@bind(vm.apellidos)" width="400px"/>
+						<textbox value="@bind(vm.medicoForm.apellidos)" width="400px"/>
 					</row>
 					
 					<row>				
 						<label value="Nombres"/>
-						<textbox value="@bind(vm.nombres)" width="400px"/>
+						<textbox value="@bind(vm.medicoForm.nombres)" width="400px"/>
 					</row>
 					
 					<row>				
 						<label value="Direccion"/>
-						<textbox value="" width="500px"/>
+						<textbox value="@bind(vm.medicoForm.direccion)" width="500px"/>
 					</row>
 					
 					<row>				
 						<label value="Localidad"/>
-						<textbox value="@bind(vm.localidad)" width="500px"/>
+						<textbox value="@bind(vm.medicoForm.locali)" width="500px"/>
 					</row>
 					
 					<row>				
 						<label value="Provincia"/>
-						<combobox model="@bind(vm)">
+						<combobox model="@bind(vm.medicoForm.listaProvincia)">
 							<template name="model">
 								<comboitem label="each.descripcion"/>
 							</template>						
@@ -73,27 +73,27 @@
 					
 					<row>				
 						<label value="Doctor Externo"/>
-						<checkbox checked=""/>
+						<checkbox checked="@bind(vm.medicoForm.externo)"/>
 					</row>
 					
 					<row>				
 						<label value="Telefono"/>
-						<textbox value="@bind(vm.telefono)" width="500px"/>
+						<textbox value="@bind(vm.medicoForm.tfno)" width="500px"/>
 					</row>
 					
 					<row>				
 						<label value="Fax"/>
-						<textbox value="" width="500px"/>
+						<textbox value="@bind(vm.medicoForm.fax)" width="500px"/>
 					</row>
 					
 					<row>				
 						<label value="Correo Electronico"/>
-						<textbox value="@bind(vm.email)" width="500px"/>
+						<textbox value="@bind(vm.medicoForm.email)" width="500px"/>
 					</row>
 					
 					<row>				
 						<label value="Codigo postal"/>
-						<textbox value="@bind(vm.cod_postal)" width="500px"/>
+						<textbox value="@bind(vm.medicoForm.codpos)" width="500px"/>
 					</row>
 					
 				</rows>

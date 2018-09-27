@@ -1426,8 +1426,57 @@ public class ControllerEncargos implements Serializable {
 	}	
 	
 	
-	//Getter and Setter
+	@NotifyChange({"ventaPedidoForm"})
+	@Command
+	public void busqueda_convenio_avanzada() {
+		
+		if (ventaPedidoForm.getEstado().equals("cerrado")) {			
+			Messagebox.show("La venta esta cerrada, no es posible modificar convenios");
+			return;
+		}
+		
+		if (ventaPedidoForm.getFecha().equals("formulario")) {
+			Messagebox.show("No hay ventas en curso, no es posible ingresar convenios");
+			return;			
+		}
+		
+		if (ventaPedidoForm.getFlujo().equals("modificar")) {
+			
+			if (!ventaPedidoForm.getBloquea().equals("bloquea")) {
+				
+				//ventana convenio
+				Window window = (Window)Executions.createComponents(
+		                "/zul/presupuestos/BusquedaConvenio.zul", null, null);		
+		        window.doModal();
+				
+			}else {
+				
+				Messagebox.show("Encargo bloqueado, no es posible modificar convenios");
+				return;
+			}
+			
+			
+		}else {
+			
+			if (!ventaPedidoForm.getCliente().equals("") && !ventaPedidoForm.getCliente().equals("0")) {
+				
+				//ventana convenio
+				Window window = (Window)Executions.createComponents(
+		                "/zul/presupuestos/BusquedaConvenio.zul", null, null);		
+		        window.doModal();
+				
+			}else {				
+				Messagebox.show("Debe seleccionar un cliente, para agregar convenios");
+				return;
+			}			
+			
+		}		
+		
+	}	
 	
+	
+	//======================Getter and Setter===========================
+	//===================================================================
 	public VentaPedidoForm getVentaPedidoForm() {
 		return ventaPedidoForm;
 	}

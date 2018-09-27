@@ -289,8 +289,8 @@
 									<label value="Fecha de entrega" />
 									<datebox value="@bind(vm.fechaEntrega)" format="dd/MM/yyyy"/>
 									<intbox  value="@bind(vm.presupuestoForm.subTotal)" style="text-align:right" format="#,###,##0" locale="it" disabled="true"/>
-									<intbox  value="@bind(vm.presupuestoForm.descuento)"/>
-									<intbox  />
+									<intbox  value="@bind(vm.presupuestoForm.descuento)" onBlur="@command('actualiza_descuento_total_monto')"/>
+									<intbox  value="@bind(vm.presupuestoForm.dtcoPorcentaje)"/>
 									<intbox  value="@bind(vm.presupuestoForm.total)" style="text-align:right" format="#,###,##0" locale="it" disabled="true"/>
 								</row>
 								<row>

@@ -276,9 +276,10 @@ public class ControllerVentaDirecta implements Serializable{
 			}else {
 				
 				//http://10.216.4.24/39%2066666666-6%201.pdf
+				String url ="http://10.216.4.24/39%10289571-1%" + ventaDirectaForm.getEstado_boleta().trim() + ".pdf";
 				
 				objetos = new HashMap<String,Object>();
-				objetos.put("documento","http://10.216.4.24/39%2066666666-6%201.pdf");
+				objetos.put("documento",url);
 				objetos.put("titulo","Venta Directa");
 				
 				Window window = (Window)Executions.createComponents(
