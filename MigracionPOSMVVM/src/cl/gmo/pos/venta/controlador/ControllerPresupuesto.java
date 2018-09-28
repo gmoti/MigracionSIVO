@@ -80,16 +80,20 @@ public class ControllerPresupuesto implements Serializable{
 	
 	private double dto_total_monto =0;
     private double dto_total=0;	
+    
+    private String selConvenio;
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view) {
-            Selectors.wireComponents(view, this, false);
+		
+        Selectors.wireComponents(view, this, false);
 		
 		fecha 		 = new Date(System.currentTimeMillis());
 		fechaEntrega = new Date(System.currentTimeMillis());
 		
 		fpagoDisable="True";
 		agenteDisable="True";
+		selConvenio = "true";
 		
 		agenteBean = new AgenteBean(); 
 		formaPagoBean = new FormaPagoBean();
@@ -244,7 +248,9 @@ public class ControllerPresupuesto implements Serializable{
 							objetos.put("origen", "presupuesto");							
 							Window window = (Window)Executions.createComponents(
 					                "/zul/encargos/encargos.zul", null, objetos);			
-					        window.doModal();			
+					        window.doModal();	
+					        
+					        
 						}
 					}						
 				}
@@ -283,7 +289,8 @@ public class ControllerPresupuesto implements Serializable{
 				
 				objetos = new HashMap<String,Object>();		
 				objetos.put("busquedaConvenios",busquedaConveniosForm);
-				objetos.put("origen","presupuesto");
+				objetos.put("ventana","presupuesto");
+				objetos.put("origen","convenio");
 				
 				//se llama ventana convenio
 				Window window = (Window)Executions.createComponents(
@@ -306,14 +313,40 @@ public class ControllerPresupuesto implements Serializable{
 		
 		if(!presupuestoForm.getEstado().equals("cerrado")) {
 			
+			objetos = new HashMap<String,Object>();		
+			objetos.put("busquedaConvenios",busquedaConveniosForm);
+			objetos.put("ventana","presupuesto");
+			objetos.put("origen","presupuesto");
+			
 			Window window = (Window)Executions.createComponents(
-	                "/zul/presupuestos/BusquedaConvenio.zul", null, null);		
+	                "/zul/presupuestos/BusquedaConvenio.zul", null, objetos);		
 	        window.doModal();			
 			
 		}else {
 			Messagebox.show("No se pueden modificar convenio, presupuesto esta cerrado");	
 		}		
 	}	
+	
+	
+	@NotifyChange({"presupuestoForm","selConvenio"})
+	@GlobalCommand
+	public void respVentanaConvenioPres(@BindingParam("busquedaConvenios")BusquedaConveniosForm convenio) {
+		
+		selConvenio="false";		
+		presupuestoForm.setConvenio(convenio.getSel_convenio());
+		presupuestoForm.setConvenio_det(convenio.getSel_convenio_det());
+		
+	}
+	
+	@NotifyChange({"presupuestoForm","selConvenio"})
+	@Command
+	public void eliminaConvenioSeleccionado() {
+		
+		presupuestoForm.setAccion("elimina_convenio");		
+		presupuestoDispatchActions.IngresaPresupuesto(presupuestoForm, sess);
+		selConvenio="true";	
+	}
+	
 	
 	
 	@NotifyChange({"presupuestoForm"})
@@ -717,6 +750,23 @@ public class ControllerPresupuesto implements Serializable{
 	public void setBusquedaConveniosForm(BusquedaConveniosForm busquedaConveniosForm) {
 		this.busquedaConveniosForm = busquedaConveniosForm;
 	}
+
+	
+	//========== Generales control de botones y acciones ===============
+
+	public String getSelConvenio() {
+		return selConvenio;
+	}
+
+
+	public void setSelConvenio(String selConvenio) {
+		this.selConvenio = selConvenio;
+	}
+	
+	
+	
+	
+	
 	
 	
 

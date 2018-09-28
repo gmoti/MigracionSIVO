@@ -93,8 +93,8 @@
 						<label value="Convenio Seleccionado"/>
 						<textbox value="@bind(vm.convenioLnBean.forma_pago)" width="50px" disabled="true"/>
 						<textbox value="@bind(vm.convenioLnBean.dto)" width="50px" disabled="true"/>
-						<button width="30px"/>
-						<button onClick="winSeleccionaConvenio.detach()" width="30px"/>
+						<button label="S" onClick="@command('aceptaConvenio')"  width="30px"/>
+						<button label="X" onClick="winSeleccionaConvenio.detach()" width="30px"/>
 					</div>				
 				</south>				
 			</borderlayout>
