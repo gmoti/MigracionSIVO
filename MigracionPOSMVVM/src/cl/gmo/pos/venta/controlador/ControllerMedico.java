@@ -67,6 +67,8 @@ public class ControllerMedico implements Serializable {
 		medicoForm.setApellidos(medico.getApelli());
 		
 		medicoForm.setExterno(medico.getExterno());
+		
+		//no se utilizan actualmente
 		//medicoForm.setEmail(medico.getEmail());
 		//medicoForm.setTfno(medico.getTfno());
 		//medicoForm.setFax(medico.getFax());
