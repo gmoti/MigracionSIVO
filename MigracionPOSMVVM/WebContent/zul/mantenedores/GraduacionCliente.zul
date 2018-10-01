@@ -29,18 +29,12 @@
 	<div sclass="col titulo">
 		<label sclass="msj-titu" value="Graduación Clientes" />
  	</div>
- 	<div sclass="col ">
- 		<div sclass="row">
-			<div sclass="col-md-4 titulo">
-			</div>
-			<div sclass="col-md-3 titulo"></div>
-			<div sclass="col-md-5 titulo">
-				<button  sclass="btn-success" tooltiptext="Nuevo Usuario" iconSclass="fa fa-user-plus" onClick="@command('nuevoUsuario',arg1=vm)"/>
-				<button  sclass="btn-success" iconSclass="fa fa-file"  />
-				<button sclass="btn-success" iconSclass="fa fa-check" onClick="@command('ingresarGraduacion',arg1=vm)"/>
-				<button sclass="btn-success" iconSclass="fa fa-times" onClick="@command('cerrar',arg1=win)"/>
-			</div>
-		</div>
+ 	<div sclass="col-">
+		<button  sclass="btn-success" tooltiptext="Nuevo Usuario" iconSclass="fa fa-user-plus" onClick="@command('nuevoUsuario',arg1=vm)"/>
+		<button  sclass="btn-success" iconSclass="fa fa-file"  />
+		<button sclass="btn-success" iconSclass="fa fa-check" onClick="@command('ingresarGraduacion',arg1=vm)"/>
+		<button sclass="btn-success" iconSclass="fa fa-times" onClick="@command('cerrar',arg1=win)"/>
+		
 	</div>	
 </div>	
 <div sclass="row">
