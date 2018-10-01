@@ -18,8 +18,13 @@
 			<north>
 			
 				<div >	
-					<div width="100%" style="background-color:black;color: white;">
-						<label value="Venta Directa" />
+					<div width="100%" style="background-color:black;color: white" height="25px">
+						<label value="VENTA DIRECTA" style="float: left"/>	
+						<div style="float: right">					
+							<label value="@load(vm.sucursalDes)"/>
+							<label value="::"/>
+							<label value="@load(vm.usuario)"/>	
+						</div>				
 					</div>	
 					
 					<div width="100%" style="background-color:black;color: white;" align="right">

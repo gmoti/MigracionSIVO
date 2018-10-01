@@ -13,7 +13,7 @@
 			<!-- Parte superior de la ventana -->
 			<north height="25%">
 				<div>
-					<div width="100%" style="background-color:black;color: white" height="30px">
+					<div width="100%" style="background-color:black;color: white" height="25px">
 						<label value="PRESUPUESTO" style="float: left"/>	
 						<div style="float: right">					
 							<label value="@load(vm.sucursalDes)"/>

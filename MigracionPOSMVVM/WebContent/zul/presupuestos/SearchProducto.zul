@@ -22,15 +22,15 @@
 
 		<borderlayout>
 			<north >			
-				<div width="100%" height="30%">	
-				
-					<div width="100%" style="background-color:black;color: white">
+				<div width="100%" height="30%">					
+						
+					<div width="100%" style="background-color:black;color: white" height="40px">
 						<label value="Busqueda Productos" />
-						<!--  <div style="text-align: right;">-->
-						<space width="400px"/>
-						<toolbarbutton image="/image/Remove_32x32.png" onClick="@command('cierraVentana')"/>							
-					</div>	
-							
+						<div style="float: right">					
+							<toolbarbutton image="/image/Remove_32x32.png" onClick="@command('cierraVentana')"/>		
+						</div>																			
+					</div>
+					
 					<hbox>
 					<label value="Familia de Productos" />
 					<space width="77px"/>
@@ -87,7 +87,7 @@
 					<space width="66px"/>
 					<textbox value = "@bind(vm.busquedaProductosForm.codigoBarraBusqueda)"/>
 					
-					<button label="click" onClick="@command('despachador',arg='buscar')"/>
+					<button image="/iconos/lupa.png" label="Buscar" onClick="@command('despachador',arg='buscar')"/>
 					</hbox>						
 				</div>	
 					
@@ -244,7 +244,8 @@
 								<textbox value="@load(each.descripcion)" width="400px" readonly="true"/>  
 								<doublebox value="@load(each.precio)" width="80px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>
 								<textbox value="@load(each.grupo)" width="60px" readonly="true"/> 
-								<button label="Sel" onClick="@command('seleccionaProducto',producto=each)" width="60px"/>
+								<toolbarbutton image="/iconos/add.png" onClick="@command('seleccionaProducto',producto=each)" width="50px"/>
+								
 							</row>							
 						</template>
 						</grid>							

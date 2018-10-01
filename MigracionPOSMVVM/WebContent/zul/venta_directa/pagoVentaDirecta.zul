@@ -12,10 +12,12 @@
 
 		<div height="40%" width="100%">
 		
-			<div height="15%" width="100%" style="background-color:black;color: white;">
-					<label value="Seleccion de cobro" />
-					<toolbarbutton image="/image/Remove_32x32.png" onClick="winPagoVentaDirecta.detach()"/>
-			</div>
+			<div width="100%" style="background-color:black;color: white" height="40px">
+				<label value="Seleccion de cobro" />
+				<div style="float: right">					
+					<toolbarbutton image="/image/Remove_32x32.png" onClick="winPagoVentaDirecta.detach()"/>		
+				</div>																			
+			</div>		
 			
 			<div height="90%" width="100%">
 				<grid sclass="MyGridRowHeight" height="100%" width="100%">   
@@ -62,12 +64,14 @@
 		</div>
 		
 		
-		<div height="60%" width="100%">
-		
-			<div height="15%" width="100%" style="background-color:black;color: white;">
+		<div height="60%" width="100%">		
+			
+			<div width="100%" height="40px" style="background-color:black;color: white">
 				<label value="Cobro" />
-				<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagarVenta',ventana=winPagoVentaDirecta)"/>
-     			<toolbarbutton image="/image/Print_32x32.png"/>
+				<div style="float: right">					
+					<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagarVenta',ventana=winPagoVentaDirecta)"/>
+     				<toolbarbutton image="/image/Print_32x32.png"/>	
+				</div>																			
 			</div>
 			
 			<div height="90%" width="100%">
@@ -91,7 +95,8 @@
      								<intbox value="@bind(vm.seleccionPagoForm.v_a_pagar)" 
      									width="120px" 
      									onBlur="@command('validaPago')" 
-     									style="text-align:right"/>
+     									style="text-align:right" 
+     									instant="true"/>
      									
      								<label value="Anticipo minimo" visible="@bind(vm.controlBotones.enableGenerico1)"/>     										
      								<intbox value="@bind(vm.seleccionPagoForm.anticipo_pedido)" 
@@ -103,13 +108,15 @@
      								<textbox value="@bind(vm.seleccionPagoForm.descuento)" 
      									width="120px" 
      									readonly="@bind(vm.disableDescuento)" 
-     									onBlur="@command('aplicaDescuento')" 
+     									onBlur="@command('calculaTotalvtaDirecta')" 
      									style="text-align:right"/>
      							</row>
      							<row>
      								<label value="Diferencia" />
-     								<intbox id="diferencia" value="@bind(vm.seleccionPagoForm.diferencia)" width="120px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>
-     								<intbox id="diferencia_total" value = "@bind(vm.diferencia_total)" width="120px" readonly="true" visible="false"/>
+     								<intbox id="diferencia" 
+     									value="@bind(vm.seleccionPagoForm.diferencia)" 
+     									width="120px" readonly="true" style="text-align:right" format="#,###,##0" locale="it"/>
+     								<!-- <intbox id="diferencia_total" value = "@bind(vm.diferencia_total)" width="120px" readonly="true" visible="false"/> -->
      							</row>
      							<row>	     							
 	     							<label value="Forma pago" />

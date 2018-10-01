@@ -12,12 +12,16 @@
 		
 		<borderlayout>
 			<north>
-				<div width="98%" height="30%">
-					<div width="100%" style="background-color:black;color: white">
-						<label value="BUSQUEDA CONVENIOS" />
-						<space width="50px"/>
-						<toolbarbutton image="/image/Remove_32x32.png" onClick="winBusquedaConvenio.detach()"/>	
+				<div width="98%" height="30%">				
+					
+					<div width="100%" style="background-color:black;color: white" height="40px">
+						<label value="Busqueda Convenios" style="float: left"/>	
+						<div style="float: right">					
+							<toolbarbutton image="/image/Remove_32x32.png" onClick="winBusquedaConvenio.detach()"/>	
+						</div>				
 					</div>
+					
+					
 					<div width="100%">
 
 						<grid sclass="MyGridRowHeight" height="150x">
@@ -39,8 +43,8 @@
 									<textbox value="@bind(vm.busquedaConveniosForm.empresa)" width="180px"/>
 								</row>
 								<row>
-									<label />
-									<button onClick="@command('buscarConvenios')"/>
+									<label />									
+									<toolbarbutton image="/iconos/lupa.png" label="Buscar"  onClick="@command('buscarConvenios')"/>
 								</row>
 							</rows>
 						</grid>
@@ -67,13 +71,14 @@
 							<columns>
 								<column width="100px" />
 								<column width="500px" />
-								<column width="30px" />
+								<column width="50px" />
 							</columns>
 							<template name="model">
 								<row>
 									<textbox value="@load(each.id)" disabled="true"/>
 									<textbox value="@load(each.descripcion)" width="490px" disabled="true"/>
-									<button onClick="@command('seleccionaConvenio',arg=each)"/>
+									
+									<toolbarbutton image="/iconos/add.png" onClick="@command('seleccionaConvenio',arg=each)"/>
 								</row>
 							</template>
 						</grid>	

@@ -66,11 +66,15 @@ public class ControllerSeleccionaConvenio implements Serializable {
 		}
 	}
 	
-	@NotifyChange({"convenioLnBean"})
+	@NotifyChange({"convenioLnBean","busquedaConveniosForm"})
 	@Command
-	public void seleccionaConvenio(@BindingParam("arg")ConvenioLnBean arg) {
+	public void seleccionaConvenio(@BindingParam("arg")ConvenioLnBean arg,
+									@BindingParam("index")int arg2) {
 		
-		convenioLnBean = arg;	
+		convenioLnBean = arg;		
+		busquedaConveniosForm.setIndice(String.valueOf(arg2));
+		busquedaConveniosForm.setAccion("desplegar_familias");
+		busquedaConveniosDispatchActions.selecciona_convenio(busquedaConveniosForm, sess);
 		
 	}
 	

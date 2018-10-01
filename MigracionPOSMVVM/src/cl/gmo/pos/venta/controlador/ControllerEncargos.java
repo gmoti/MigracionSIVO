@@ -822,7 +822,7 @@ public class ControllerEncargos implements Serializable {
 	//=========== Recupera Encargo seleccionado======
 	//===============================================	
 		
-	@NotifyChange({"ventaPedidoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean","fecha","fechaEntrega"})
+	@NotifyChange({"ventaPedidoForm","agenteBean","divisaBean","formaPagoBean","idiomaBean","fecha","fechaEntrega","tipoPedidoBean"})
 	@GlobalCommand
 	public void encargoSeleccionado(@BindingParam("arg")ArrayList<PedidosPendientesBean> arg,
 									@BindingParam("arg2")PedidosPendientesBean arg2) {				
@@ -1301,8 +1301,10 @@ public class ControllerEncargos implements Serializable {
 		idiomaBean = d.get();	
 		
 		Optional<FormaPagoBean> e = ventaPedidoForm.getListaFormasPago().stream().filter(s -> ventaPedidoForm.getForma_pago().equals(s.getId())).findFirst();
-		formaPagoBean = e.get();		
+		formaPagoBean = e.get();	
 		
+		Optional<TipoPedidoBean> f = ventaPedidoForm.getListaTiposPedidos().stream().filter(s -> ventaPedidoForm.getTipo_pedido().equals(s.getCodigo())).findFirst();
+		tipoPedidoBean = f.get();
 	}
 	
 	

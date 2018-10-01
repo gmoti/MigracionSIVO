@@ -3,6 +3,7 @@ package cl.gmo.pos.venta.controlador;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.BindingParam;
@@ -23,8 +24,11 @@ import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
+import com.google.protobuf.Message;
+
 import cl.gmo.pos.venta.controlador.ventaDirecta.SeleccionPagoDispatchActions;
 import cl.gmo.pos.venta.utils.Constantes;
+import cl.gmo.pos.venta.web.beans.AgenteBean;
 import cl.gmo.pos.venta.web.beans.ClienteBean;
 import cl.gmo.pos.venta.web.beans.FormaPagoBean;
 import cl.gmo.pos.venta.web.beans.PagoBean;
@@ -50,6 +54,7 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	private ClienteBean cliente;	
 	private SeleccionPagoDispatchActions seleccionPagoDispatchActions;
 	private Integer diferencia_total=0;
+	private Double dto = 0.0;
 	
 	private FormaPagoBean formaPagoBean;
 	private String disableDescuento;
@@ -104,12 +109,9 @@ public class ControllerPagoVentaDirecta implements Serializable{
 		seleccionPagoDispatchActions.carga_formulario(seleccionPagoForm, sess, fecha);
 		
 		this.setDiferencia_total(seleccionPagoForm.getV_total());
-		seleccionPagoForm.setV_a_pagar(0);
+		this.dto = ventaDirectaForm.getDescuentoTotal();
+		seleccionPagoForm.setV_a_pagar(0);		
 		
-		//if (origen.equals("G"))
-		//   controlBotones.setEnableGenerico1("true");
-		
-		System.out.println("en init");
 	}
 
 	
@@ -160,7 +162,20 @@ public class ControllerPagoVentaDirecta implements Serializable{
 				if (formaPagoBean.getId().equals("")) {					
 					Messagebox.show("Debe ingresar una forma de pago");
 					correcto = 0;
-				}
+				}else {
+					//no duplicar forma de pago
+					Optional<PagoBean> a = seleccionPagoForm.getListaPagos()
+												.stream().filter(s -> formaPagoBean.getId()
+												.equals(s.getForma_pago()))
+												.findFirst();
+					if(a.isPresent()) {
+						Messagebox.show("Ya se utilizo la forma de pago");
+						correcto = 0;
+					}
+						
+					
+				}				
+				
 				/*else
 				{
 					if(seleccionPagoForm.getDiferencia() == 0)
@@ -183,6 +198,9 @@ public class ControllerPagoVentaDirecta implements Serializable{
 				
 				seleccionPagoForm.setAccion("pagar");
 				seleccionPagoForm= seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);	
+				
+				//actualizo la diferencia total
+				this.setDiferencia_total(seleccionPagoForm.getDiferencia());
 				
 				//formaPagoBean = null;		
 				//en caso de ser completamente pagado				    
@@ -242,54 +260,54 @@ public class ControllerPagoVentaDirecta implements Serializable{
 	
 	
 	//validaciones sobre el pago
-	@NotifyChange({"seleccionPagoForm","diferencia_total"})
+	@NotifyChange({"seleccionPagoForm"})
 	@Command
-	public void validaPago() {		
-		System.out.println("validando pago");
+	public void validaPago() {			
 		
 		int diferencia;		
 		
-		diferencia= this.diferencia_total - seleccionPagoForm.getV_a_pagar();
-		seleccionPagoForm.setDiferencia(diferencia);		
+		diferencia= diferencia_total - seleccionPagoForm.getV_a_pagar();				
 		
-		if (seleccionPagoForm.getDiferencia() < 0) {			
+		if (diferencia < 0) {			
 			seleccionPagoForm.setV_a_pagar(0);
 			seleccionPagoForm.setDiferencia(this.diferencia_total);
-			Messagebox.show("La diferencia no puede ser menor a 0");			
+			Messagebox.show("La diferencia no puede ser menor a 0");
+			return;
 		}
-		
-		this.setDiferencia_total(seleccionPagoForm.getDiferencia());
+		seleccionPagoForm.setDiferencia(diferencia);
+		//this.setDiferencia_total(seleccionPagoForm.getDiferencia());
 	}
 	
 	
 	@NotifyChange({"seleccionPagoForm","disableDescuento"})
 	@Command
-	public void aplicaDescuento() {
+	public void calculaTotalvtaDirecta() {		
 		
-		
-		/*if (seleccionPagoForm.getDescuento() != ventaDirectaForm.getDescuentoTotal()) {
+		if (seleccionPagoForm.getDescuento() != dto) {
 			
-			Double descuento_max = Double.parseDouble(String.valueOf(ventaDirectaForm.getPorcentaje_descuento_max()));
-			Double dto = ventaDirectaForm.getDescuentoTotal();
+			Double descuento_max = Double.parseDouble(String.valueOf(ventaDirectaForm.getPorcentaje_descuento_max()));			
 			
-			if (dto <= descuento_max) {
-				
-				seleccionPagoForm.setDescuento(ventaDirectaForm.getDescuentoTotal());
-				seleccionPagoForm.setAccion("descuento_directa");
-				
+			if (dto <= descuento_max) {				
 				try {
+					
+					//seleccionPagoForm.setDescuento(dto);
+					seleccionPagoForm.setAccion("descuento_directa");					
 					seleccionPagoForm =seleccionPagoDispatchActions.IngresaPago(seleccionPagoForm, sess);
 					
-				} catch (Exception e) {
+					//se reajusta el monto a pagar
+					diferencia_total = seleccionPagoForm.getV_total();
+					seleccionPagoForm.setV_a_pagar(0);
 					
+				} catch (Exception e) {					
 					e.printStackTrace();
 				}
 				
 			}else {
 				
-				
+				Messagebox.show("El descuento debe ser menor o igual al " + descuento_max + "%"); 
+				seleccionPagoForm.setDescuento(dto);
 			}			
-		}	*/	
+		}	
 		
 	}
 	

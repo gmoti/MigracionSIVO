@@ -239,11 +239,7 @@ public class VentaDirectaDispatchActions {
 				ArrayList<PagoBean> listaPagos = new ArrayList<PagoBean>();
 				listaPagos = (ArrayList<PagoBean>)sess.getAttribute(Constantes.STRING_LISTA_PAGOS);
 				String agenteTemporal = sess.getAttribute(Constantes.STRING_USUARIO).toString();
-				sess.setAttribute(Constantes.STRING_USUARIO,formulario.getCajero());
-				
-				
-				
-				
+				sess.setAttribute(Constantes.STRING_USUARIO,formulario.getCajero());			
 				
 				
 				sess.setAttribute(Constantes.STRING_USUARIO,agenteTemporal);

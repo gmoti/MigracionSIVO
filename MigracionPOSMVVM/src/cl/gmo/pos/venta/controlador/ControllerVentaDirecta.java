@@ -69,6 +69,10 @@ public class ControllerVentaDirecta implements Serializable{
 	private AgenteBean agenteBean;
 	private CajaBean   cajaBean;
 	
+	private String usuario;
+	private String sucursal;
+	private String sucursalDes;
+	
 		
 	
 	@Init
@@ -106,6 +110,10 @@ public class ControllerVentaDirecta implements Serializable{
 		ventaDirectaForm.setAgente(sess.getAttribute("agente").toString());
 		
 		posicionaCombos();*/
+		
+		usuario = (String)sess.getAttribute(Constantes.STRING_USUARIO);
+		sucursal = (String)sess.getAttribute(Constantes.STRING_SUCURSAL);
+		sucursalDes = (String)sess.getAttribute(Constantes.STRING_NOMBRE_SUCURSAL);
 	}
 	
 	
@@ -277,6 +285,7 @@ public class ControllerVentaDirecta implements Serializable{
 				
 				//http://10.216.4.24/39%2066666666-6%201.pdf
 				String url ="http://10.216.4.24/39%10289571-1%" + ventaDirectaForm.getEstado_boleta().trim() + ".pdf";
+				//String url ="http://10.216.4.24/39%" + ventaDirectaForm.getNif() + "-" + ventaDirectaForm.getDv() + 
 				
 				objetos = new HashMap<String,Object>();
 				objetos.put("documento",url);
@@ -583,6 +592,30 @@ public class ControllerVentaDirecta implements Serializable{
 
 	public void setCajaBean(CajaBean cajaBean) {
 		this.cajaBean = cajaBean;
+	}
+	
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getSucursal() {
+		return sucursal;
+	}
+
+	public void setSucursal(String sucursal) {
+		this.sucursal = sucursal;
+	}
+
+	public String getSucursalDes() {
+		return sucursalDes;
+	}
+
+	public void setSucursalDes(String sucursalDes) {
+		this.sucursalDes = sucursalDes;
 	}
 	
 	
