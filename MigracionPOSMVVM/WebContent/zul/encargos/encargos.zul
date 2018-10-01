@@ -14,22 +14,29 @@
 			<north height="28%">
 				<div>
 					<div width="100%" style="background-color:black;color: white">
-						<label value="Encargos" />
 						
-						<div style="text-align: right;">
-						<button iconSclass="z-icon-file" 			onClick="@command('nuevo_Pedido')" 		  disabled="@bind(vm.beanControlBotones.enableNew)"/>
-						<button iconSclass="z-icon-align-justify" 	onClick="@command('cargaPedidoCliente')"  disabled="@bind(vm.beanControlBotones.enableListar)"/>
-						<button iconSclass="z-icon-search" 			onClick="@command('busquedaAvanzada')"    disabled="@bind(vm.beanControlBotones.enableBuscar)"/>
+						<div width="100%" style="background-color:black;color: white" height="25px">
+							<label value="ENCARGOS" style="float: left"/>
+							<div style="float: right">					
+								<label value="@load(vm.sucursalDes)"/>
+								<label value="::"/>
+								<label value="@load(vm.usuario)"/>	
+							</div>
+						</div>	
 						
-						<button label="Eli" 						onClick="@command('eliminarPedido')"	  disabled="@bind(vm.beanControlBotones.enableEliminar)"/>
-						
-						<button iconSclass="z-icon-eye" 			onClick="@command('mostrar_pagos_boletas')"  	disabled="@bind(vm.beanControlBotones.enableListar)"/>
-						<button label="Taller" 						onClick="@command('generaFichaTecnica')" 	    disabled="@bind(vm.beanControlBotones.enableTaller)"/>
-						<button label="Cliente"				 		onClick="@command('generaFichaCliente')"        disabled="@bind(vm.beanControlBotones.enableCliente)"/>
-						
-						<button iconSclass="z-icon-money" 			onClick="@command('validaCantidadProductosMulit')"    disabled="@bind(vm.beanControlBotones.enablePagar)"/>
-						<button iconSclass="z-icon-save"  			onClick="@command('ingresa_pedido')"  				  disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
-						<button iconSclass="z-icon-close" 			onClick="@command('salir', win=winEncargos)"/>						
+						<div style="text-align: right;" height="40px">
+							<toolbarbutton image="/iconos/nuevo.png" onClick="@command('nuevo_Pedido')"  disabled="@bind(vm.beanControlBotones.enableNew)"/>
+							<toolbarbutton image="/iconos/lista.png" onClick="@command('cargaPedidoCliente')"  disabled="@bind(vm.beanControlBotones.enableListar)"/>
+							<toolbarbutton image="/iconos/lupa.png" onClick="@command('busquedaAvanzada')"    disabled="@bind(vm.beanControlBotones.enableBuscar)"/>
+							<toolbarbutton image="/iconos/delete.png" onClick="@command('eliminarPedido')"	  disabled="@bind(vm.beanControlBotones.enableEliminar)"/>
+							
+							<toolbarbutton image="/iconos/boleta.png" onClick="@command('mostrar_pagos_boletas')"  	disabled="@bind(vm.beanControlBotones.enableListar)"/>
+							<toolbarbutton image="/iconos/Hoja.png" onClick="@command('generaFichaTecnica')" 	    disabled="@bind(vm.beanControlBotones.enableTaller)"/>
+							<toolbarbutton image="/iconos/cliente.gif" onClick="@command('generaFichaCliente')"        disabled="@bind(vm.beanControlBotones.enableCliente)"/>
+							
+							<toolbarbutton image="/iconos/money2.png" onClick="@command('validaCantidadProductosMulit')"    disabled="@bind(vm.beanControlBotones.enablePagar)"/>
+							<toolbarbutton image="/iconos/check.png" onClick="@command('ingresa_pedido')"  				  disabled="@bind(vm.beanControlBotones.enableGrabar)"/>
+							<toolbarbutton image="/iconos/cancel.png" onClick="@command('salir', win=winEncargos)"/>										
 						</div>					
 					</div>
 					
@@ -47,10 +54,11 @@
 						    <label value="Cliente"/>	
 						    <space width="2px"/>					
 							<textbox value="@bind(vm.ventaPedidoForm.nif)"   width="150px"/>
-							<textbox value="@bind(vm.ventaPedidoForm.dvnif)" width="30px"/>
-							<button label="B" onClick="@command('buscarCliente')"  width="30px"/>
-							<button label="D" onClick=""  width="30px"/>	
-							<button label="G" onClick="@command('buscarClienteGenerico')"  width="30px"/>					
+							<textbox value="@bind(vm.ventaPedidoForm.dvnif)" width="30px" disabled="true"/>
+							
+							<toolbarbutton image="/iconos/luparapida.jpg" onClick="@command('buscarCliente')"  width="30px"/>
+							<toolbarbutton image="/iconos/lupa.png" width="30px"/>
+							<toolbarbutton image="/iconos/cliente_generico.png" onClick="@command('buscarClienteGenerico')"  width="30px"/>										
 						</div>
 						
 						<textbox value="@load(vm.ventaPedidoForm.nombre_cliente)" width="250px" disabled="true"/>
@@ -153,9 +161,10 @@
 							<div width="450px">
 								<label value="Convenio" />	
 								<textbox value="@bind(vm.ventaPedidoForm.convenio)" width="80px" />
-								<textbox value="@bind(vm.ventaPedidoForm.convenio_det)" width="150px" disabled="true"/>
-								<button label="B" onClick="@command('buscarConvenioAjax')" />
-								<button label="A" onClick="@command('busqueda_convenio_avanzada')" />
+								<textbox value="@bind(vm.ventaPedidoForm.convenio_det)" width="150px" disabled="true"/>								
+								<toolbarbutton image="/iconos/luparapida.jpg" onClick="@command('buscarConvenioAjax')" visible="@bind(vm.selConvenio eq 'true'? 'true':'false')"/>
+								<toolbarbutton image="/iconos/lupa.png" onClick="@command('busqueda_convenio_avanzada')" visible="@bind(vm.selConvenio eq 'true'? 'true':'false')"/>
+								<toolbarbutton image="/iconos/cancel.png" onClick="@command('eliminaConvenioSeleccionado')"  visible="@bind(vm.selConvenio eq 'false'? 'true':'false')"/>
 							</div>
 							
 							<label value="Cambio" />
@@ -234,8 +243,8 @@
 							<label value="Multi" />
 							<space width="50px"/>
 							
-							<button label="M" onClick="@command('busca_multi')" width="5px"/>
-							<button label="P" onClick="@command('buscaProducto')" width="5px"/>							
+							<toolbarbutton image="/iconos/multi.png" onClick="@command('busca_multi')" width="5px"/>
+							<toolbarbutton image="/iconos/add.png" onClick="@command('buscaProducto')" width="5px"/>												
 						</div>
 
 						<grid model="@bind(vm.ventaPedidoForm.listaProductos)" 
@@ -273,8 +282,9 @@
 									<textbox value="@load(each.tipo)" width="60px" disabled="true"/>
 									<textbox value="" width="60px" disabled="true"/>									
 									
-									<button label="M" width="40px" onClick="@command('multiofertaProducto',producto=each)" visible="@bind(each.familia eq 'MUL'?'true':'false')"/>
-									<button label="X" width="40px" onClick="@command('deleteItem',arg=each)" />
+									<toolbarbutton image="/iconos/add.png" width="40px" onClick="@command('multiofertaProducto',producto=each)" visible="@bind(each.familia eq 'MUL'?'true':'false')"/>
+									<toolbarbutton image="/iconos/cancel.png" width="40px" onClick="@command('deleteItem',arg=each)"/>						
+									
 								</row>
 							</template>
 						</grid>

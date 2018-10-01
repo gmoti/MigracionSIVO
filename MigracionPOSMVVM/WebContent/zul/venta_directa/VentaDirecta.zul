@@ -23,10 +23,10 @@
 					</div>	
 					
 					<div width="100%" style="background-color:black;color: white;" align="right">
-						<toolbarbutton image="/image/New_32x32.png" onClick="@command('nuevaVenta')" disabled="@bind(vm.controlBotones.enableNew)"/>
-			    		<toolbarbutton image="/image/Save_32x32.png" onClick="@command('pagoVenta')" disabled="@bind(vm.controlBotones.enablePagar)"/>
-			    		<toolbarbutton image="/image/Check_32x32.png" onClick="@command('grabaVenta')" disabled="@bind(vm.controlBotones.enableGrabar)"/>
-			    		<toolbarbutton image="/image/Remove_32x32.png" onClick="@command('salir')" />				
+						<toolbarbutton image="/iconos/nuevo.png" onClick="@command('nuevaVenta')" disabled="@bind(vm.controlBotones.enableNew)"/>
+			    		<toolbarbutton image="/iconos/money2.png" onClick="@command('pagoVenta')" disabled="@bind(vm.controlBotones.enablePagar)"/>
+			    		<toolbarbutton image="/iconos/check.png" onClick="@command('grabaVenta')" disabled="@bind(vm.controlBotones.enableGrabar)"/>
+			    		<toolbarbutton image="/iconos/cancel.png" onClick="@command('salir')" />				
 					</div>
 					
 					<div width="100%" style="padding :10px 0px 0px 0px">
@@ -43,9 +43,9 @@
 						</div>
 						<div width="300px">
 							<textbox value="@bind(vm.ventaDirectaForm.nif)" width="140px"/> <!-- constraint="/^[0-9]{7,12}$/"/> -->
-							<textbox value="@bind(vm.ventaDirectaForm.dv)" width="30px"/>
-							<button  onClick="@command('buscarCliente')" />
-							<button  onClick="@command('buscarClienteGenerico')" />
+							<textbox value="@bind(vm.ventaDirectaForm.dv)" width="30px" disabled="true"/>
+							<toolbarbutton onClick="@command('buscarCliente')" image="/iconos/luparapida.jpg"/>
+							<toolbarbutton onClick="@command('buscarClienteGenerico')" image="/iconos/cliente_generico.png"/>							
 						</div>
 						<div width="600px">
 							<textbox value="@bind(vm.ventaDirectaForm.nombreCliente)" width="500px" readonly="true"/>						
@@ -124,7 +124,7 @@
 				    <div width="100%" height="45px" style="background-color:black;color: white;">
 				    	<space width="10px"/>
 						<label value="Codigo del articulo"/>
-						<button image="/image/adicion.png" onClick="@command('buscaProductoDirecto')" disabled="@bind(vm.controlBotones.enableGrid)" />
+						<button image="/iconos/add.png" onClick="@command('buscaProductoDirecto')" disabled="@bind(vm.controlBotones.enableGrid)" />
 						<space width="30px"/>
 						<label value="Descripcion"/>
 						<space width="355px"/>
@@ -134,7 +134,7 @@
 						<space width="100px"/>
 						<label value="Cantidad"/>
 						<space width="90px"/>
-						<button image="/image/adicion.png" onClick="@command('buscaProducto')" disabled="@bind(vm.controlBotones.enableGrid)"/>		    
+						<button image="/iconos/add.png" onClick="@command('buscaProducto')" disabled="@bind(vm.controlBotones.enableGrid)"/>		    
 				    </div> 
 				    
 					<div width="100%" height="430px" >	

@@ -82,6 +82,10 @@ public class ControllerPresupuesto implements Serializable{
     private double dto_total=0;	
     
     private String selConvenio;
+    
+    private String usuario;
+	private String sucursal;
+	private String sucursalDes;
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view) {
@@ -111,6 +115,10 @@ public class ControllerPresupuesto implements Serializable{
 		
 		sess.setAttribute(Constantes.STRING_PRESUPUESTO, 0);
 		presupuestoDispatchActions.cargaFormulario(presupuestoForm, sess);
+		
+		usuario = (String)sess.getAttribute(Constantes.STRING_USUARIO);
+		sucursal = (String)sess.getAttribute(Constantes.STRING_SUCURSAL);
+		sucursalDes = (String)sess.getAttribute(Constantes.STRING_NOMBRE_SUCURSAL);
 		
 	}
 
@@ -214,7 +222,7 @@ public class ControllerPresupuesto implements Serializable{
         window.doModal();
 	}	
 	
-	//================= Crear Encargo =================
+	//================= Crear presupuesto =================
 	//=================================================
 	
 	@NotifyChange({"presupuestoForm"})
@@ -259,16 +267,51 @@ public class ControllerPresupuesto implements Serializable{
 		} else {
 			
 			Messagebox.show("Este presupuesto, ya ha sido transferido a Encargo");
-		}
-		
-		
+		}	
 	}	
+	
+	
+	//==================== Eliminar presupuesto =================================
+	//===========================================================================
+	@NotifyChange({"presupuestoForm"})
+	@Command
+	public void eliminar_Presupuesto(){
+		
+		if (!presupuestoForm.getEstado().equals("cerrado")){
+			
+			Messagebox.show("ALERTA!! va a proceder a eliminar este registro, si desea eliminarlo de click en ACEPTAR de lo contrario de click en CANCELAR.","Eliminar Encargo", 
+					Messagebox.OK | 
+					Messagebox.CANCEL, 
+					Messagebox.QUESTION, new EventListener<Event>() {			
+				@Override
+				public void onEvent(Event e) throws Exception {				
+						if( ((Integer) e.getData()).intValue() == Messagebox.OK ) {								
+							
+							//presupuestoForm.setAccion(accion);
+							presupuestoForm = presupuestoDispatchActions.eliminarPresupuesto(presupuestoForm, sess);
+														
+						}						
+					}
+			});				
+			
+		}		
+		
+	}
+	
+	
+	//==================== Listar Presupuestos ========================
+	//=================================================================
+	@NotifyChange({"presupuestoForm"})
+	@Command
+	public void lista_detalles(){}
+	
 	
 	
 	//===================== Acciones comunes de la ventana ======================
 	//===========================================================================
 	
 	//===================== BUsqueda de convenios ===============================
+	//===========================================================================
 	
 	@NotifyChange({"presupuestoForm","busquedaConveniosForm"})
 	@Command
@@ -299,7 +342,7 @@ public class ControllerPresupuesto implements Serializable{
 				
 				
 			}else {				
-				Messagebox.show("Debe ingresar un código de convenio");			
+				Messagebox.show("Debe ingresar un cï¿½digo de convenio");			
 			}		
 		}else {
 			Messagebox.show("No se pueden modificar convenio, presupuesto esta cerrado");	
@@ -758,17 +801,33 @@ public class ControllerPresupuesto implements Serializable{
 		return selConvenio;
 	}
 
-
 	public void setSelConvenio(String selConvenio) {
 		this.selConvenio = selConvenio;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getSucursal() {
+		return sucursal;
+	}
 
 
+	public void setSucursal(String sucursal) {
+		this.sucursal = sucursal;
+	}
+
+	public String getSucursalDes() {
+		return sucursalDes;
+	}
+
+	public void setSucursalDes(String sucursalDes) {
+		this.sucursalDes = sucursalDes;
+	}
+	
 }

@@ -113,6 +113,12 @@ public class ControllerEncargos implements Serializable {
 	private ReportesHelper reportes;
 	private AMedia fileContent;
 	
+	private String selConvenio;
+	
+	private String usuario;
+	//private String sucursal;
+	private String sucursalDes;
+	
 	
 	@Init
 	public void inicial(@ContextParam(ContextType.VIEW) Component view, @ExecutionArgParam("origen")String arg) {	
@@ -141,6 +147,7 @@ public class ControllerEncargos implements Serializable {
 		
 		fpagoDisable ="True";
 		agenteDisable="True";	
+		selConvenio = "true";
 		
 		fecha= new Date(System.currentTimeMillis());
 		fechaEntrega= new Date(System.currentTimeMillis());		
@@ -167,6 +174,10 @@ public class ControllerEncargos implements Serializable {
 		beanControlCombos.setComboTiposEnable("true");		
 				
 		posicionCombo();
+		
+		usuario = (String)sess.getAttribute(Constantes.STRING_USUARIO);
+		//sucursal = (String)sess.getAttribute(Constantes.STRING_SUCURSAL);
+		sucursalDes = (String)sess.getAttribute(Constantes.STRING_NOMBRE_SUCURSAL);
 		
 	}
 	
@@ -912,6 +923,95 @@ public class ControllerEncargos implements Serializable {
 	
 	//===================== Acciones comunes de la ventana ======================
 	//===========================================================================
+	
+	//===================== BUsqueda de convenios ===============================
+	
+		@NotifyChange({"ventaPedidoForm","busquedaConveniosForm"})
+		@Command
+		public void busquedaRapidaConvenio() {
+			
+			if(!ventaPedidoForm.getEstado().equals("cerrado")) {
+			
+				if (!ventaPedidoForm.getConvenio().equals("")) {				
+					
+					sess.setAttribute("convenio", ventaPedidoForm.getConvenio());
+					
+					BeanGlobal bg = busquedaConveniosDispatchActions.buscarConvenioAjax(busquedaConveniosForm, sess);
+					//param1 : descripcion
+					//param2 : cdg
+					//param3 : isapre				
+					ventaPedidoForm.setConvenio_det((String)bg.getObj_1());				
+					busquedaConveniosDispatchActions.selecciona_convenio_cdg(busquedaConveniosForm, sess);
+					
+					objetos = new HashMap<String,Object>();		
+					objetos.put("busquedaConvenios",busquedaConveniosForm);
+					objetos.put("ventana","pedido");
+					objetos.put("origen","convenio");
+					
+					//se llama ventana convenio
+					Window window = (Window)Executions.createComponents(
+			                "/zul/presupuestos/SeleccionaConvenio.zul", null, objetos);		
+			        window.doModal();		
+					
+					
+				}else {				
+					Messagebox.show("Debe ingresar un cï¿½digo de convenio");			
+				}		
+			}else {
+				Messagebox.show("No se pueden modificar convenio, presupuesto esta cerrado");	
+			}
+		}
+		
+		
+		@NotifyChange({"ventaPedidoForm","busquedaConveniosForm"})
+		@Command
+		public void busquedaConvenio() {
+			
+			if(!ventaPedidoForm.getEstado().equals("cerrado")) {
+				
+				objetos = new HashMap<String,Object>();		
+				objetos.put("busquedaConvenios",busquedaConveniosForm);
+				objetos.put("ventana","pedido");
+				objetos.put("origen","pedido");
+				
+				Window window = (Window)Executions.createComponents(
+		                "/zul/presupuestos/BusquedaConvenio.zul", null, objetos);		
+		        window.doModal();			
+				
+			}else {
+				Messagebox.show("No se pueden modificar convenio, presupuesto esta cerrado");	
+			}		
+		}	
+		
+		
+		@NotifyChange({"ventaPedidoForm","selConvenio"})
+		@GlobalCommand
+		public void respVentanaConvenioPres(@BindingParam("busquedaConvenios")BusquedaConveniosForm convenio) {
+			
+			selConvenio="false";		
+			ventaPedidoForm.setConvenio(convenio.getSel_convenio());
+			ventaPedidoForm.setConvenio_det(convenio.getSel_convenio_det());		
+		}
+		
+		@NotifyChange({"ventaPedidoForm","selConvenio"})
+		@Command
+		public void eliminaConvenioSeleccionado() {
+			
+							
+			try {
+				ventaPedidoForm.setAccion("elimina_convenio");
+				ventaPedidoDispatchActions.IngresaVentaPedido(ventaPedidoForm, sess);
+				selConvenio="true";	
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+			}
+			
+		}
+	
+	
+	
+	
 	@NotifyChange({"ventaPedidoForm","beanControlBotones"})
 	@Command
 	public void buscarClienteGenerico() {		
@@ -1352,7 +1452,7 @@ public class ControllerEncargos implements Serializable {
 			}
 			
 			if (ventaPedidoForm.getConvenio().equals("")) {
-				Messagebox.show("debe ingresar un código de convenio");
+				Messagebox.show("debe ingresar un cï¿½digo de convenio");
 				return;
 			}			
 			
@@ -1590,5 +1690,30 @@ public class ControllerEncargos implements Serializable {
 	public void setPromocionBean(PromocionBean promocionBean) {
 		this.promocionBean = promocionBean;
 	}
+
+	public String getSelConvenio() {
+		return selConvenio;
+	}
+
+	public void setSelConvenio(String selConvenio) {
+		this.selConvenio = selConvenio;
+	}
+	
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getSucursalDes() {
+		return sucursalDes;
+	}
+
+	public void setSucursalDes(String sucursalDes) {
+		this.sucursalDes = sucursalDes;
+	}
+	
 	
 }

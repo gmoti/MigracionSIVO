@@ -91,7 +91,7 @@ public class ControllerSeleccionaConvenio implements Serializable {
 				winSeleccionaConvenio.detach();				
 			}
 			
-		}else if (pVentana.equals("encargo")) {
+		}else if (pVentana.equals("pedido")) {
 			
 			
 			

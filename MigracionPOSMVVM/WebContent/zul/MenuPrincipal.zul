@@ -10,14 +10,11 @@
 		viewModel="@id('vm') @init('cl.gmo.pos.venta.controlador.ControllerMenuPrincipal')">
 		
 	<div width="100%">
-		<vbox>
-			<hbox>
-				<label value="Sucursal "/><label value="@load(vm.sucursalDes)"/>
-			</hbox>
-			<hbox>
-				<label value="Usuario "/><label value="@load(vm.usuario)"/>
-			</hbox>	
-		</vbox>
+		<hbox style="text-align: right;">
+			<label value="@load(vm.sucursalDes)"/>
+			<label value="::"/>
+			<label value="@load(vm.usuario)"/>			
+		</hbox>
 	</div>	
 	
 	<div>		
