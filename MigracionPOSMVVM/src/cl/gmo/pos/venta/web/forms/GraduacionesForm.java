@@ -26,25 +26,25 @@ public class GraduacionesForm{
 	private int cliente;
 	private String tipo;
 	private String doctor;
-	private String OD_esfera;
-	private String OD_cilindro;
-	private String OD_eje;
-	private String OD_cerca;
-	private String OD_adicion;
-	private String OD_dnpl;
-	private String OD_dnpc;
-	private String OD_avsc;
-	private String OD_avcc;
+	private double OD_esfera;
+	private double OD_cilindro;
+	private int OD_eje;
+	private double OD_cerca;
+	private double OD_adicion;
+	private double OD_dnpl;
+	private double OD_dnpc;
+	private int OD_avsc;
+	private int OD_avcc;
 	private String OD_observaciones;
-	private String OI_esfera;
-	private String OI_cilindro;
-	private String OI_eje;
-	private String OI_cerca;
-	private String OI_adicion;
-	private String OI_dnpl;
-	private String OI_dnpc;
-	private String OI_avsc;
-	private String OI_avcc;
+	private double OI_esfera;
+	private double OI_cilindro;
+	private int OI_eje;
+	private double OI_cerca;
+	private double OI_adicion;
+	private double OI_dnpl;
+	private double OI_dnpc;
+	private int OI_avsc;
+	private int OI_avcc;
 	private String OI_observaciones;
 	private int Interna;
 	private int Externa;
@@ -95,25 +95,25 @@ public class GraduacionesForm{
 		this.agente = Constantes.STRING_BLANCO;
 		this.doctor = Constantes.STRING_BLANCO;
 		this.cod_doctor = Constantes.STRING_BLANCO;
-		this.OD_esfera = Constantes.STRING_BLANCO;
-		this.OD_cilindro = Constantes.STRING_BLANCO;
-		this.OD_eje = Constantes.STRING_BLANCO;
-		this.OD_cerca = Constantes.STRING_BLANCO;
-		this.OD_adicion = Constantes.STRING_BLANCO;
-		this.OD_dnpl = Constantes.STRING_BLANCO;
-		this.OD_dnpc = Constantes.STRING_BLANCO;
-		this.OD_avsc = Constantes.STRING_BLANCO;
-		this.OD_avcc = Constantes.STRING_BLANCO;
+		this.OD_esfera = 0;
+		this.OD_cilindro = 0;
+		this.OD_eje = 0;
+		this.OD_cerca = 0;
+		this.OD_adicion = 0;
+		this.OD_dnpl = 0;
+		this.OD_dnpc = 0;
+		this.OD_avsc = 0;
+		this.OD_avcc = 0;
 		this.OD_observaciones = Constantes.STRING_BLANCO;
-		this.OI_esfera = Constantes.STRING_BLANCO;
-		this.OI_cilindro = Constantes.STRING_BLANCO;
-		this.OI_eje = Constantes.STRING_BLANCO;
-		this.OI_cerca = Constantes.STRING_BLANCO;
-		this.OI_adicion = Constantes.STRING_BLANCO;
-		this.OI_dnpl = Constantes.STRING_BLANCO;
-		this.OI_dnpc = Constantes.STRING_BLANCO;
-		this.OI_avsc = Constantes.STRING_BLANCO;
-		this.OI_avcc = Constantes.STRING_BLANCO;
+		this.OI_esfera = 0;
+		this.OI_cilindro = 0;
+		this.OI_eje = 0;
+		this.OI_cerca = 0;
+		this.OI_adicion = 0;
+		this.OI_dnpl = 0;
+		this.OI_dnpc = 0;
+		this.OI_avsc = 0;
+		this.OI_avcc = 0;
 		this.OI_observaciones = Constantes.STRING_BLANCO;
 		this.Interna = Constantes.INT_CERO;
 		this.Externa = Constantes.INT_CERO;
@@ -136,6 +136,7 @@ public class GraduacionesForm{
 		this.existe_graduacion=Constantes.STRING_BLANCO;
 		this.diferenteAdd = false;
 		this.estaGrabado = 0;
+		this.nombre_cliente = Constantes.STRING_BLANCO;
 		
 	}
 	
@@ -251,75 +252,75 @@ public class GraduacionesForm{
 		this.doctor = doctor;
 	}
 
-	public String getOD_esfera() {
+	public double getOD_esfera() {
 		return OD_esfera;
 	}
 
-	public void setOD_esfera(String oD_esfera) {
+	public void setOD_esfera(double oD_esfera) {
 		OD_esfera = oD_esfera;
 	}
 
-	public String getOD_cilindro() {
+	public double getOD_cilindro() {
 		return OD_cilindro;
 	}
 
-	public void setOD_cilindro(String oD_cilindro) {
+	public void setOD_cilindro(double oD_cilindro) {
 		OD_cilindro = oD_cilindro;
 	}
 
-	public String getOD_eje() {
+	public int getOD_eje() {
 		return OD_eje;
 	}
 
-	public void setOD_eje(String oD_eje) {
+	public void setOD_eje(int oD_eje) {
 		OD_eje = oD_eje;
 	}
 
-	public String getOD_cerca() {
+	public double getOD_cerca() {
 		return OD_cerca;
 	}
 
-	public void setOD_cerca(String oD_cerca) {
+	public void setOD_cerca(double oD_cerca) {
 		OD_cerca = oD_cerca;
 	}
 
-	public String getOD_adicion() {
+	public double getOD_adicion() {
 		return OD_adicion;
 	}
 
-	public void setOD_adicion(String oD_adicion) {
+	public void setOD_adicion(double oD_adicion) {
 		OD_adicion = oD_adicion;
 	}
 
-	public String getOD_dnpl() {
+	public double getOD_dnpl() {
 		return OD_dnpl;
 	}
 
-	public void setOD_dnpl(String oD_dnpl) {
+	public void setOD_dnpl(double oD_dnpl) {
 		OD_dnpl = oD_dnpl;
 	}
 
-	public String getOD_dnpc() {
+	public double getOD_dnpc() {
 		return OD_dnpc;
 	}
 
-	public void setOD_dnpc(String oD_dnpc) {
+	public void setOD_dnpc(double oD_dnpc) {
 		OD_dnpc = oD_dnpc;
 	}
 
-	public String getOD_avsc() {
+	public int getOD_avsc() {
 		return OD_avsc;
 	}
 
-	public void setOD_avsc(String oD_avsc) {
+	public void setOD_avsc(int oD_avsc) {
 		OD_avsc = oD_avsc;
 	}
 
-	public String getOD_avcc() {
+	public int getOD_avcc() {
 		return OD_avcc;
 	}
 
-	public void setOD_avcc(String oD_avcc) {
+	public void setOD_avcc(int oD_avcc) {
 		OD_avcc = oD_avcc;
 	}
 
@@ -331,75 +332,75 @@ public class GraduacionesForm{
 		OD_observaciones = oD_observaciones;
 	}
 
-	public String getOI_esfera() {
+	public double getOI_esfera() {
 		return OI_esfera;
 	}
 
-	public void setOI_esfera(String oI_esfera) {
+	public void setOI_esfera(double oI_esfera) {
 		OI_esfera = oI_esfera;
 	}
 
-	public String getOI_cilindro() {
+	public double getOI_cilindro() {
 		return OI_cilindro;
 	}
 
-	public void setOI_cilindro(String oI_cilindro) {
+	public void setOI_cilindro(double oI_cilindro) {
 		OI_cilindro = oI_cilindro;
 	}
 
-	public String getOI_eje() {
+	public int getOI_eje() {
 		return OI_eje;
 	}
 
-	public void setOI_eje(String oI_eje) {
+	public void setOI_eje(int oI_eje) {
 		OI_eje = oI_eje;
 	}
 
-	public String getOI_cerca() {
+	public double getOI_cerca() {
 		return OI_cerca;
 	}
 
-	public void setOI_cerca(String oI_cerca) {
+	public void setOI_cerca(double oI_cerca) {
 		OI_cerca = oI_cerca;
 	}
 
-	public String getOI_adicion() {
+	public double getOI_adicion() {
 		return OI_adicion;
 	}
 
-	public void setOI_adicion(String oI_adicion) {
+	public void setOI_adicion(double oI_adicion) {
 		OI_adicion = oI_adicion;
 	}
 
-	public String getOI_dnpl() {
+	public double getOI_dnpl() {
 		return OI_dnpl;
 	}
 
-	public void setOI_dnpl(String oI_dnpl) {
+	public void setOI_dnpl(double oI_dnpl) {
 		OI_dnpl = oI_dnpl;
 	}
 
-	public String getOI_dnpc() {
+	public double getOI_dnpc() {
 		return OI_dnpc;
 	}
 
-	public void setOI_dnpc(String oI_dnpc) {
+	public void setOI_dnpc(double oI_dnpc) {
 		OI_dnpc = oI_dnpc;
 	}
 
-	public String getOI_avsc() {
+	public int getOI_avsc() {
 		return OI_avsc;
 	}
 
-	public void setOI_avsc(String oI_avsc) {
+	public void setOI_avsc(int oI_avsc) {
 		OI_avsc = oI_avsc;
 	}
 
-	public String getOI_avcc() {
+	public int getOI_avcc() {
 		return OI_avcc;
 	}
 
-	public void setOI_avcc(String oI_avcc) {
+	public void setOI_avcc(int oI_avcc) {
 		OI_avcc = oI_avcc;
 	}
 

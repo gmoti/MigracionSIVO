@@ -54,7 +54,6 @@ public class ControllerCliente extends ClienteForm  implements Serializable{
 	@Init	
 	public void inicial() {
 		
-		
 		 clif = new ClienteForm();  
 		
 		 clif = clid.cargaInicial("T002");
