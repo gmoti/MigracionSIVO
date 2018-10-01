@@ -14,8 +14,8 @@ public class GraduacionesBean {
 	private Double OD_esfera_cerca;
 	private Double OD_n;
 	private Double OD_p;
-	private Double OD_avsc;
-	private Double OD_avcc;
+	private int OD_avsc;
+	private int OD_avcc;
 	private String OD_obser;
 	private String OD_cantidad;
 	private String OD_base;
@@ -33,8 +33,8 @@ public class GraduacionesBean {
 	private Double OI_esfera_cerca;
 	private Double OI_n;
 	private Double OI_p;
-	private Double OI_avsc;
-	private Double OI_avcc;
+	private int OI_avsc;
+	private int OI_avcc;
 	private String OI_obser;
 	private String OI_cantidad;
 	private String OI_base;
@@ -74,10 +74,10 @@ public class GraduacionesBean {
 	public void setFecha_ant(String fecha_ant) {
 		this.fecha_ant = fecha_ant;
 	}
-	public Double getOI_avcc() {
+	public int getOI_avcc() {
 		return OI_avcc;
 	}
-	public void setOI_avcc(Double oI_avcc) {
+	public void setOI_avcc(int oI_avcc) {
 		OI_avcc = oI_avcc;
 	}
 	public int getCliente() {
@@ -152,16 +152,16 @@ public class GraduacionesBean {
 	public void setOD_p(Double oD_p) {
 		OD_p = oD_p;
 	}
-	public Double getOD_avsc() {
+	public int getOD_avsc() {
 		return OD_avsc;
 	}
-	public void setOD_avsc(Double oD_avsc) {
+	public void setOD_avsc(int oD_avsc) {
 		OD_avsc = oD_avsc;
 	}
-	public Double getOD_avcc() {
+	public int getOD_avcc() {
 		return OD_avcc;
 	}
-	public void setOD_avcc(Double oD_avcc) {
+	public void setOD_avcc(int oD_avcc) {
 		OD_avcc = oD_avcc;
 	}
 	public String getOD_obser() {
@@ -254,10 +254,10 @@ public class GraduacionesBean {
 	public void setOI_p(Double oI_p) {
 		OI_p = oI_p;
 	}
-	public Double getOI_avsc() {
+	public int getOI_avsc() {
 		return OI_avsc;
 	}
-	public void setOI_avsc(Double oI_avsc) {
+	public void setOI_avsc(int oI_avsc) {
 		OI_avsc = oI_avsc;
 	}
 	
@@ -381,8 +381,5 @@ public class GraduacionesBean {
 	public void setTratami(String tratami) {
 		this.tratami = tratami;
 	}
-	
-	
-	
 	
 }
