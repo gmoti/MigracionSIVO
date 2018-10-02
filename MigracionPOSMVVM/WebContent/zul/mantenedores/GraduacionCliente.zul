@@ -94,31 +94,31 @@
 		<label value="OD" />		
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OD_esfera)" format="#,##0.##" locale="es"/>	
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_esfera)" />	
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OD_cilindro)" format="#,##0.##" locale="es"/>
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_cilindro)" />
 	 </div>
 	 <div sclass="col-md-1">
-			<intbox sclass="form-control input-sm" value="@bind(vm.OD_eje)" />
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_eje)" />
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OD_cerca)" format="#,##0.##" locale="es"/>
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_cerca)" />
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OD_adicion)" format="#,##0.##" locale="es"/>	
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_adicion)" />	
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OD_dnpl)" format="#,##0.##" locale="es"/>
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_dnpl)" />
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OD_dnpc)" format="#,##0.##" locale="es"/>
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_dnpc)" />
 	 </div>
 	 <div sclass="col-md-1">
-			<intbox sclass="form-control input-sm" value="@bind(vm.OD_avsc)" />	
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_avsc)" />	
 	 </div>
 	 <div sclass="col-md-2">
-			<intbox sclass="form-control input-sm" value="@bind(vm.OD_avcc)" />
+			<textbox sclass="form-control input-sm" value="@bind(vm.OD_avcc)" />
 	 </div>
 </div>
 <separator/>
@@ -169,31 +169,31 @@
 		<label value="OI" />		
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OI_esfera)" format="#,##0.##" locale="es" />	
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_esfera)"  />	
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OI_cilindro)" format="#,##0.##" locale="es" />
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_cilindro)"  />
 	 </div>
 	 <div sclass="col-md-1">
-			<intbox sclass="form-control input-sm" value="@bind(vm.OI_eje)" />
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_eje)" />
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OI_cerca)" format="#,##0.##" locale="es" />
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_cerca)"  />
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OI_adicion)" format="#,##0.##" locale="es" />	
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_adicion)"  />	
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OI_dnpl)" format="#,##0.##" locale="es" />
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_dnpl)"  />
 	 </div>
 	 <div sclass="col-md-1">
-			<doublebox sclass="form-control input-sm" value="@bind(vm.OI_dnpc)" format="#,##0.##" locale="es"/>
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_dnpc)" />
 	 </div>
 	 <div sclass="col-md-1">
-			<intbox sclass="form-control input-sm" value="@bind(vm.OI_avsc)" />	
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_avsc)" />	
 	 </div>
 	 <div sclass="col-md-2">
-			<intbox sclass="form-control input-sm" value="@bind(vm.OI_avcc)" />
+			<textbox sclass="form-control input-sm" value="@bind(vm.OI_avcc)" />
 	 </div>
 </div>
 <separator/>
@@ -264,7 +264,7 @@
 				</combobox>
 			</div>
 			<div sclass="col-md-1"></div>
-			<div sclass="col-md-1"><intbox sclass="form-control input-sm" value="0"/></div>
+			<div sclass="col-md-1"><textbox sclass="form-control input-sm" value="0"/></div>
 			<div sclass="col-md-1"></div>
 			<div sclass="col-md-2">
 				    <radiogroup id="tipo" />
@@ -291,7 +291,7 @@
 			</div>
 			<div sclass="col-md-1"></div>
 			<div sclass="col-md-1">
-				<intbox sclass="form-control input-sm" value="0"/></div>
+				<textbox sclass="form-control input-sm" value="0"/></div>
 			<div sclass="col-md-1"></div>
 			<div sclass="col-md-2">
 			

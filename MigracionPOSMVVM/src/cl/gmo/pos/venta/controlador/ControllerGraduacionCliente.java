@@ -105,27 +105,27 @@ public class ControllerGraduacionCliente extends GraduacionesForm{
 	@NotifyChange({"*"})
 	public void nuevoUsuario(@BindingParam("arg1") GraduacionesForm gform){
 		//OJO DERECHO	
-		this.setOD_esfera(0);
-		this.setOD_cilindro(0);
-		this.setOD_eje(0);
-		this.setOD_cerca(0);
-		this.setOD_adicion(0);
-		this.setOD_dnpl(0);
-		this.setOD_dnpc(0);
-		this.setOD_avsc(0);
-		this.setOD_avcc(0);
+		this.setOD_esfera("");
+		this.setOD_cilindro("");
+		this.setOD_eje("");
+		this.setOD_cerca("");
+		this.setOD_adicion("");
+		this.setOD_dnpl("");
+		this.setOD_dnpc("");
+		this.setOD_avsc("");
+		this.setOD_avcc("");
 		this.setOD_observaciones("");
 
 		//OJO IZQUIERDO
-		this.setOI_esfera(0);
-		this.setOI_cilindro(0);
-		this.setOI_eje(0);
-		this.setOI_cerca(0);
-		this.setOI_adicion(0);
-		this.setOI_dnpl(0);
-		this.setOI_dnpc(0);
-		this.setOI_avsc(0);
-		this.setOI_avcc(0);
+		this.setOI_esfera("");
+		this.setOI_cilindro("");
+		this.setOI_eje("");
+		this.setOI_cerca("");
+		this.setOI_adicion("");
+		this.setOI_dnpl("");
+		this.setOI_dnpc("");
+		this.setOI_avsc("");
+		this.setOI_avcc("");
 		this.setOI_observaciones("");
 		
 		this.setNombre_doctor("");

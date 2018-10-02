@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.zkoss.zk.ui.Session;
 
-import com.ibm.ws.client.ccrct.HelpButtonListener;
 
 import cl.gmo.pos.venta.utils.Constantes;
 import cl.gmo.pos.venta.utils.Utils;
@@ -337,12 +337,12 @@ public class DevolucionHelper extends Utils {
 	    	return res;
 		}
 	 
-	 public boolean ingresaPagoAlbaran(ArrayList<PagoBean> listaPago, HttpSession session, DevolucionForm formulario, String local)
+	 public boolean ingresaPagoAlbaran(ArrayList<PagoBean> listaPago, Session sesion, DevolucionForm formulario, String local)
 	 {
 			log.info("VentaDirectaHelper:ingresaPago inicio");
 	    	boolean estado = false;
 	    	String devolucion = formulario.getTipoAlbaran();
-	    	String tipo_doc = session.getAttribute(Constantes.STRING_TIPO_DOCUMENTO).toString();
+	    	String tipo_doc = sesion.getAttribute(Constantes.STRING_TIPO_DOCUMENTO).toString();
 	    	
 	    	if("D".equalsIgnoreCase(devolucion)){
 	    		devolucion = "S";
@@ -373,7 +373,7 @@ public class DevolucionHelper extends Utils {
 														pago.getCantidad(),
 														devolucion,
 														Constantes.STRING_N,
-														session.getAttribute(Constantes.STRING_USUARIO).toString(),
+														sesion.getAttribute(Constantes.STRING_USUARIO).toString(),
 														null,
 														pago.getDescuento(),
 														tipo_doc);
@@ -456,7 +456,7 @@ public class DevolucionHelper extends Utils {
 	
 	//LMARIN NOTA DE CREDITO 20150604
 	
-	public String genera_nota_credito(String tipodoc,ArrayList<PagoBean> listaPagos,DevolucionForm devform,String foliocl,HttpSession session,DevolucionForm formulario2){
+	public String genera_nota_credito(String tipodoc,ArrayList<PagoBean> listaPagos,DevolucionForm devform,String foliocl,Session sesion,DevolucionForm formulario2){
 				
 		Utils util = new Utils();
 		String res = null;
@@ -464,7 +464,7 @@ public class DevolucionHelper extends Utils {
 		System.out.println("FOLIO DEVOLUCION HELPER ===> "+folio);
 		
 		try {					
-			res = util.genera_notacredito(tipodoc,folio,listaPagos,devform,session,formulario2);
+			res = util.genera_notacredito(tipodoc,folio,listaPagos,devform,sesion,formulario2);
 			System.out.println("Boleta devo ====>===>==>=> "+res);
 		} catch (Exception e) {
 			e.printStackTrace();
